@@ -1,6 +1,6 @@
 # FEATURE_PLAN template
 
-Write to `FEATURE_PLAN_<name>.md` at the project root. Use this structure verbatim. Keep it scannable — the user edits this by hand.
+Write to `_docs/FEATURE_PLAN_<name>.md` (create the `_docs/` folder if it doesn't exist). Use this structure verbatim. Keep it scannable — the user edits this by hand.
 
 ```markdown
 # Feature plan: <name>

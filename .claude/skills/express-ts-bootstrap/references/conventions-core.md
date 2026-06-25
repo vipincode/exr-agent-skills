@@ -12,10 +12,11 @@ src/
   lib/
     app-error.ts      # AppError + typed subclasses (NotFound, BadRequest, ...)
     http.ts           # response envelope helpers: ok(), created(), noContent()
+    db-errors.ts      # normalizeDbError(): maps Mongoose/Zod errors -> AppError
     logger.ts         # pino instance
     jwt.ts            # JOSE sign/verify helpers (see auth-jose.md)
   middleware/
-    error-handler.ts  # central error handler (Zod- and AppError-aware)
+    error-handler.ts  # central error handler (AppError-, Mongoose-, Zod-aware)
     not-found.ts      # 404 fallthrough
     request-context.ts# request id + child logger per request
     protect.ts        # JOSE auth guard (see auth-jose.md)
@@ -56,6 +57,18 @@ Controllers never hand-roll this. They call `ok(res, data, meta?)`, `created(res
 - `isOperational` is `true` on these. Unknown/thrown non-AppError values are treated as non-operational → logged at `error`, rendered as a generic 500 with code `INTERNAL` (never leak the message/stack in production).
 - Services throw these. Controllers do not try/catch — Express 5 forwards rejections to the error handler. The only try/catch in normal code is around genuinely recoverable operations (e.g. an external call with a fallback).
 
+### Mongoose & Zod error normalization (reusable)
+
+Mongoose and Zod throw their own error shapes, not `AppError`. Rather than scattering `instanceof` checks across modules, normalize them in **one reusable place**: `lib/db-errors.ts` exports `normalizeDbError(err: unknown): AppError | null`, which returns a mapped `AppError` for a recognized error and `null` otherwise. `middleware/error-handler.ts` calls it first; if it returns an `AppError`, render that, else fall through to the AppError/`INTERNAL` logic above. This keeps the mapping testable, shared, and the single source of truth — module code never re-implements it.
+
+`normalizeDbError` maps:
+- Mongoose `CastError` (e.g. malformed ObjectId) → `BadRequestError` (400, `BAD_REQUEST`), `details` = `{ path, value }`.
+- Mongoose `ValidationError` → `UnprocessableError` (422, `UNPROCESSABLE`), `details` = per-field messages keyed by path.
+- Mongoose duplicate key (`MongoServerError` with `code === 11000`) → `ConflictError` (409, `CONFLICT`), `details` = the conflicting `keyValue`.
+- Zod `ZodError` (a raw one that reached the handler, not via `validate`) → `BadRequestError` (400, `BAD_REQUEST`), `details = z.treeifyError(err)`.
+
+Detection is by shape/`name`, not a hard `instanceof mongoose.Error` import chain where avoidable, so the helper stays decoupled and reusable. The `validate` middleware still handles request-body Zod errors up front; the handler's Zod branch is a defensive fallback for ZodError thrown deeper (e.g. response/parse validation).
+
 ## Validation flow
 
 - One schema file per module (`<name>.schema.ts`) using Zod 4 (`import * as z from "zod"`; top-level `z.email()`, `z.uuid()`; `z.object()` strips unknown keys by default).
@@ -81,6 +94,30 @@ Controllers never hand-roll this. They call `ok(res, data, meta?)`, `created(res
 ## DRY rules (the point of the registry)
 
 Before creating any util, middleware, helper, type, or constant, the rule for every skill that builds code is: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists — reuse it. If a genuinely new reusable piece is created, add it to the registry in the same change so the next feature sees it. Module-local, single-use code stays in the module and is not registered.
+
+## Build & scripts (clean dist, always)
+
+The compiled output lives in `dist/` (TypeScript `outDir`). A stale `dist/` is a recurring footgun — deleted source files linger as compiled `.js`, and `npm start` can run yesterday's code. So **`dist/` is always wiped before a build or a dev run.** Use `rimraf` (a devDependency) for the delete, never `rm -rf` — it must work on Windows too.
+
+`package.json` scripts (PM-agnostic — the same script bodies work under npm/pnpm/bun; chain with `&&`, not `npm run`, so they aren't tied to one PM):
+
+```jsonc
+"scripts": {
+  "clean": "rimraf dist",
+  "dev": "rimraf dist && tsx watch src/server.ts",
+  "build": "rimraf dist && tsc -p tsconfig.json",
+  "start": "node dist/server.js",
+  "typecheck": "tsc --noEmit",
+  "lint": "eslint ."
+}
+```
+
+- `clean` — standalone wipe, callable directly.
+- `dev` — clears `dist/` then runs via `tsx watch` (no emit; running fresh from source, never a stale build).
+- `build` — clears `dist/` then emits a clean compile.
+- `start` — runs the compiled output (assumes a prior `build`).
+
+Add `dist/` to `.gitignore`. The `rimraf` devDependency must be in `package.json`, and the registry/README note that `clean` runs automatically inside `dev` and `build`.
 
 ## Graceful shutdown
 

@@ -33,9 +33,9 @@ Use `references/question-banks.md` to pick the right scoped questions for the fe
 
 If the user already specified some in their request, honor those and don't re-ask.
 
-## Step 4 — Write `FEATURE_PLAN_<name>.md`
+## Step 4 — Write `_docs/FEATURE_PLAN_<name>.md`
 
-Follow `references/plan-template.md` exactly. The non-negotiable sections are:
+Write the plan to `_docs/FEATURE_PLAN_<name>.md` — create the `_docs/` folder at the project root if it doesn't exist yet. Planner docs live under `_docs/`; only `ARCHITECTURE.md` and `MODULE_REGISTRY.md` stay at the project root. Follow `references/plan-template.md` exactly. The non-negotiable sections are:
 - **Decisions** — resolved choices, and any assumptions made (flagged as assumptions so the user can correct them).
 - **Reuse (from registry / existing code)** — an explicit list with paths of what this feature will import rather than create. This section is the whole point: it commits the feature to dedup *before* code exists. If Step 1 found a usable util/middleware/model, it goes here.
 - **Create** — the new files, by path, each with a one-line purpose.

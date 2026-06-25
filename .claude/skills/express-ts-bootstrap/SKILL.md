@@ -17,6 +17,7 @@ This skill runs **once per project**. It does NOT build feature modules (auth, p
 - **JOSE 5** for token signing/verification. The bootstrap installs JOSE + token utils + a `protect` middleware, but does **not** build auth endpoints — that is a feature for feature-planner/module-builder.
 - **Zod 4** for validation and env parsing. Use root import `import * as z from "zod"`, top-level formats (`z.email()`, `z.uuid()`), and `z.treeifyError()` (not `.flatten()`/`.format()`).
 - **pino** + `pino-http` for logging, **helmet**, **cors**, **compression**, **express-rate-limit** for the production middleware stack.
+- **rimraf** (devDependency) so `dist/` is wiped before every build and dev run — cross-platform, never `rm -rf`. See the "Build & scripts" section of `references/conventions-core.md` for the exact `package.json` scripts.
 
 ## Decision gate (ask ONLY these)
 
@@ -38,8 +39,8 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 3. **Generate the `health` module** in the chosen paradigm. The functional version ships in `assets/files/src/modules/health/`. For OOP or hybrid, rewrite that module following `references/paradigm-oop.md` or `references/paradigm-hybrid.md`. The health module is the canonical example later skills imitate, so it must match the paradigm exactly.
 4. **Fill in package manager specifics** — scripts and lockfile-relevant bits in `package.json` are PM-agnostic, but install/run commands in the generated README use the chosen PM.
 5. **Generate `ARCHITECTURE.md`** from `assets/ARCHITECTURE.template.md`, filling every `{{placeholder}}` with the resolved decisions and the actual conventions from `references/conventions-core.md`. This file is read by every other skill before it writes code — it must be concrete, not aspirational.
-6. **Generate `MODULE_REGISTRY.md`** from `assets/MODULE_REGISTRY.template.md`. Seed it with the shared pieces the scaffold itself ships (the error classes, response helpers, `protect` middleware, env config, logger, request-context). This is the dedup ledger; if a shared util exists, it must be listed here so feature-planner sees it and module-builder reuses it instead of recreating it.
-7. **Install dependencies** with the chosen PM, then verify the project builds and boots (`<pm> run build` then a quick `<pm> run dev` smoke check that the health route responds). Report the result.
+6. **Generate `MODULE_REGISTRY.md`** from `assets/MODULE_REGISTRY.template.md`. Seed it with the shared pieces the scaffold itself ships (the error classes, response helpers, `normalizeDbError` from `lib/db-errors.ts`, `protect` middleware, env config, logger, request-context). This is the dedup ledger; if a shared util exists, it must be listed here so feature-planner sees it and module-builder reuses it instead of recreating it — in particular, modules must reuse `normalizeDbError`/the central error handler rather than catching Mongoose/Zod errors themselves.
+7. **Install dependencies** with the chosen PM, then verify the project builds and boots (`<pm> run build` then a quick `<pm> run dev` smoke check that the health route responds). Confirm `dist/` is wiped on both `build` and `dev` (the `rimraf` step). Report the result.
 
 ## What to read when
 
@@ -53,5 +54,7 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 
 - **No `asyncHandler`.** Express 5 handles it. Any generated wrapper is a bug.
 - **One response shape, one error model.** Every module uses the shared `ok()/created()` helpers and throws `AppError` subclasses — never ad-hoc `res.status().json()` shapes or bare `throw new Error()`. This is what keeps modules consistent enough for later skills to reason about.
+- **Mongoose & Zod errors are normalized once.** The scaffold ships `lib/db-errors.ts` (`normalizeDbError`) and the error handler calls it, so `CastError`, `ValidationError`, duplicate-key (11000), and raw `ZodError` all render through the standard envelope. Modules must not re-catch these — reuse the shared path.
+- **`dist/` is always clean.** `dev` and `build` both `rimraf dist` first (via `rimraf`, Windows-safe). A scaffold that can run yesterday's compiled output is a bug.
 - **Seed the registry honestly.** Every reusable thing the scaffold creates goes into MODULE_REGISTRY.md immediately. An empty or inaccurate registry defeats the dedup workflow and the duplicate-code problem comes right back.
 - **Don't scaffold features.** Auth, users, products are out of scope here. Stop at infrastructure + health.

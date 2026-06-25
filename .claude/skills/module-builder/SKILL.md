@@ -5,11 +5,11 @@ description: Build a backend feature/module from an approved FEATURE_PLAN, enfor
 
 # module-builder
 
-Execute an approved `FEATURE_PLAN_<name>.md` into working code, following the project's conventions exactly and — critically — reusing what already exists instead of regenerating it. Duplicate utils/middleware are the failure mode this skill exists to prevent, so the search-before-create gate is mandatory, not advisory.
+Execute an approved `_docs/FEATURE_PLAN_<name>.md` into working code, following the project's conventions exactly and — critically — reusing what already exists instead of regenerating it. Duplicate utils/middleware are the failure mode this skill exists to prevent, so the search-before-create gate is mandatory, not advisory.
 
 ## Step 1 — Load everything
 
-1. The feature plan: `FEATURE_PLAN_<name>.md`. If none exists, stop and point the user to feature-planner — do not improvise a plan.
+1. The feature plan: `_docs/FEATURE_PLAN_<name>.md` (planner docs live under `_docs/`). If none exists, stop and point the user to feature-planner — do not improvise a plan.
 2. `ARCHITECTURE.md` — paradigm, response envelope, error model, validation flow, **import convention** (e.g. NodeNext `.js` extensions), layout, auth primitives. Follow it literally; do not impose patterns from memory that contradict it.
 3. `MODULE_REGISTRY.md` — the catalog of shared pieces and existing modules.
 
