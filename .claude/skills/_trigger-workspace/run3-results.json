@@ -1,0 +1,357 @@
+{
+  "accuracy": 0.9583333333333334,
+  "correct": 46,
+  "total": 48,
+  "results": [
+    {
+      "id": 1,
+      "query": "starting a brand new side project \u2014 i need a fresh express + typescript api with mongoose, nothing exists yet, just an empty folder. get me a runnable backend skeleton",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 2,
+      "query": "spin up a node/express backend boilerplate for me, strict TS, ESM, the usual prod middleware",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 3,
+      "query": "new API from scratch please",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 4,
+      "query": "i want to bootstrap a server-side project. mongo, jwt auth utils, the works \u2014 clean slate",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 5,
+      "query": "i already have an express API at work (~30 route files, joi validation, jsonwebtoken). i want to start using these planning/build skills on it. set it up for that",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 6,
+      "query": "onboard this repo so the toolkit knows my conventions",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 7,
+      "query": "get my current backend ready to use with feature-planner and module-builder",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 8,
+      "query": "point these skills at my existing codebase \u2014 there's no ARCHITECTURE.md yet",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 9,
+      "query": "i want to add authentication to my api. plan it out first before we write anything",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 10,
+      "query": "how should i structure a payments module for stripe in this project?",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 11,
+      "query": "design the orders feature \u2014 what files, endpoints, schema",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 12,
+      "query": "plan a file-upload feature with s3, give me something i can edit before coding",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 13,
+      "query": "i'm thinking about building a notifications system, help me think through the design",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 14,
+      "query": "implement FEATURE_PLAN_products.md",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 15,
+      "query": "the auth plan is approved, build it",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 16,
+      "query": "ok the plan looks good, now code up the orders module",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 17,
+      "query": "build the module from the feature plan in _docs",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 18,
+      "query": "generate the actual code for the search feature we planned",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 19,
+      "query": "write unit tests for src/modules/auth/auth.service.ts",
+      "gold": "test-writer",
+      "predicted": "test-writer",
+      "correct": true
+    },
+    {
+      "id": 20,
+      "query": "cover the order service with tests, happy path and the failure branches",
+      "gold": "test-writer",
+      "predicted": "test-writer",
+      "correct": true
+    },
+    {
+      "id": 21,
+      "query": "add vitest tests for the products module",
+      "gold": "test-writer",
+      "predicted": "test-writer",
+      "correct": true
+    },
+    {
+      "id": 22,
+      "query": "i need integration tests for the auth routes with supertest",
+      "gold": "test-writer",
+      "predicted": "test-writer",
+      "correct": true
+    },
+    {
+      "id": 23,
+      "query": "review my changes on this branch before i open a PR",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 24,
+      "query": "is this auth service production-ready? check it for issues",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 25,
+      "query": "audit src/modules/payments for security problems",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 26,
+      "query": "sanity-check the diff i just made to the orders controller",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 27,
+      "query": "critique this mongoose query code, feels slow",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 28,
+      "query": "i want to build user auth for my express api",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 29,
+      "query": "build the auth module",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 30,
+      "query": "set up my API for this",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 31,
+      "query": "set up a new api for me",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 32,
+      "query": "review my React component for accessibility issues, it's a dropdown menu",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 33,
+      "query": "build me a landing page in next.js with tailwind",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 34,
+      "query": "write a python script to parse this csv and dedupe rows",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 35,
+      "query": "set up a CI/CD pipeline with github actions for my repo",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 36,
+      "query": "bootstrap a django rest framework project",
+      "gold": "none",
+      "predicted": "express-ts-bootstrap",
+      "correct": false
+    },
+    {
+      "id": 37,
+      "query": "write tests for my react hook useDebounce",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 38,
+      "query": "plan my team's sprint for next week",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 39,
+      "query": "optimize this raw postgres SQL query, it does a 3-way join",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 40,
+      "query": "review this terraform config for my AWS setup",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 41,
+      "query": "explain how JWT refresh tokens work conceptually",
+      "gold": "none",
+      "predicted": "none",
+      "correct": true
+    },
+    {
+      "id": 42,
+      "query": "look over the changes in my last commit and tell me if anything's broken",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    },
+    {
+      "id": 43,
+      "query": "i changed the order service, can you verify it works?",
+      "gold": "none",
+      "predicted": "code-review",
+      "correct": false
+    },
+    {
+      "id": 44,
+      "query": "what's the best way to add role-based access control to my api?",
+      "gold": "feature-planner",
+      "predicted": "feature-planner",
+      "correct": true
+    },
+    {
+      "id": 45,
+      "query": "now build it",
+      "gold": "module-builder",
+      "predicted": "module-builder",
+      "correct": true
+    },
+    {
+      "id": 46,
+      "query": "I'm new to backend dev, can you create me a starter express api project I can learn from",
+      "gold": "express-ts-bootstrap",
+      "predicted": "express-ts-bootstrap",
+      "correct": true
+    },
+    {
+      "id": 47,
+      "query": "i cloned a legacy express 4 codebase, help me make it work with your planning workflow",
+      "gold": "project-onboard",
+      "predicted": "project-onboard",
+      "correct": true
+    },
+    {
+      "id": 48,
+      "query": "go through src/modules/auth and flag anything that duplicates code we already have",
+      "gold": "code-review",
+      "predicted": "code-review",
+      "correct": true
+    }
+  ],
+  "confusion": {
+    "none": {
+      "express-ts-bootstrap": 1,
+      "code-review": 1
+    }
+  },
+  "descriptions": {
+    "project-onboard": "Make any project ready for the backend toolkit (feature-planner, module-builder, test-writer) by establishing its contract files. Use this as the entry point whenever the user points the toolkit at a directory \u2014 \"set up my existing API for this\", \"onboard this repo\", \"I want to use these skills on my current project\", \"get this project ready\", or starting work in a folder that has no ARCHITECTURE.md / MODULE_REGISTRY.md yet. For an EXISTING codebase it scans the repo and generates a DESCRIPTIVE ARCHITECTURE.md plus a MODULE_REGISTRY.md seeded with all existing reusable code, so feature work reuses what's there instead of duplicating it (DRY). For an EMPTY directory it hands off to express-ts-bootstrap. It is non-destructive \u2014 it never refactors existing code, only writes the contract files. After onboarding, plan/build/test happen through the dedicated skills.",
+    "express-ts-bootstrap": "Scaffold a new production-grade Express.js + TypeScript + Mongoose + JOSE backend from scratch. Use this whenever the user wants to start a new Node/Express API project, bootstrap a backend, set up an Express + TypeScript starter, or initialize a server-side project \u2014 even if they only say \"new API\", \"Express starter\", \"backend boilerplate\", or name the stack loosely. This skill scaffolds the infrastructure ONCE per project and generates the two source-of-truth files (ARCHITECTURE.md and MODULE_REGISTRY.md) that the feature-planner, module-builder, and test-writer skills depend on. Do NOT use this to add a feature to an existing project (that is feature-planner + module-builder) or to write tests (test-writer).",
+    "feature-planner": "Plan a backend feature or module before any code is written. Use this whenever the user wants to add a feature, design a module (auth, products, orders, payments, search, file upload, etc.), or says things like \"I want to build X\", \"plan the auth feature\", \"design the product module\", or \"how should I structure Y\" for a server-side API. This is the BMAD replacement \u2014 it reads the project's ARCHITECTURE.md and MODULE_REGISTRY.md first, asks ONLY the questions those files don't already answer, and writes an editable FEATURE_PLAN markdown file. It does NOT write feature code (that is module-builder) and does NOT write tests (that is test-writer). Works in any project in the Express/TS convention family that has the contract files, or offers to create them for an existing repo.",
+    "module-builder": "Build a backend feature/module from an approved FEATURE_PLAN, enforcing reuse so no duplicate utils, middleware, types, or helpers get created. Use this whenever the user wants to implement, build, or generate a planned feature \u2014 \"build the auth module\", \"implement FEATURE_PLAN_products.md\", \"now build it\", \"code up the orders feature\". It reads ARCHITECTURE.md + MODULE_REGISTRY.md + the feature plan, searches for existing reusable code BEFORE creating anything, builds the module in the project's paradigm, then updates the registry. It does NOT plan features (that is feature-planner) and does NOT write tests (that is test-writer). Works in any project in the Express/TS convention family with the contract files.",
+    "test-writer": "Write test cases for backend code on demand. Use this ONLY when the user explicitly asks to test something \u2014 \"write tests for auth.service.ts\", \"test the product module\", \"add unit tests for this\", \"cover the order service\". It is a standalone utility, run manually whenever the user wants \u2014 never auto-chained from feature-planner or module-builder. It reads ARCHITECTURE.md (conventions), MODULE_REGISTRY.md (what to mock vs use), and the actual target file(s), detects the test framework from package.json, and writes matching test files. It never modifies source files and never touches the registry. Works in any project in the Express/TS convention family.",
+    "code-review": "Review backend / server-side code (Express, Node, TypeScript, Mongoose APIs) for correctness, security, convention adherence, and duplication. Use whenever the user asks to review, audit, critique, or sanity-check backend code \u2014 \"review this service\", \"code review the auth module\", \"review my changes / this PR / the diff\", \"is this production-ready\", \"check this for issues\". It reads ARCHITECTURE.md + MODULE_REGISTRY.md so it reviews against THIS project's conventions and flags code that duplicates existing registry entries (DRY). Standalone and read-only \u2014 run anytime, never auto-chained, and it does not modify source unless explicitly asked to apply fixes. Tuned for backend; not for frontend/React review."
+  }
+}

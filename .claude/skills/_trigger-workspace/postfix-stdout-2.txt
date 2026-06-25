@@ -1,0 +1,55 @@
+
+Accuracy: 46/48 = 96%
+
+OK  # 1 gold=express-ts-bootstrap   pred=express-ts-bootstrap   starting a brand new side project — i need a fresh
+OK  # 2 gold=express-ts-bootstrap   pred=express-ts-bootstrap   spin up a node/express backend boilerplate for me,
+OK  # 3 gold=express-ts-bootstrap   pred=express-ts-bootstrap   new API from scratch please
+OK  # 4 gold=express-ts-bootstrap   pred=express-ts-bootstrap   i want to bootstrap a server-side project. mongo, 
+OK  # 5 gold=project-onboard        pred=project-onboard        i already have an express API at work (~30 route f
+OK  # 6 gold=project-onboard        pred=project-onboard        onboard this repo so the toolkit knows my conventi
+OK  # 7 gold=project-onboard        pred=project-onboard        get my current backend ready to use with feature-p
+OK  # 8 gold=project-onboard        pred=project-onboard        point these skills at my existing codebase — there
+OK  # 9 gold=feature-planner        pred=feature-planner        i want to add authentication to my api. plan it ou
+OK  #10 gold=feature-planner        pred=feature-planner        how should i structure a payments module for strip
+OK  #11 gold=feature-planner        pred=feature-planner        design the orders feature — what files, endpoints,
+OK  #12 gold=feature-planner        pred=feature-planner        plan a file-upload feature with s3, give me someth
+OK  #13 gold=feature-planner        pred=feature-planner        i'm thinking about building a notifications system
+OK  #14 gold=module-builder         pred=module-builder         implement FEATURE_PLAN_products.md
+OK  #15 gold=module-builder         pred=module-builder         the auth plan is approved, build it
+OK  #16 gold=module-builder         pred=module-builder         ok the plan looks good, now code up the orders mod
+OK  #17 gold=module-builder         pred=module-builder         build the module from the feature plan in _docs
+OK  #18 gold=module-builder         pred=module-builder         generate the actual code for the search feature we
+OK  #19 gold=test-writer            pred=test-writer            write unit tests for src/modules/auth/auth.service
+OK  #20 gold=test-writer            pred=test-writer            cover the order service with tests, happy path and
+OK  #21 gold=test-writer            pred=test-writer            add vitest tests for the products module
+OK  #22 gold=test-writer            pred=test-writer            i need integration tests for the auth routes with 
+OK  #23 gold=code-review            pred=code-review            review my changes on this branch before i open a P
+OK  #24 gold=code-review            pred=code-review            is this auth service production-ready? check it fo
+OK  #25 gold=code-review            pred=code-review            audit src/modules/payments for security problems
+OK  #26 gold=code-review            pred=code-review            sanity-check the diff i just made to the orders co
+OK  #27 gold=code-review            pred=code-review            critique this mongoose query code, feels slow
+OK  #28 gold=feature-planner        pred=feature-planner        i want to build user auth for my express api
+OK  #29 gold=module-builder         pred=module-builder         build the auth module
+OK  #30 gold=project-onboard        pred=project-onboard        set up my API for this
+OK  #31 gold=express-ts-bootstrap   pred=express-ts-bootstrap   set up a new api for me
+OK  #32 gold=none                   pred=none                   review my React component for accessibility issues
+OK  #33 gold=none                   pred=none                   build me a landing page in next.js with tailwind
+OK  #34 gold=none                   pred=none                   write a python script to parse this csv and dedupe
+OK  #35 gold=none                   pred=none                   set up a CI/CD pipeline with github actions for my
+OK  #36 gold=none                   pred=none                   bootstrap a django rest framework project
+OK  #37 gold=none                   pred=none                   write tests for my react hook useDebounce
+OK  #38 gold=none                   pred=none                   plan my team's sprint for next week
+OK  #39 gold=none                   pred=none                   optimize this raw postgres SQL query, it does a 3-
+OK  #40 gold=none                   pred=none                   review this terraform config for my AWS setup
+OK  #41 gold=none                   pred=none                   explain how JWT refresh tokens work conceptually
+OK  #42 gold=code-review            pred=code-review            look over the changes in my last commit and tell m
+XX  #43 gold=none                   pred=UNPARSED:verify        i changed the order service, can you verify it wor
+XX  #44 gold=feature-planner        pred=none                   what's the best way to add role-based access contr
+OK  #45 gold=module-builder         pred=module-builder         now build it
+OK  #46 gold=express-ts-bootstrap   pred=express-ts-bootstrap   I'm new to backend dev, can you create me a starte
+OK  #47 gold=project-onboard        pred=project-onboard        i cloned a legacy express 4 codebase, help me make
+OK  #48 gold=code-review            pred=code-review            go through src/modules/auth and flag anything that
+
+Confusion (gold -> wrongly predicted):
+  none -> UNPARSED:verify: 1
+  feature-planner -> none: 1
