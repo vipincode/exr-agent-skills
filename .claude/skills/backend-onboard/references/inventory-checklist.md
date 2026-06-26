@@ -55,7 +55,7 @@ Read several controllers. Is there ONE consistent success shape? Capture it exac
 - Shared logger module + how requests are logged, or `console.*`. Record it.
 
 ## Tests
-- Framework, file convention (colocated `*.test.ts` vs `__tests__/` vs `test/`), and whether integration uses supertest / in-memory Mongo. test-writer will match this.
+- Framework, file convention (colocated `*.test.ts` vs `__tests__/` vs `test/`), and whether integration uses supertest / in-memory Mongo. backend-test-writer will match this.
 
 ## Output of the scan
 Two things: (1) the facts to write into ARCHITECTURE.md, and (2) the exhaustive list of reusable pieces to seed MODULE_REGISTRY.md. Plus a findings note of any duplication/inconsistency observed (reported, never auto-fixed).

@@ -41,7 +41,7 @@
 
 > **Auth endpoints do not exist yet.** The JWT helpers and `protect`/`requireRole`
 > middleware are installed, but login/register/refresh routes are a feature for
-> feature-planner + module-builder to design and wire onto these primitives.
+> backend-feature-planner + backend-module-builder to design and wire onto these primitives.
 
 ## Decisions log
 

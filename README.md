@@ -4,12 +4,12 @@ Reusable agent skills for software planning, onboarding, module building, testin
 
 ## Skills
 
-- `project-onboard` - inspect an existing project and build a practical understanding before making changes.
-- `feature-planner` - turn a feature request into an implementation plan with risks and questions.
-- `module-builder` - build Express TypeScript modules using the project's conventions.
+- `backend-onboard` - inspect an existing project and build a practical understanding before making changes.
+- `backend-feature-planner` - turn a feature request into an implementation plan with risks and questions.
+- `backend-module-builder` - build Express TypeScript modules using the project's conventions.
 - `express-ts-bootstrap` - bootstrap an Express TypeScript backend structure.
-- `test-writer` - add focused tests that match the project's test style.
-- `code-review` - review code for bugs, regressions, security risks, and missing tests.
+- `backend-test-writer` - add focused tests that match the project's test style.
+- `backend-code-review` - review code for bugs, regressions, security risks, and missing tests.
 
 ## Installation
 
@@ -36,7 +36,7 @@ Copy-Item -Recurse -Force ".claude\skills\*" "$HOME\.claude\skills\"
 4. Ask Claude to use one of the skills by describing the task, for example:
 
 ```text
-Review this pull request using the code-review skill.
+Review this pull request using the backend-code-review skill.
 ```
 
 ### OpenAI Codex CLI
@@ -75,23 +75,26 @@ SkillsMP indexes public GitHub repositories that contain `SKILL.md` files. To ma
 
 ```text
 .claude/
+  workspace.json        # maps each project's domain -> folder (root or backend/); see LAYOUT.md
   skills/
-    code-review/
+    NAMING.md           # skill naming & domain taxonomy (collision-proofing)
+    LAYOUT.md           # project-location manifest & resolution protocol (monorepo-ready)
+    backend-code-review/
       SKILL.md
       references/
     express-ts-bootstrap/
       SKILL.md
       references/
-    feature-planner/
+    backend-feature-planner/
       SKILL.md
       references/
-    module-builder/
+    backend-module-builder/
       SKILL.md
       references/
-    project-onboard/
+    backend-onboard/
       SKILL.md
       references/
-    test-writer/
+    backend-test-writer/
       SKILL.md
       references/
 ```

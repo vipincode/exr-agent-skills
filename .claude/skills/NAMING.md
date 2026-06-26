@@ -1,7 +1,8 @@
 # Skill Naming & Domain Taxonomy
 
-> Notes for a future refactor. **Nothing here is applied yet.** This documents the agreed
-> convention so the skill set stays clean as it grows from backend-only into frontend.
+> **Applied 2026-06-26.** The rename below has been carried out; this now documents the
+> convention (and the historical map) so the skill set stays clean as it grows from
+> backend-only into frontend.
 
 ## Why this exists
 
@@ -33,7 +34,7 @@ Future-proofing is therefore **two** moves, not one:
 A user may run several frontend stacks, so scaffolders keep the stack in the name (not
 `frontend-`); workflow skills are stack-agnostic within a domain, so they take the domain prefix.
 
-## Rename map (apply later)
+## Rename map (applied)
 
 | Current | New |
 |---|---|
@@ -66,7 +67,7 @@ Find every site first:
 rg -n "project-onboard|feature-planner|module-builder|test-writer|code-review" .claude
 ```
 
-## Execution order (when ready)
+## Execution order (followed)
 
 1. Run the grep above; inventory every hit.
 2. Rename the 5 folders.
@@ -75,6 +76,13 @@ rg -n "project-onboard|feature-planner|module-builder|test-writer|code-review" .
 5. Update templates / CLAUDE.md / README hits.
 6. **Verify**: re-run `route_eval.py` against `eval-set.json`; routing accuracy should match
    the prior baseline (`baseline-results.json`). No regression = clean rename.
+
+## Companion: project layout
+
+Naming keeps skills from colliding; **[`LAYOUT.md`](./LAYOUT.md)** keeps them pointed at the
+right folder. It defines the `.claude/workspace.json` manifest (domain → folder) and the
+resolution protocol every skill runs to find its project dir — the same domain-prefix mechanism
+that lets a future `frontend/` project coexist with `backend/` under one repo-root `.claude/`.
 
 ## Open follow-up
 

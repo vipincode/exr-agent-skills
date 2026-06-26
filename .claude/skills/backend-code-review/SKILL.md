@@ -1,9 +1,9 @@
 ---
-name: code-review
+name: backend-code-review
 description: Review backend / server-side code (Express, Node, TypeScript, Mongoose APIs) for correctness, security, convention adherence, and duplication. Use whenever the user asks to review, audit, critique, or sanity-check backend code — "review this service", "code review the auth module", "review my changes / this PR / the diff", "is this production-ready", "check this for issues". It reads ARCHITECTURE.md + MODULE_REGISTRY.md so it reviews against THIS project's conventions and flags code that duplicates existing registry entries (DRY). Standalone and read-only — run anytime, never auto-chained, and it does not modify source unless explicitly asked to apply fixes. Tuned for backend; not for frontend/React review. This is static code review only — it does NOT run the app or confirm a change behaves correctly at runtime; requests like "verify it works", "does it run", or "check that my change actually works" are run/verify intent (/verify or /run), not review.
 ---
 
-# code-review
+# backend-code-review
 
 Review backend code against the project's own conventions and solid server-side practice, and report findings the user can act on. The thing that makes this more useful than a generic review: it reads the contract, so it reviews against *this* project (its envelope, error model, validation flow, layout, paradigm, import convention) instead of imposing a personal style — and it checks new code against `MODULE_REGISTRY.md` to catch reinvented utilities.
 
@@ -11,8 +11,14 @@ Standalone, read-only utility. Run on demand against a file, a module, a set of 
 
 ## Step 1 — Establish scope and context
 
+**First resolve the project dir** for this (`backend`) domain via `../LAYOUT.md` (read
+`.claude/workspace.json`; fall back to the repo root if a root `ARCHITECTURE.md` exists with no
+manifest). The contract files and the code under review are **relative to that project dir** —
+in a monorepo this also keeps the review scoped to the backend folder rather than a sibling
+`frontend/`.
+
 1. **Scope** — what to review. Detect from the request: a named file/module, the working changes (`git diff`, staged, or a branch/PR), or "the project". If a repo is git-managed and the user says "my changes"/"this PR", review the diff, not the whole tree. Ask only if scope is genuinely unclear.
-2. **Contract** — read `ARCHITECTURE.md` and `MODULE_REGISTRY.md` if present. Review against what they say. If absent, review against general backend best practice and note once that running `project-onboard` first would let the review enforce project conventions (don't repeat this caveat per finding).
+2. **Contract** — read `ARCHITECTURE.md` and `MODULE_REGISTRY.md` if present. Review against what they say. If absent, review against general backend best practice and note once that running `backend-onboard` first would let the review enforce project conventions (don't repeat this caveat per finding).
 3. **Read the actual code** under review, plus enough surrounding context (the module's siblings, the shared lib/middleware it touches) to judge reuse and integration — not the file in isolation.
 
 ## Step 2 — Review across the dimensions

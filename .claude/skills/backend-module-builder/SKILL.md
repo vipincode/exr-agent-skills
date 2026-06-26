@@ -1,15 +1,20 @@
 ---
-name: module-builder
-description: Build a backend feature/module from an approved FEATURE_PLAN, enforcing reuse so no duplicate utils, middleware, types, or helpers get created. Use this whenever the user wants to implement, build, or generate a planned feature — "build the auth module", "implement FEATURE_PLAN_products.md", "now build it", "code up the orders feature". It reads ARCHITECTURE.md + MODULE_REGISTRY.md + the feature plan, searches for existing reusable code BEFORE creating anything, builds the module in the project's paradigm, then updates the registry. It does NOT plan features (that is feature-planner) and does NOT write tests (that is test-writer). Works in any project in the Express/TS convention family with the contract files.
+name: backend-module-builder
+description: Build a backend feature/module from an approved FEATURE_PLAN, enforcing reuse so no duplicate utils, middleware, types, or helpers get created. Use this whenever the user wants to implement, build, or generate a planned feature — "build the auth module", "implement FEATURE_PLAN_products.md", "now build it", "code up the orders feature". It reads ARCHITECTURE.md + MODULE_REGISTRY.md + the feature plan, searches for existing reusable code BEFORE creating anything, builds the module in the project's paradigm, then updates the registry. It does NOT plan features (that is backend-feature-planner) and does NOT write tests (that is backend-test-writer). Works in any project in the Express/TS convention family with the contract files.
 ---
 
-# module-builder
+# backend-module-builder
 
 Execute an approved `_docs/FEATURE_PLAN_<name>.md` into working code, following the project's conventions exactly and — critically — reusing what already exists instead of regenerating it. Duplicate utils/middleware are the failure mode this skill exists to prevent, so the search-before-create gate is mandatory, not advisory.
 
 ## Step 1 — Load everything
 
-1. The feature plan: `_docs/FEATURE_PLAN_<name>.md` (planner docs live under `_docs/`). If none exists, stop and point the user to feature-planner — do not improvise a plan.
+**First resolve the project dir** for this (`backend`) domain via `../LAYOUT.md` (read
+`.claude/workspace.json`; fall back to the repo root if a root `ARCHITECTURE.md` exists with no
+manifest). Everything below — the plan, the contract files, the dedup greps, the new `src/`
+files, the registry, and the `src/app.ts` router mount — is **relative to that project dir**.
+
+1. The feature plan: `_docs/FEATURE_PLAN_<name>.md` (planner docs live under `_docs/`). If none exists, stop and point the user to backend-feature-planner — do not improvise a plan.
 2. `ARCHITECTURE.md` — paradigm, response envelope, error model, validation flow, **import convention** (e.g. NodeNext `.js` extensions), layout, auth primitives. Follow it literally; do not impose patterns from memory that contradict it.
 3. `MODULE_REGISTRY.md` — the catalog of shared pieces and existing modules.
 
@@ -51,7 +56,7 @@ An out-of-date registry silently reintroduces the duplication problem, so this s
 
 ## Step 6 — Hand off
 
-Summarize what was built, what was reused (with paths — this proves the gate worked), and what was newly registered. Note that tests are a separate step via test-writer (do not write them here, do not auto-invoke it).
+Summarize what was built, what was reused (with paths — this proves the gate worked), and what was newly registered. Note that tests are a separate step via backend-test-writer (do not write them here, do not auto-invoke it).
 
 ## Guardrails
 

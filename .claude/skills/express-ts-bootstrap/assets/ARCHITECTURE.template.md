@@ -1,7 +1,7 @@
 # Architecture — {{PROJECT_NAME}}
 
-> Source of truth for conventions. Every skill (feature-planner, module-builder,
-> test-writer, code-review) reads this before writing or reviewing code. Keep it
+> Source of truth for conventions. Every skill (backend-feature-planner, backend-module-builder,
+> backend-test-writer, backend-code-review) reads this before writing or reviewing code. Keep it
 > concrete and current — if a convention changes, change it here first.
 
 ## Stack
@@ -88,8 +88,8 @@ The error envelope is rendered in exactly one place: `middleware/error-handler.t
 
 `lib/jwt.ts` (`signAccessToken`/`signRefreshToken`/`verifyToken`),
 `middleware/protect.ts`, `middleware/require-role.ts` ship with the scaffold.
-**Auth endpoints do not exist yet** — feature-planner designs them and
-module-builder wires them onto these primitives. Never write new token logic.
+**Auth endpoints do not exist yet** — backend-feature-planner designs them and
+backend-module-builder wires them onto these primitives. Never write new token logic.
 
 ## Environment config
 
@@ -123,5 +123,7 @@ root `logger` elsewhere. No `console.log` in committed code (the one exception i
 ## Feature workflow
 
 Planner docs are written to **`_docs/FEATURE_PLAN_<name>.md`**. Only this file
-(`ARCHITECTURE.md`) and `MODULE_REGISTRY.md` live at the project root. Plan with
-feature-planner, build with module-builder, test with test-writer.
+(`ARCHITECTURE.md`) and `MODULE_REGISTRY.md` live at the **project root** — the project folder,
+which may be the repo root or a subfolder such as `backend/`. That folder is recorded in
+`.claude/workspace.json` at the repo root, which is how the skills locate this project. Plan with
+backend-feature-planner, build with backend-module-builder, test with backend-test-writer.

@@ -1,13 +1,18 @@
 ---
-name: test-writer
-description: Write test cases for backend code on demand. Use this ONLY when the user explicitly asks to test something — "write tests for auth.service.ts", "test the product module", "add unit tests for this", "cover the order service". It is a standalone utility, run manually whenever the user wants — never auto-chained from feature-planner or module-builder. It reads ARCHITECTURE.md (conventions), MODULE_REGISTRY.md (what to mock vs use), and the actual target file(s), detects the test framework from package.json, and writes matching test files. It never modifies source files and never touches the registry. Works in any project in the Express/TS convention family.
+name: backend-test-writer
+description: Write test cases for backend code on demand. Use this ONLY when the user explicitly asks to test something — "write tests for auth.service.ts", "test the product module", "add unit tests for this", "cover the order service". It is a standalone utility, run manually whenever the user wants — never auto-chained from backend-feature-planner or backend-module-builder. It reads ARCHITECTURE.md (conventions), MODULE_REGISTRY.md (what to mock vs use), and the actual target file(s), detects the test framework from package.json, and writes matching test files. It never modifies source files and never touches the registry. Works in any project in the Express/TS convention family.
 ---
 
-# test-writer
+# backend-test-writer
 
 Write tests for a target the user points at — a file, a module, or a feature name. This is a pure, on-demand utility: the user calls it explicitly and it does one thing. **It is never invoked by the other skills, never modifies source, and never edits MODULE_REGISTRY.md.**
 
 ## Step 1 — Read context (do not assume)
+
+**First resolve the project dir** for this (`backend`) domain via `../LAYOUT.md` (read
+`.claude/workspace.json`; fall back to the repo root if a root `ARCHITECTURE.md` exists with no
+manifest). The contract files, `package.json` (framework detection), and the target files are
+all **relative to that project dir**.
 
 1. The **target file(s)** the user named — read the real implementation, not an assumption of it. If they named a module or feature, read its service/controller/routes.
 2. `ARCHITECTURE.md` — the response envelope, error model, and validation flow, so assertions match how the code actually behaves (e.g. assert `{ success: true, data }`, assert error `{ success: false, error: { code } }`, assert the right `AppError` status codes).

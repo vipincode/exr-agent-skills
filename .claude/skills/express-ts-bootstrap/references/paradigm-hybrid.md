@@ -58,4 +58,4 @@ export async function getOne(req: Request, res: Response) {
 }
 ```
 
-The mixing rule must be written explicitly into ARCHITECTURE.md so feature-planner and module-builder apply the same decision rule per module rather than guessing. Consistency of *the rule* matters more than uniformity of the output.
+The mixing rule must be written explicitly into ARCHITECTURE.md so backend-feature-planner and backend-module-builder apply the same decision rule per module rather than guessing. Consistency of *the rule* matters more than uniformity of the output.

@@ -40,7 +40,7 @@ Rule: a module folder contains everything that module owns and nothing another m
 
 ## Response envelope (single shape)
 
-Success and error responses share one shape so clients and the test-writer skill can rely on it:
+Success and error responses share one shape so clients and the backend-test-writer skill can rely on it:
 
 ```jsonc
 // success

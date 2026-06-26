@@ -12,7 +12,7 @@ It does **not** apply to genuinely module-local, single-use code (e.g. a private
 
 1. **Name the capability**, not the implementation. "verify a JWT", "paginate a query", "send an email", "check a role" — capabilities, not "make a function called X".
 
-2. **Consult the plan's Reuse section.** feature-planner already searched; treat its list as the first candidates and verify each path still exists.
+2. **Consult the plan's Reuse section.** backend-feature-planner already searched; treat its list as the first candidates and verify each path still exists.
 
 3. **Search MODULE_REGISTRY.md** for that capability among shared pieces and existing modules' public surfaces.
 

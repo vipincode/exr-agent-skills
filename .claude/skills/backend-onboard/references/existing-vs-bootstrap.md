@@ -1,19 +1,19 @@
 # Mapping existing patterns into the contract (descriptive, not prescriptive)
 
-The contract must describe what the repo *does*. If it instead prescribes the bootstrap's defaults, module-builder will generate code that clashes with the surrounding codebase. Below: how to faithfully record common existing patterns, and how the other skills then adapt because they are contract-driven.
+The contract must describe what the repo *does*. If it instead prescribes the bootstrap's defaults, backend-module-builder will generate code that clashes with the surrounding codebase. Below: how to faithfully record common existing patterns, and how the other skills then adapt because they are contract-driven.
 
 ## The governing rule
 Record reality + the user's Step 2 decisions. Never silently "upgrade" the repo's conventions into the contract. If something is genuinely worth changing (Express 4 → 5, scattered `process.env` → validated env), raise it as a **finding/recommendation** in the report — do not bake the change into the contract unless the user opts in.
 
 ## Async error handling
-- **Express 4 + asyncHandler/catchAsync**: ARCHITECTURE.md error section states wrappers ARE required and names the wrapper + path. module-builder will then wrap handlers, because the contract says so.
+- **Express 4 + asyncHandler/catchAsync**: ARCHITECTURE.md error section states wrappers ARE required and names the wrapper + path. backend-module-builder will then wrap handlers, because the contract says so.
 - **Express 5**: state that async rejections forward natively; no wrapper.
 - **Mixed** (a Step 2 conflict): user picks one; record the choice; report the others as cleanup candidates.
 
 ## Response envelope
-Record the exact shape in use. Examples and what the builder/test-writer then do:
+Record the exact shape in use. Examples and what the builder/backend-test-writer then do:
 - `{ success, data }` → helpers like `ok()/created()` if they exist (register them); else describe the shape and where it's built.
-- `{ data, message }` or `{ status, data }` → record verbatim; test-writer asserts against THIS shape.
+- `{ data, message }` or `{ status, data }` → record verbatim; backend-test-writer asserts against THIS shape.
 - No consistent shape (conflict) → user picks canonical; note that existing endpoints may differ until migrated.
 
 ## Error model
@@ -21,7 +21,7 @@ Record the exact shape in use. Examples and what the builder/test-writer then do
 - Plain `throw new Error()` + status set in handlers → record that pattern; recommend (as a finding) introducing a base error class, but don't force it.
 
 ## Layout
-- **Layered** (`controllers/`, `services/`, `routes/`, `models/`): ARCHITECTURE.md layout section says layered and specifies where each file type goes. module-builder's default is domain-module, but ARCHITECTURE.md wins — it will place a new feature's controller in `controllers/`, service in `services/`, etc.
+- **Layered** (`controllers/`, `services/`, `routes/`, `models/`): ARCHITECTURE.md layout section says layered and specifies where each file type goes. backend-module-builder's default is domain-module, but ARCHITECTURE.md wins — it will place a new feature's controller in `controllers/`, service in `services/`, etc.
 - **Domain-module**: record the module folder pattern.
 - Note the path-alias convention (`@/...`) if present so imports match.
 

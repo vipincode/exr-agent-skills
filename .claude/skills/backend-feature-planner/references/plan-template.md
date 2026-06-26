@@ -5,7 +5,7 @@ Write to `_docs/FEATURE_PLAN_<name>.md` (create the `_docs/` folder if it doesn'
 ```markdown
 # Feature plan: <name>
 
-> Status: draft — edit freely, then hand to module-builder. Add/remove any section.
+> Status: draft — edit freely, then hand to backend-module-builder. Add/remove any section.
 
 ## Overview
 One or two sentences: what this feature does and why.
@@ -52,7 +52,7 @@ Per schema: which fields, formats (z.email/z.uuid), constraints, which are creat
 - <concurrency / not-found / duplicate / permission cases worth handling>
 
 ## New shared pieces (→ register after build)
-Anything genuinely reusable this feature introduces (else "none"). module-builder adds these to MODULE_REGISTRY.md.
+Anything genuinely reusable this feature introduces (else "none"). backend-module-builder adds these to MODULE_REGISTRY.md.
 
 ## New env vars
 `<VAR>` — <purpose, default>. (or "none") — must be added to env schema + .env.example.
