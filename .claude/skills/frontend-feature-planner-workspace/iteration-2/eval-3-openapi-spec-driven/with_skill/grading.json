@@ -1,0 +1,46 @@
+{
+  "expectations": [
+    {
+      "text": "Plan file produced",
+      "passed": true,
+      "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+    },
+    {
+      "text": "Cites the OpenAPI spec as the source (rung 3)",
+      "passed": true,
+      "evidence": "ontract (observed) > Source: **Rung 3 \u2014 OpenAPI / Swagger spec**, `backend/openapi.json"
+    },
+    {
+      "text": "Does NOT claim to have read backend source code",
+      "passed": true,
+      "evidence": "no fabrication pattern matched"
+    },
+    {
+      "text": "Derives the {success,data,message} envelope from the spec",
+      "passed": true,
+      "evidence": "i\"`.  **Success envelope (single):** `{ success: true, data: Product, message?: string }` \u2014 `ProductEnvelope` **Succe"
+    },
+    {
+      "text": "Derives price-in-cents from the spec",
+      "passed": true,
+      "evidence": "slug: string` - `price: integer` \u2014 **in CENTS** (per spec description) \u2192 format to c"
+    },
+    {
+      "text": "Anchors reuse to axios/BFF (no new route)",
+      "passed": true,
+      "evidence": "forwards `/api/products*` \u2192 backend; **no new BFF route needed** | | query client | src/lib/que"
+    },
+    {
+      "text": "Includes a Dependencies section",
+      "passed": true,
+      "evidence": "esign's existing `price: string` prop.  ## Dependencies What must be in place for this binding"
+    },
+    {
+      "text": "Includes a Testing checklist section",
+      "passed": true,
+      "evidence": "fails \u2014 caught, not silently rendered.  ## Testing checklist Behavior a correct binding must satisfy"
+    }
+  ],
+  "score": 8,
+  "total": 8
+}

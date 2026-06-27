@@ -1,0 +1,24 @@
+{
+  "expectations": [
+    {
+      "text": "Gives a positive/clean verdict for sound code",
+      "passed": true,
+      "evidence": "positive verdict"
+    },
+    {
+      "text": "Does NOT manufacture Critical/High findings (honest calibration)",
+      "passed": true,
+      "evidence": "no manufactured high/critical"
+    },
+    {
+      "text": "Confirms BFF + envelope unwrap + Zod + Query are correct",
+      "passed": true,
+      "evidence": "standard conformance confirmed"
+    },
+    {
+      "text": "Read-only: no source files modified",
+      "passed": true,
+      "evidence": "no source edits"
+    }
+  ]
+}

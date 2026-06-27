@@ -1,0 +1,14 @@
+{
+  "eval_id": 1,
+  "eval_name": "dedup-reuse-header-build-cards",
+  "prompt": "Build _docs/designs/pricing.html into Next.js components and assemble the page.",
+  "assertions": [
+    {"text": "No second/duplicate header component file was created — the existing components/shared/layout/header.tsx is reused"},
+    {"text": "The existing Header is imported and used in the page/template"},
+    {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies"},
+    {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)"},
+    {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px"},
+    {"text": "MODULE_REGISTRY.md gets a new row for PricingCard"},
+    {"text": "page.tsx (or a template) composes Header + pricing section and stays thin"}
+  ]
+}

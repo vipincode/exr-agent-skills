@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Reports the orders module is absent from the backend",
+      "passed": true,
+      "evidence": "No backend orders capability.** Backend mounts only `/api/products`. The single module is   `products`; `M"
+    },
+    {
+      "text": "Does NOT fabricate a concrete observed orders endpoint contract",
+      "passed": true,
+      "evidence": "no fabrication pattern matched"
+    },
+    {
+      "text": "Asks for the endpoint/sample OR flags it as a blocker/prerequisite",
+      "passed": true,
+      "evidence": "pe, this plan documents the gap and the prerequisite work.  ---  ## What I checked (ground t"
+    },
+    {
+      "text": "Notes the missing orders design on the frontend",
+      "passed": true,
+      "evidence": "orders capability and the frontend has no orders screen.** Binding plans must be grounded in a"
+    }
+  ],
+  "score": 4,
+  "total": 4
+}

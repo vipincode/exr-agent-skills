@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "create-mutation-auth-and-design-gap",
+  "prompt": "I want an admin-only create product form wired up to the backend. Plan it.",
+  "assertions": [
+    "Plan file produced",
+    "Notes POST /products requires admin (requireRole/admin)",
+    "Mirrors the create body schema (name/price-cents/category...)",
+    "Flags the missing create-form design (design gap -> figma/html)",
+    "Reuses shared *Field components",
+    "Plans a mutation invalidating the products query"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "test-bound-list-and-query-hook",
+  "prompt": "Write tests for the products grid and the useProductsQuery hook.",
+  "assertions": [
+    "Hook test renders within a QueryClientProvider / renderHook",
+    "Mocks the network boundary (api axios instance or MSW)",
+    "Tests loading, empty, and error states of the grid",
+    "Asserts envelope/Zod drift surfaces as an error",
+    "Uses RTL semantic queries (role/text), not class names"
+  ]
+}

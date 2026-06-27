@@ -1,0 +1,30 @@
+{
+  "skill_name": "font-theme-setup",
+  "notes": "Each run starts from a freshly scaffolded nextjs-bootstrap project (stock shadcn theme + default font). The baseline (without_skill) gets the same starting project and the same prompt, no skill. Replace <FIGMA_LINK> with the live node-specific Figma URL the user provides before running.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "full-theme-from-figma",
+      "prompt": "Set up our theme from this Figma file: <FIGMA_LINK>. Pull the colors, typography and fonts and apply them to the project — colors should be oklch since we're on shadcn. Update globals.css and wire the fonts in layout.tsx.",
+      "expected_output": "globals.css :root and .dark blocks re-valued with oklch colors mapped to shadcn roles; @theme inline updated; layout.tsx loads the design's fonts via next/font (google and/or local) with CSS variables bound to --font-*; radius/shadow from Figma applied; ARCHITECTURE.md + MODULE_REGISTRY.md theming notes updated; build passes.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "colors-only-oklch",
+      "prompt": "Take the color palette from <FIGMA_LINK> and convert it into our shadcn theme. I just want the colors done right in oklch for both light and dark — don't worry about fonts yet.",
+      "expected_output": "Every theme color in globals.css is a valid oklch() value (no raw hex in theme variables); Figma palette mapped onto shadcn semantic roles (primary/secondary/muted/accent/destructive/border/etc.); both :root and .dark filled; layout.tsx fonts left unchanged.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "fonts-google-and-custom",
+      "prompt": "Wire up the fonts from <FIGMA_LINK> in our Next.js app. The headings use a Google font and the body uses a custom brand font we have as woff2 files — set both up properly so there's no layout shift.",
+      "expected_output": "layout.tsx uses next/font/google for the heading family and next/font/local for the brand font; each exposes a CSS variable; variables attached to <html> and bound in @theme inline as --font-display/--font-sans; no <link> tags or @import url(); body sets default family.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

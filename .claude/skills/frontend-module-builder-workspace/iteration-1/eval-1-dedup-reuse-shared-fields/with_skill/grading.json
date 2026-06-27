@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "Form reuses the shared *Field components (components/shared/form)",
+      "passed": true,
+      "evidence": "shared *Field imported"
+    },
+    {
+      "text": "No duplicate field component created; no bare useController field UI",
+      "passed": true,
+      "evidence": "no new field comp / no bare useController"
+    },
+    {
+      "text": "useCreateProductMutation invalidates [\"products\"]",
+      "passed": true,
+      "evidence": "mutation invalidates products"
+    },
+    {
+      "text": "Form uses zodResolver with a create schema",
+      "passed": true,
+      "evidence": "zodResolver used"
+    },
+    {
+      "text": "Admin-only UI gated via useAuth",
+      "passed": true,
+      "evidence": "useAuth gating present"
+    },
+    {
+      "text": "Mutation goes through shared axios/BFF (no new instance / absolute URL)",
+      "passed": true,
+      "evidence": "axios api used, no bypass"
+    }
+  ]
+}

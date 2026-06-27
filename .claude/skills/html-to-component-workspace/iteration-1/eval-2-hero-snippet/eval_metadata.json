@@ -1,0 +1,13 @@
+{
+  "eval_id": 2,
+  "eval_name": "hero-snippet-to-shared-component",
+  "prompt": "Turn the pasted hero HTML section into a reusable component (see prompt for the markup).",
+  "assertions": [
+    {"text": "A Hero component is created under components/shared/ (marketing/ or layout/)"},
+    {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup"},
+    {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) — responsive utilities used"},
+    {"text": "The gradient is a theme token/utility, not an inline style with raw hex"},
+    {"text": "A typed props interface (heading/subheading/CTA) is defined"},
+    {"text": "Hero is registered in MODULE_REGISTRY.md"}
+  ]
+}

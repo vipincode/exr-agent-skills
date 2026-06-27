@@ -1,0 +1,12 @@
+{
+  "eval_id": 0,
+  "eval_name": "binding-bypasses-standard",
+  "prompt": "Review frontend/src/features/products/ \u2014 I just wired up the products list.",
+  "assertions": [
+    "Flags the BFF bypass / direct backend fetch (BACKEND_URL in client)",
+    "Flags missing envelope unwrap / Zod validation / `any` typing",
+    "Flags useEffect+useState instead of TanStack Query",
+    "Assigns Critical/High severity to real issues",
+    "Read-only: no source files modified"
+  ]
+}

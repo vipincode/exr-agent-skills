@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)",
+      "passed": true,
+      "evidence": "--primary: oklch(0.5106 0.2301 276.97) \u2014 indigo, not the stock near-black."
+    },
+    {
+      "text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks",
+      "passed": true,
+      "evidence": "grep for ': #hex;' value lines in the theme blocks returned nothing; every color is oklch()."
+    },
+    {
+      "text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts",
+      "passed": true,
+      "evidence": "layout.tsx imports Inter + Poppins from next/font/google with --font-sans / --font-display."
+    },
+    {
+      "text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display",
+      "passed": true,
+      "evidence": "globals.css @theme inline has --font-display: var(--font-display)."
+    },
+    {
+      "text": "The .dark block is still present and re-valued (theme remains dual-mode)",
+      "passed": true,
+      "evidence": ".dark block present, derived from the light palette (bg\u2192dark, fg\u2192light, primary lifted)."
+    },
+    {
+      "text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced",
+      "passed": true,
+      "evidence": "Fonts wired via next/font only; no <link> tag or @import url() in layout/globals."
+    },
+    {
+      "text": "--radius, a shadow token, and a gradient token reflect the design's values",
+      "passed": true,
+      "evidence": "--radius:0.625rem, --shadow-button/--shadow-card, --gradient-brand all set from the design."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

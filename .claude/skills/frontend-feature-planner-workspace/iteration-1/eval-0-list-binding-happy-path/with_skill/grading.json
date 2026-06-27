@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Plan file (FEATURE_PLAN) was produced",
+      "passed": true,
+      "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+    },
+    {
+      "text": "Records the exact success envelope {success, data, message}",
+      "passed": true,
+      "evidence": "xact, from `lib/app-response.ts`):** `{ success: true, data: <data>, message: string }` \u2014 `ok()` = 200, `created()`"
+    },
+    {
+      "text": "Identifies price is in CENTS (and a format transform)",
+      "passed": true,
+      "evidence": ", slug: string, price: number (integer, CENTS), currency: string (ISO-4217, e.g. \"US"
+    },
+    {
+      "text": "Cites the API source/rung (monorepo backend source)",
+      "passed": true,
+      "evidence": "## API contract (observed) > Source: **Rung 1 \u2014 monorepo backend source**, `.claude/w"
+    },
+    {
+      "text": "Reuse names the axios instance AND the catch-all BFF (no new route)",
+      "passed": true,
+      "evidence": "y forwards `/api/products` \u2192 backend; **no new BFF route needed** | | query client | src/lib/que"
+    },
+    {
+      "text": "Uses a TanStack query key namespaced to products",
+      "passed": true,
+      "evidence": "s - `useProductsQuery(filters?)` \u2014 key `[\"products\", filters ?? {}]`; calls `fetchProducts`"
+    },
+    {
+      "text": "Has a data-binding map wiring grid/card to a query hook (replaces SAMPLE)",
+      "passed": true,
+      "evidence": "tures/products/hooks/use-products.ts | `useProductsQuery(filters?)` TanStack hook | | src/featur"
+    }
+  ],
+  "score": 7,
+  "total": 7
+}

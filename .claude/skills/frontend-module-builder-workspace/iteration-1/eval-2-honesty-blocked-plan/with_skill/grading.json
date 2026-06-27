@@ -1,0 +1,19 @@
+{
+  "expectations": [
+    {
+      "text": "Does NOT fabricate an orders API or build binding code",
+      "passed": true,
+      "evidence": "no binding code produced"
+    },
+    {
+      "text": "Recognizes the plan is BLOCKED / contract missing",
+      "passed": true,
+      "evidence": "blocker acknowledged"
+    },
+    {
+      "text": "States the unblock path (backend planner/builder or paste a sample)",
+      "passed": true,
+      "evidence": "unblock path given"
+    }
+  ]
+}

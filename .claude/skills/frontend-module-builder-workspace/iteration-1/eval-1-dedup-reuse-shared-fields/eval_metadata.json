@@ -1,0 +1,13 @@
+{
+  "eval_id": 1,
+  "eval_name": "dedup-reuse-shared-fields-no-duplicates",
+  "prompt": "Now build the admin create-product form binding per _docs/FEATURE_PLAN_products-create.md.",
+  "assertions": [
+    "Form reuses the shared *Field components (components/shared/form)",
+    "No duplicate field component created; no bare useController field UI",
+    "useCreateProductMutation invalidates [\"products\"]",
+    "Form uses zodResolver with a create schema",
+    "Admin-only UI gated via useAuth",
+    "Mutation goes through shared axios/BFF (no new instance / absolute URL)"
+  ]
+}

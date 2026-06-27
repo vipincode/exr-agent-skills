@@ -1,0 +1,494 @@
+{
+  "metadata": {
+    "skill_name": "html-to-component",
+    "skill_path": "D:/SKILLS/exr-agent-skills/.claude/skills/html-to-component",
+    "executor_model": "claude (iteration-1, timing not captured)",
+    "analyzer_model": "claude-opus-4-8",
+    "timestamp": "2026-06-27T03:55:54Z",
+    "evals_run": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "eval_name": "theme-from-full-page",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)",
+          "passed": true,
+          "evidence": "--primary: oklch(0.5106 0.2301 276.97) \u2014 indigo, not the stock near-black."
+        },
+        {
+          "text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks",
+          "passed": true,
+          "evidence": "grep for ': #hex;' value lines in the theme blocks returned nothing; every color is oklch()."
+        },
+        {
+          "text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts",
+          "passed": true,
+          "evidence": "layout.tsx imports Inter + Poppins from next/font/google with --font-sans / --font-display."
+        },
+        {
+          "text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display",
+          "passed": true,
+          "evidence": "globals.css @theme inline has --font-display: var(--font-display)."
+        },
+        {
+          "text": "The .dark block is still present and re-valued (theme remains dual-mode)",
+          "passed": true,
+          "evidence": ".dark block present, derived from the light palette (bg\u2192dark, fg\u2192light, primary lifted)."
+        },
+        {
+          "text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced",
+          "passed": true,
+          "evidence": "Fonts wired via next/font only; no <link> tag or @import url() in layout/globals."
+        },
+        {
+          "text": "--radius, a shadow token, and a gradient token reflect the design's values",
+          "passed": true,
+          "evidence": "--radius:0.625rem, --shadow-button/--shadow-card, --gradient-brand all set from the design."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "eval_name": "theme-from-full-page",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)",
+          "passed": true,
+          "evidence": "--primary: oklch(0.511 0.262 276.966) \u2014 indigo-600."
+        },
+        {
+          "text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks",
+          "passed": true,
+          "evidence": "All values oklch(); hex appears only in trailing comments, never as a value."
+        },
+        {
+          "text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts",
+          "passed": true,
+          "evidence": "layout.tsx is byte-identical to with_skill: Inter + Poppins via next/font/google."
+        },
+        {
+          "text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display",
+          "passed": true,
+          "evidence": "@theme inline has --font-display: var(--font-display); also adds h1-h3 font-family rule."
+        },
+        {
+          "text": "The .dark block is still present and re-valued (theme remains dual-mode)",
+          "passed": true,
+          "evidence": ".dark block present and re-valued."
+        },
+        {
+          "text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced",
+          "passed": true,
+          "evidence": "No <link> or @import url(); next/font only."
+        },
+        {
+          "text": "--radius, a shadow token, and a gradient token reflect the design's values",
+          "passed": true,
+          "evidence": "--radius set, --shadow-xs..lg, --gradient-hero defined; even richer (charts/sidebar tokens too)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "dedup-reuse-header-build-cards",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused",
+          "passed": true,
+          "evidence": "Only the original header.tsx exists; no new header file."
+        },
+        {
+          "text": "The existing Header is imported and used in the page/template",
+          "passed": true,
+          "evidence": "pricing-template.tsx imports Header from @/components/shared/layout and renders it."
+        },
+        {
+          "text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies",
+          "passed": true,
+          "evidence": "Single PricingCard; PricingSection maps pricingPlans data into a grid."
+        },
+        {
+          "text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)",
+          "passed": false,
+          "evidence": "Placed in features/pricing/components/pricing-card.tsx \u2014 feature folder, not shared/data-display. (Defensible as pricing-domain, but not what the assertion asked.)"
+        },
+        {
+          "text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px",
+          "passed": true,
+          "evidence": "Uses bg-card, border-border/border-primary, text-muted-foreground, shadow-card; 0 raw hex."
+        },
+        {
+          "text": "MODULE_REGISTRY.md gets a new row for PricingCard",
+          "passed": true,
+          "evidence": "Registry has a PricingCard row (under Feature components)."
+        },
+        {
+          "text": "page.tsx (or a template) composes Header + pricing section and stays thin",
+          "passed": true,
+          "evidence": "app/pricing/page.tsx just renders <PricingTemplate/>; template composes Header + PricingSection."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "eval_name": "dedup-reuse-header-build-cards",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused",
+          "passed": true,
+          "evidence": "Only original header.tsx; no duplicate."
+        },
+        {
+          "text": "The existing Header is imported and used in the page/template",
+          "passed": true,
+          "evidence": "app/pricing/page.tsx imports and renders Header."
+        },
+        {
+          "text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies",
+          "passed": true,
+          "evidence": "Single PricingCard + PricingSection mapping plans."
+        },
+        {
+          "text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)",
+          "passed": false,
+          "evidence": "Placed in features/pricing/components/pricing-card.tsx."
+        },
+        {
+          "text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px",
+          "passed": true,
+          "evidence": "Tokens used; 0 raw hex in pricing-card.tsx."
+        },
+        {
+          "text": "MODULE_REGISTRY.md gets a new row for PricingCard",
+          "passed": true,
+          "evidence": "Registry has PricingCard + PricingSection rows."
+        },
+        {
+          "text": "page.tsx (or a template) composes Header + pricing section and stays thin",
+          "passed": true,
+          "evidence": "app/pricing/page.tsx composes Header + PricingSection thinly (no template layer)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "hero-snippet-to-shared-component",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8333,
+        "passed": 5,
+        "failed": 1,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A Hero component is created under components/shared/ (marketing/ or layout/)",
+          "passed": true,
+          "evidence": "components/shared/marketing/hero.tsx created."
+        },
+        {
+          "text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup",
+          "passed": true,
+          "evidence": "<section> wrapper; CTA is <Button asChild><a>\u2026</a></Button>."
+        },
+        {
+          "text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used",
+          "passed": true,
+          "evidence": "Uses max-w-5xl and text-4xl md:text-5xl lg:text-6xl \u2014 responsive, no hardcoded px."
+        },
+        {
+          "text": "The gradient is a theme token/utility, not an inline style with raw hex",
+          "passed": true,
+          "evidence": "bg-[image:var(--gradient-brand)] \u2014 references the theme gradient token, no inline hex."
+        },
+        {
+          "text": "A typed props interface (heading/subheading/CTA) is defined",
+          "passed": true,
+          "evidence": "HeroProps with title/subtitle/action (HeroAction)."
+        },
+        {
+          "text": "Hero is registered in MODULE_REGISTRY.md",
+          "passed": false,
+          "evidence": "No Hero row in MODULE_REGISTRY.md \u2014 the skill's own registration step was skipped here."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "eval_name": "hero-snippet-to-shared-component",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.6667,
+        "passed": 4,
+        "failed": 2,
+        "total": 6,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "A Hero component is created under components/shared/ (marketing/ or layout/)",
+          "passed": true,
+          "evidence": "components/shared/marketing/hero.tsx created."
+        },
+        {
+          "text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup",
+          "passed": true,
+          "evidence": "<section> + <Button asChild><a>."
+        },
+        {
+          "text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used",
+          "passed": false,
+          "evidence": "Hardcodes text-[56px] and max-w-[1100px] \u2014 pinned to desktop px, not responsive."
+        },
+        {
+          "text": "The gradient is a theme token/utility, not an inline style with raw hex",
+          "passed": false,
+          "evidence": "Uses from-blue-500 to-purple-600 (default Tailwind palette), not the brand gradient token."
+        },
+        {
+          "text": "A typed props interface (heading/subheading/CTA) is defined",
+          "passed": true,
+          "evidence": "HeroProps with title/subtitle/ctaLabel/ctaHref."
+        },
+        {
+          "text": "Hero is registered in MODULE_REGISTRY.md",
+          "passed": true,
+          "evidence": "Registry has a Hero row at components/shared/marketing/hero.tsx."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "dark-mode-theme-and-sidebar",
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root",
+          "passed": true,
+          "evidence": ".dark --background oklch(0.18\u2026), --foreground oklch(0.93\u2026) \u2014 distinct dark palette."
+        },
+        {
+          "text": "Every role variable present in :root is also present in .dark (no role missing in dark)",
+          "passed": true,
+          "evidence": "All roles (bg/card/popover/primary/secondary/muted/accent/destructive/border/input/ring + sidebar-*) present in both."
+        },
+        {
+          "text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source",
+          "passed": true,
+          "evidence": "All values oklch in both blocks; mapped from the design's light + dark palettes."
+        },
+        {
+          "text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block",
+          "passed": true,
+          "evidence": "@custom-variant dark present in globals.css."
+        },
+        {
+          "text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data",
+          "passed": true,
+          "evidence": "StatCard with {label,value,delta,trend} in shared/data-display, mapped over data."
+        },
+        {
+          "text": "A Sidebar component is created in components/shared/layout/",
+          "passed": true,
+          "evidence": "components/shared/layout/sidebar.tsx created."
+        },
+        {
+          "text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex",
+          "passed": true,
+          "evidence": "StatCard uses bg-card/border-border/text-muted-foreground + token type scale (text-sm/text-3xl)."
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "eval_name": "dark-mode-theme-and-sidebar",
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 0.0,
+        "tokens": 0,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root",
+          "passed": true,
+          "evidence": ".dark --background oklch(0.179\u2026), --foreground oklch(0.928\u2026)."
+        },
+        {
+          "text": "Every role variable present in :root is also present in .dark (no role missing in dark)",
+          "passed": true,
+          "evidence": "All roles present in both blocks (+ --positive)."
+        },
+        {
+          "text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source",
+          "passed": true,
+          "evidence": "All oklch in both blocks."
+        },
+        {
+          "text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block",
+          "passed": true,
+          "evidence": "@custom-variant dark present."
+        },
+        {
+          "text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data",
+          "passed": true,
+          "evidence": "StatCard {label,value,delta,trend} in shared/data-display, mapped over data."
+        },
+        {
+          "text": "A Sidebar component is created in components/shared/layout/",
+          "passed": false,
+          "evidence": "Sidebar placed in components/shared/navigation/sidebar.tsx, not layout/ as the assertion specifies."
+        },
+        {
+          "text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex",
+          "passed": true,
+          "evidence": "Color tokens used (no hex); minor: uses text-[13px]/text-[28px] arbitrary font sizes instead of the type scale."
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 0.9226,
+        "stddev": 0.0899,
+        "min": 0.8333,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.8452,
+        "stddev": 0.1368,
+        "min": 0.6667,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      },
+      "tokens": {
+        "mean": 0,
+        "stddev": 0,
+        "min": 0,
+        "max": 0
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.08",
+      "time_seconds": "+0.0",
+      "tokens": "+0"
+    }
+  },
+  "notes": [
+    "Timing/token data was lost when the previous session hit its limit; only pass-rate is meaningful here.",
+    "with_skill mean pass-rate 92% vs without_skill 85% (delta +0.08). Plain Claude is already very strong on these tasks, so the lift is modest.",
+    "Eval-0 (theme) and Eval-1 (dedup) are essentially tied \u2014 baseline reuses Header, makes one PricingCard over data, and themes in oklch on its own. The 'PricingCard in shared/data-display' assertion fails in BOTH (both chose features/pricing) \u2014 non-discriminating; consider relaxing or rewording it.",
+    "Eval-2 (hero) is the clearest skill win: with_skill uses the gradient TOKEN + responsive utilities; baseline hardcodes text-[56px]/max-w-[1100px] and from-blue-500. BUT with_skill forgot to register Hero in MODULE_REGISTRY.md while baseline did \u2014 a real regression in the skill's own registration discipline worth fixing.",
+    "Eval-3 (dark): both produce correct dual-mode oklch themes; only differ on Sidebar folder (layout/ vs navigation/)."
+  ]
+}

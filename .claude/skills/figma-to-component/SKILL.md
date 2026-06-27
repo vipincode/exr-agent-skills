@@ -1,0 +1,56 @@
+---
+name: figma-to-component
+description: Turn a Figma frame or node (via the Figma MCP) into production-grade Next.js + TypeScript + Tailwind + shadcn/ui components, WITHOUT creating duplicates — it scans MODULE_REGISTRY.md and the shared/feature trees first and reuses or extends what exists, places each new piece correctly (generic/reusable → components/shared, domain-specific → features/<name>/components), styles with Tailwind utilities + theme tokens, animates with Tailwind/CSS or framer-motion, exports assets, and registers new shared components. Use this whenever the user wants to build/implement/convert a Figma design, frame, screen, section, or component into React/Next.js code — phrases like "turn this figma frame into a component", "build this design", "implement this figma node", "code this screen from figma", "figma to react/next", or pasting a figma.com link and asking for components. This is the design-to-code component builder — it does NOT set up the global theme/colors/fonts (that is font-theme-setup) and does NOT scaffold a project (that is nextjs-bootstrap). Requires the Figma MCP connected, a node-specific Figma URL, and an existing Next.js + shadcn project with the contract files.
+---
+
+# figma-to-component
+
+Convert a Figma frame/node into **Next.js + Tailwind + shadcn/ui** components that look production-grade *and* fit the project's existing structure — the headline being **no duplicate components**. The hard part isn't generating JSX from a design; current models do that well. The hard part is doing it *without* creating the third `Header`, the second `Avatar`, the duplicate `Card` — so this skill is built around a **dedup-first protocol**: read the registry, search the tree, reuse/extend what's there, and only then create, placing each new piece in its one correct home.
+
+This is the **component builder** of the frontend toolkit. It assumes the project is already scaffolded (`nextjs-bootstrap`) and ideally themed (`font-theme-setup`), so it can lean on shadcn primitives, the shared component library, and the oklch theme tokens instead of hardcoding. It does **not** set up the theme and does **not** scaffold.
+
+## The core problem this skill solves
+
+Designs repeat. A Figma file has the same header on five frames, the same avatar in three places, cards everywhere. A naive frame→code pass re-emits all of them inline, and you drown in duplicates. The fix is to treat the project's `MODULE_REGISTRY.md` as a dedup ledger and the shared/feature trees as the source of truth: **before writing any component, check whether it already exists; if it does, import it; if a close cousin exists, extend/compose it; only genuinely new things get created** — and reusable ones land in `components/shared/` so the *next* frame reuses them too. Read `references/dedup-protocol.md` — it's the heart of this skill.
+
+## Prerequisites & project resolution
+
+1. **Resolve the project dir.** Read `.claude/workspace.json` (repo root) → `frontend` entry = `<proj>`. Else find a `frontend/` folder or a `src/app/` with shadcn. If there's no scaffolded Next.js + shadcn project, stop and point at `nextjs-bootstrap` — this skill builds *into* an existing structure.
+2. **Read the contract files** (required, not optional): `ARCHITECTURE.md` (conventions) and `MODULE_REGISTRY.md` (the dedup ledger — every existing shared component, hook, util). You cannot dedup against a ledger you haven't read.
+3. **Confirm Figma MCP + a node-specific URL.** Need `figma.com/design/<fileKey>/...?node-id=<n>`. No `node-id` → call `get_metadata` (fileKey only) to list pages, then drill in, or ask which frame.
+4. **Theme check (soft).** If the project still has stock shadcn theme/fonts and the user cares about fidelity, suggest running `font-theme-setup` first so colors/fonts map to tokens. Not a hard block — you can still build with semantic tokens.
+
+## Workflow
+
+> All paths are relative to `<proj>`. Conventions come from `ARCHITECTURE.md` +
+> `references/conventions` below; when this skill and the project docs agree, follow them; the
+> project docs win on project-specific specifics.
+
+1. **Map the frame's structure before coding.** Call `get_metadata` on the node to get the layer tree (ids, names, types, sizes) — this is your **decomposition map**. Then `get_design_context` on the node (reference code + asset URLs) and `get_screenshot` for visual truth. For a large frame, read structure first and drill into child nodes individually rather than dumping everything. See `references/reading-frames.md`.
+2. **Decompose into candidate components.** From the layer tree + screenshot, list the discrete pieces (header, hero, card grid, sidebar, avatar, …). For each, decide **reusable-generic vs feature-specific** using `references/shared-taxonomy.md`. Figma layer names are a strong hint (a layer literally named "Header"/"Navbar"/"Card" is almost always a shared component).
+3. **Run the dedup protocol for every candidate** (`references/dedup-protocol.md`): check `MODULE_REGISTRY.md` → grep `components/shared`, `components/ui`, `features/*/components` → decide **reuse / extend / create**. Never create something the ledger already lists. If a feature-local component is now needed by a second feature, **move it to shared** (don't copy).
+4. **Fill primitive gaps via shadcn, not by hand.** If a piece is really a primitive the project lacks (e.g. `carousel`, `avatar`, `chart`, `tabs`, `accordion`), add it with the shadcn CLI (`shadcn add <name>`) into `components/ui/` and **compose** it — never hand-author or re-skin a primitive. shadcn ships `carousel` (Embla), `avatar`, `chart` (Recharts), `sidebar`, and more; prefer them.
+5. **Build each new component — mobile-first and token-based.** Tailwind utility classes only (no separate CSS files, no inline style objects for things Tailwind covers); reference **theme tokens** (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`) instead of raw hex/px from the Figma code — never a hardcoded color when a token exists. Author **mobile-first**: base classes target small screens, layer up with `md:`/`lg:` prefixes; the Figma frame is usually one (desktop) breakpoint, so infer the responsive layout. Any header/navbar/sidebar **collapses on mobile into a hamburger that opens a shadcn `Sheet`**. Match spacing, gap, radius, border, shadow, line-height faithfully but through the token system. TypeScript props, `cva` for variant-bearing components. Reusable → `components/shared/<group>/`; domain-specific → `features/<name>/components/`. See `references/building-components.md`.
+6. **Assets.** Export images/icons/backgrounds with `download_assets`, save under `public/` (or the feature), and use `next/image`. Inline SVGs as components when small/recolorable. Don't hotlink Figma URLs.
+7. **Animation.** Default to Tailwind/CSS transitions and shadcn's built-in motion. Reach for **framer-motion** (`motion/react`) only when the design needs orchestrated/gesture/scroll-linked motion. See `references/animation.md`.
+8. **Compose & register.** Assemble the pieces into the screen via a feature `template/` (page-level) if it's a full screen; keep `page.tsx` thin. **Register every new shared component** in `MODULE_REGISTRY.md` (name, path, what it wraps, purpose) so the next run reuses it — an unregistered shared component is a future duplicate.
+9. **Verify.** `<pm> run build` (typecheck + lint) and a quick visual check against the screenshot. Report: components created vs reused, where each landed, primitives added, registry rows added.
+
+## What to read when
+
+- `references/dedup-protocol.md` — the reuse/extend/create decision and the exact search order. **Read before creating any component.** This is the skill's reason to exist.
+- `references/shared-taxonomy.md` — what counts as a reusable shared component vs feature-specific, the canonical shared list (header, banner, logo, carousel, charts, sidebar, navbar, hero, small-hero, profile avatar, …) and which `components/shared/` subfolder each lands in. Read during decomposition (step 2).
+- `references/reading-frames.md` — which Figma MCP tool for what, decomposing a large frame, reading the structure tree, exporting assets. Read before step 1.
+- `references/building-components.md` — Tailwind-token styling rules, when to use `cva`, server vs client components, props/typing, faithful spacing/shadow/radius via tokens, `next/image`. Read before step 5.
+- `references/animation.md` — Tailwind/CSS vs framer-motion decision and patterns. Read before step 7 (only if the design animates).
+
+## Non-negotiables (why this skill exists)
+
+- **Check the registry before you create — every time.** The `MODULE_REGISTRY.md` ledger + a grep of `shared`/`ui`/`features` is mandatory per candidate component. Re-creating something that exists is the exact failure this skill prevents. Reuse > extend > create, in that order.
+- **One home per component, by dependency.** Generic/reusable (depends on no single feature) → `components/shared/<group>/`. Depends on one feature's domain → `features/<name>/components/`. A reusable component buried inside a feature folder is a bug; so is a domain component in shared. When a feature-local piece is needed by a second feature, it **moves** to shared and gets registered — never copied.
+- **shadcn primitives are composed, never duplicated.** Need a carousel/avatar/chart/tabs? `shadcn add` it into `components/ui/` and wrap it. Hand-writing a primitive that shadcn ships, or re-skinning `Button`/`Select`, is a regression.
+- **Style with Tailwind utilities + theme tokens, not raw values.** The Figma reference code will be full of `#3B82F6`, `14px`, `border-radius: 12px`. Translate those to `bg-primary`, `text-sm`/`gap-3.5`, `rounded-xl` against the project's theme. A hardcoded color (or px) when a token exists defeats the theme and the next redesign — always use the token.
+- **Mobile-first responsive, with a real mobile nav.** Every component is authored mobile-first (base = small screen, `md:`/`lg:` layer up), never desktop-pinned to the frame's fixed width. Any header/navbar/sidebar **collapses on mobile into a hamburger that opens a shadcn `Sheet`** — not links silently `hidden` with no affordance.
+- **Reusable shared components get registered immediately.** A new `Header`/`Avatar`/`Carousel` in `components/shared/` that isn't in `MODULE_REGISTRY.md` is invisible to the next run and will be rebuilt. Register on creation.
+- **Faithful, but production-grade.** Honor the design's spacing, gaps, radii, borders, shadows, gradients, line-heights — through the token system, responsively (don't pin desktop px). Accessible markup (semantic elements, alt text, focus states). The output should look like a senior engineer built it, not like exported markup.
+- **Stay in your lane.** Don't rewrite the global theme/fonts here (that's `font-theme-setup`) and don't scaffold (that's `nextjs-bootstrap`). Build components into the existing structure.

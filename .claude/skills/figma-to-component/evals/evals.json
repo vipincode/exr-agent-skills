@@ -1,0 +1,30 @@
+{
+  "skill_name": "figma-to-component",
+  "notes": "Each run starts from a scaffolded nextjs-bootstrap project (has ARCHITECTURE.md + MODULE_REGISTRY.md + shared form/typography/overlay components). Eval 3 specifically pre-seeds a feature-local component to test the dedup/move behavior. Baseline (without_skill) gets the same starting project + prompt, no skill. Replace <FIGMA_LINK>/<FRAME_LINK> with live node-specific Figma URLs before running.",
+  "evals": [
+    {
+      "id": 1,
+      "name": "frame-to-components-placement",
+      "prompt": "Turn this Figma frame into Next.js components: <FRAME_LINK>. It's a landing page section with a header, a hero, and a row of cards. Build it out properly for our project.",
+      "expected_output": "Header and Hero created in components/shared (layout/marketing groups), Card as a shared data-display component with variants (not one card per item); page/template composes them; Tailwind utilities + theme tokens (no raw hex/px); shadcn primitives composed not duplicated; new shared components registered in MODULE_REGISTRY.md; build passes.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 2,
+      "name": "reuse-existing-shared",
+      "prompt": "Build this profile screen from <FRAME_LINK>. Heads up — we already have a shared Avatar and Card in the project, reuse those, don't make new ones.",
+      "expected_output": "Existing shared Avatar and Card are imported and reused (no new Avatar/Card files); only genuinely new pieces are created; if the design needs an avatar variant (e.g. status dot) it extends the existing component via a prop/cva variant rather than forking; registry not polluted with duplicates.",
+      "files": [],
+      "assertions": []
+    },
+    {
+      "id": 3,
+      "name": "dedup-move-to-shared",
+      "prompt": "Implement this dashboard frame: <FRAME_LINK>. It reuses the same StatCard that already exists inside the billing feature, but now the analytics feature needs it too.",
+      "expected_output": "StatCard is MOVED from features/billing/components to components/shared/data-display (not copied), billing's imports updated, registry row added; the new analytics screen imports the now-shared StatCard; no duplicate StatCard left in billing.",
+      "files": [],
+      "assertions": []
+    }
+  ]
+}

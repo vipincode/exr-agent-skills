@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused",
+      "passed": true,
+      "evidence": "Only original header.tsx; no duplicate."
+    },
+    {
+      "text": "The existing Header is imported and used in the page/template",
+      "passed": true,
+      "evidence": "app/pricing/page.tsx imports and renders Header."
+    },
+    {
+      "text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies",
+      "passed": true,
+      "evidence": "Single PricingCard + PricingSection mapping plans."
+    },
+    {
+      "text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)",
+      "passed": false,
+      "evidence": "Placed in features/pricing/components/pricing-card.tsx."
+    },
+    {
+      "text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px",
+      "passed": true,
+      "evidence": "Tokens used; 0 raw hex in pricing-card.tsx."
+    },
+    {
+      "text": "MODULE_REGISTRY.md gets a new row for PricingCard",
+      "passed": true,
+      "evidence": "Registry has PricingCard + PricingSection rows."
+    },
+    {
+      "text": "page.tsx (or a template) composes Header + pricing section and stays thin",
+      "passed": true,
+      "evidence": "app/pricing/page.tsx composes Header + PricingSection thinly (no template layer)."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.8571
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

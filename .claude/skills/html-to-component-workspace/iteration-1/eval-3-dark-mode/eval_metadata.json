@@ -1,0 +1,14 @@
+{
+  "eval_id": 3,
+  "eval_name": "dark-mode-theme-and-sidebar",
+  "prompt": "Set up the theme from _docs/designs/dashboard-dark.html and build the dashboard (sidebar + stat cards) into components. This design has a dark mode — make sure both light and dark work.",
+  "assertions": [
+    {"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root"},
+    {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)"},
+    {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source"},
+    {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block"},
+    {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data"},
+    {"text": "A Sidebar component is created in components/shared/layout/"},
+    {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex"}
+  ]
+}

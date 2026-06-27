@@ -1,0 +1,111 @@
+{
+  "openapi": "3.0.3",
+  "info": { "title": "demo-api", "version": "1.0.0" },
+  "servers": [{ "url": "/api" }],
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "List products (paginated)",
+        "security": [],
+        "parameters": [
+          { "name": "page",   "in": "query", "schema": { "type": "integer", "minimum": 1, "default": 1 } },
+          { "name": "limit",  "in": "query", "schema": { "type": "integer", "minimum": 1, "maximum": 100, "default": 20 } },
+          { "name": "search", "in": "query", "schema": { "type": "string" } },
+          { "name": "category","in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductListEnvelope" } } }
+          }
+        }
+      },
+      "post": {
+        "summary": "Create product (admin only)",
+        "security": [{ "bearerAuth": [] }],
+        "requestBody": {
+          "required": true,
+          "content": { "application/json": { "schema": { "$ref": "#/components/schemas/CreateProductBody" } } }
+        },
+        "responses": {
+          "201": { "description": "Created", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductEnvelope" } } } },
+          "401": { "description": "Unauthorized", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorEnvelope" } } } }
+        }
+      }
+    },
+    "/products/{id}": {
+      "get": {
+        "summary": "Get one product",
+        "security": [],
+        "parameters": [{ "name": "id", "in": "path", "required": true, "schema": { "type": "string" } }],
+        "responses": {
+          "200": { "description": "OK", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ProductEnvelope" } } } },
+          "404": { "description": "Not found", "content": { "application/json": { "schema": { "$ref": "#/components/schemas/ErrorEnvelope" } } } }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": { "bearerAuth": { "type": "http", "scheme": "bearer" } },
+    "schemas": {
+      "Product": {
+        "type": "object",
+        "required": ["id", "name", "slug", "price", "currency", "category", "inStock"],
+        "properties": {
+          "id":       { "type": "string" },
+          "name":     { "type": "string" },
+          "slug":     { "type": "string" },
+          "price":    { "type": "integer", "description": "price in CENTS" },
+          "currency": { "type": "string", "example": "USD" },
+          "category": { "type": "string" },
+          "inStock":  { "type": "boolean" },
+          "imageUrl": { "type": "string", "format": "uri" }
+        }
+      },
+      "CreateProductBody": {
+        "type": "object",
+        "required": ["name", "price", "category"],
+        "properties": {
+          "name":     { "type": "string" },
+          "price":    { "type": "integer", "description": "cents" },
+          "currency": { "type": "string", "default": "USD" },
+          "category": { "type": "string" },
+          "inStock":  { "type": "boolean", "default": true },
+          "imageUrl": { "type": "string", "format": "uri" }
+        }
+      },
+      "ProductEnvelope": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data":    { "$ref": "#/components/schemas/Product" },
+          "message": { "type": "string" }
+        }
+      },
+      "ProductListEnvelope": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": true },
+          "data": {
+            "type": "object",
+            "properties": {
+              "items": { "type": "array", "items": { "$ref": "#/components/schemas/Product" } },
+              "total": { "type": "integer" },
+              "page":  { "type": "integer" },
+              "limit": { "type": "integer" }
+            }
+          },
+          "message": { "type": "string" }
+        }
+      },
+      "ErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "example": false },
+          "message": { "type": "string" },
+          "code":    { "type": "string" }
+        }
+      }
+    }
+  }
+}

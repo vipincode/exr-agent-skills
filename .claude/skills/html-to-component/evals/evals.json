@@ -1,0 +1,69 @@
+{
+  "skill_name": "html-to-component",
+  "notes": "Each eval runs against a copy of evals/fixtures/scaffold/ (a minimal Next.js + Tailwind v4 + shadcn project with the contract files). The design HTML lives in that scaffold's _docs/designs/. The subagent should treat <scaffold> as the project root.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "theme-from-full-page",
+      "prompt": "Set up the theme from the design in _docs/designs/landing.html — pull the colors, fonts, radius, shadow and gradient out of it and apply them to the project's theme. Colors must be in oklch.",
+      "expected_output": "globals.css rewritten with the design's palette as oklch shadcn role tokens (primary from the brand blue, etc.), --radius set, a shadow + gradient token added; layout.tsx wires Inter (body) and Poppins (display) via next/font and binds their variables in @theme. No raw hex left in the theme variables, no <link> font tag.",
+      "files": ["fixtures/scaffold"],
+      "assertions": [
+        {"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)"},
+        {"text": "All theme color variables in :root and .dark are oklch() — no raw # hex left inside the theme variable blocks"},
+        {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts"},
+        {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display"},
+        {"text": "The .dark block is still present and re-valued (theme remains dual-mode)"},
+        {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced"},
+        {"text": "--radius, a shadow token, and a gradient token reflect the design's values"}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "dedup-reuse-header-build-cards",
+      "prompt": "Build _docs/designs/pricing.html into Next.js components and assemble the page.",
+      "expected_output": "The existing shared Header (components/shared/layout/header.tsx, listed in MODULE_REGISTRY.md) is REUSED, not recreated. The repeated pricing cards become ONE PricingCard component mapped over data, placed in components/shared/data-display/ (generic), styled with theme tokens (bg-primary, text-muted-foreground, rounded-lg) not raw hex/px, and registered in MODULE_REGISTRY.md. Page composed thinly.",
+      "files": ["fixtures/scaffold"],
+      "assertions": [
+        {"text": "No second/duplicate header component file was created — the existing components/shared/layout/header.tsx is reused"},
+        {"text": "The existing Header is imported and used in the page/template"},
+        {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies"},
+        {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)"},
+        {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px"},
+        {"text": "MODULE_REGISTRY.md gets a new row for PricingCard"},
+        {"text": "page.tsx (or a template) composes Header + pricing section and stays thin"}
+      ]
+    },
+    {
+      "id": 2,
+      "name": "hero-snippet-to-shared-component",
+      "prompt": "Turn this HTML section into a reusable component:\n\n<section class=\"hero\" style=\"background:linear-gradient(135deg,#3b82f6,#9333ea);padding:96px 24px\">\n  <div class=\"hero__inner\" style=\"max-width:1100px;margin:0 auto;text-align:center\">\n    <h1 style=\"font-family:Poppins;font-size:56px;line-height:1.05;color:#fff\">Ship faster with Acme</h1>\n    <p style=\"font-size:18px;color:#e5e7eb;margin-top:16px\">The all-in-one platform for modern teams.</p>\n    <a href=\"/signup\" style=\"display:inline-block;margin-top:32px;background:#fff;color:#3b82f6;padding:14px 28px;border-radius:12px;font-weight:600\">Get started</a>\n  </div>\n</section>",
+      "expected_output": "A Hero component created in components/shared (marketing/ or layout/), semantic <section> + real <a>/<button>, responsive (not pinned to 56px/1100px), styled with theme tokens + the gradient as a token/utility rather than inline hex, typed props for heading/subheading/CTA, registered in MODULE_REGISTRY.md.",
+      "files": ["fixtures/scaffold"],
+      "assertions": [
+        {"text": "A Hero component is created under components/shared/ (marketing/ or layout/)"},
+        {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup"},
+        {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) — responsive utilities used"},
+        {"text": "The gradient is a theme token/utility, not an inline style with raw hex"},
+        {"text": "A typed props interface (heading/subheading/CTA) is defined"},
+        {"text": "Hero is registered in MODULE_REGISTRY.md"}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "dark-mode-theme-and-sidebar",
+      "prompt": "Set up the theme from _docs/designs/dashboard-dark.html and build the dashboard (sidebar + stat cards) into components. This design has a dark mode — make sure both light and dark work.",
+      "expected_output": "globals.css :root (light) AND .dark blocks both re-valued in oklch from the design's two palettes (the @media prefers-color-scheme:dark overrides → .dark block, role for role — bg/card go dark, foreground goes light, primary lifted). No role present in :root missing from .dark. Sidebar built as a shared layout component, the repeated stats become ONE StatCard ({label,value,delta}) in shared/data-display mapped over data, tokens not raw hex, registered. @custom-variant dark present.",
+      "files": ["fixtures/scaffold"],
+      "assertions": [
+        {"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root"},
+        {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)"},
+        {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source"},
+        {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block"},
+        {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data"},
+        {"text": "A Sidebar component is created in components/shared/layout/"},
+        {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex"}
+      ]
+    }
+  ]
+}

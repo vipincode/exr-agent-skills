@@ -1,0 +1,6 @@
+{
+  "projects": [
+    { "domain": "backend",  "path": "backend",  "stack": "express-ts" },
+    { "domain": "frontend", "path": "frontend", "stack": "nextjs" }
+  ]
+}

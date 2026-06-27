@@ -1,0 +1,13 @@
+{
+  "eval_id": 3,
+  "eval_name": "openapi-spec-driven",
+  "prompt": "We only have the OpenAPI spec for the backend (backend/openapi.json) \u00e2\u20ac\u201d no source. Plan how to bind the products design to it.",
+  "assertions": [
+    "Plan file produced",
+    "Cites the OpenAPI spec as the source (rung 3)",
+    "Does NOT claim to have read backend source code",
+    "Derives the {success,data,message} envelope from the spec",
+    "Derives price-in-cents from the spec",
+    "Anchors reuse to axios/BFF (no new route)"
+  ]
+}

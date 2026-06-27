@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+
+/* LIGHT — from _docs/designs/dashboard-dark.html (:root) */
+:root {
+  --radius: 0.75rem; /* design --radius: 12px */
+
+  --background: oklch(1 0 0); /* #ffffff */
+  --foreground: oklch(0.208 0.042 265.755); /* #0f172a */
+  --card: oklch(0.984 0.003 247.858); /* #f8fafc — surface */
+  --card-foreground: oklch(0.208 0.042 265.755);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.208 0.042 265.755);
+  --primary: oklch(0.585 0.233 277.117); /* #6366f1 — indigo 500 */
+  --primary-foreground: oklch(1 0 0); /* #ffffff */
+  --secondary: oklch(0.984 0.003 247.858); /* surface */
+  --secondary-foreground: oklch(0.208 0.042 265.755);
+  --muted: oklch(0.984 0.003 247.858);
+  --muted-foreground: oklch(0.554 0.046 257.417); /* #64748b */
+  --accent: oklch(0.984 0.003 247.858);
+  --accent-foreground: oklch(0.208 0.042 265.755);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.929 0.013 255.508); /* #e2e8f0 */
+  --input: oklch(0.929 0.013 255.508);
+  --ring: oklch(0.585 0.233 277.117); /* primary */
+  --positive: oklch(0.627 0.194 149.214); /* #16a34a — green 600 */
+  --positive-foreground: oklch(1 0 0);
+}
+
+/* DARK — from _docs/designs/dashboard-dark.html (prefers-color-scheme: dark) */
+.dark {
+  --background: oklch(0.179 0.039 265.5); /* #0b1120 — slate 950-ish */
+  --foreground: oklch(0.928 0.006 264.531); /* #e5e7eb */
+  --card: oklch(0.21 0.034 264.665); /* #111827 — surface on dark */
+  --card-foreground: oklch(0.928 0.006 264.531);
+  --popover: oklch(0.21 0.034 264.665);
+  --popover-foreground: oklch(0.928 0.006 264.531);
+  --primary: oklch(0.673 0.182 276.935); /* #818cf8 — indigo 400, lifted */
+  --primary-foreground: oklch(0.179 0.039 265.5); /* #0b1120 */
+  --secondary: oklch(0.21 0.034 264.665);
+  --secondary-foreground: oklch(0.928 0.006 264.531);
+  --muted: oklch(0.21 0.034 264.665);
+  --muted-foreground: oklch(0.704 0.04 256.788); /* #94a3b8 */
+  --accent: oklch(0.278 0.033 256.848); /* #1f2937 */
+  --accent-foreground: oklch(0.928 0.006 264.531);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0.278 0.033 256.848); /* #1f2937 */
+  --input: oklch(0.278 0.033 256.848);
+  --ring: oklch(0.673 0.182 276.935); /* primary */
+  --positive: oklch(0.792 0.209 151.711); /* #4ade80 — green 400 */
+  --positive-foreground: oklch(0.179 0.039 265.5);
+}
+
+/* Follow the OS preference by default (mirrors the design's
+   prefers-color-scheme). An explicit .light / .dark class still wins. */
+@media (prefers-color-scheme: dark) {
+  :root:not(.light):not(.dark) {
+    --background: oklch(0.179 0.039 265.5);
+    --foreground: oklch(0.928 0.006 264.531);
+    --card: oklch(0.21 0.034 264.665);
+    --card-foreground: oklch(0.928 0.006 264.531);
+    --popover: oklch(0.21 0.034 264.665);
+    --popover-foreground: oklch(0.928 0.006 264.531);
+    --primary: oklch(0.673 0.182 276.935);
+    --primary-foreground: oklch(0.179 0.039 265.5);
+    --secondary: oklch(0.21 0.034 264.665);
+    --secondary-foreground: oklch(0.928 0.006 264.531);
+    --muted: oklch(0.21 0.034 264.665);
+    --muted-foreground: oklch(0.704 0.04 256.788);
+    --accent: oklch(0.278 0.033 256.848);
+    --accent-foreground: oklch(0.928 0.006 264.531);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(0.278 0.033 256.848);
+    --input: oklch(0.278 0.033 256.848);
+    --ring: oklch(0.673 0.182 276.935);
+    --positive: oklch(0.792 0.209 151.711);
+    --positive-foreground: oklch(0.179 0.039 265.5);
+  }
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-positive: var(--positive);
+  --color-positive-foreground: var(--positive-foreground);
+
+  --font-sans: var(--font-sans);
+  --font-display: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+}

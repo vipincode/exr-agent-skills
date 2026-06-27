@@ -1,0 +1,11 @@
+{
+  "eval_id": 2,
+  "eval_name": "clean-binding-calibration",
+  "prompt": "Review the products binding in frontend/src/features/products/.",
+  "assertions": [
+    "Gives a positive/clean verdict for sound code",
+    "Does NOT manufacture Critical/High findings (honest calibration)",
+    "Confirms BFF + envelope unwrap + Zod + Query are correct",
+    "Read-only: no source files modified"
+  ]
+}

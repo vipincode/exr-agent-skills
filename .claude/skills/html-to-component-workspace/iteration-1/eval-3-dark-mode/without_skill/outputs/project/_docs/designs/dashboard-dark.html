@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Acme — Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* LIGHT (default) */
+    :root {
+      --bg: #ffffff;
+      --surface: #f8fafc;        /* card */
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --brand: #6366f1;          /* indigo 500 — primary */
+      --brand-fg: #ffffff;
+      --border: #e2e8f0;
+      --positive: #16a34a;
+      --radius: 12px;
+    }
+    /* DARK — the design ships a real dark theme */
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0b1120;           /* slate 950-ish */
+        --surface: #111827;      /* card on dark */
+        --text: #e5e7eb;
+        --text-muted: #94a3b8;
+        --brand: #818cf8;        /* indigo 400 — lifted for dark */
+        --brand-fg: #0b1120;
+        --border: #1f2937;
+        --positive: #4ade80;
+      }
+    }
+    * { box-sizing: border-box; margin: 0; }
+    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); }
+    .shell { display: grid; grid-template-columns: 240px 1fr; min-height: 100vh; }
+
+    .sidebar { background: var(--surface); border-right: 1px solid var(--border); padding: 24px 16px; }
+    .sidebar__item { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: var(--text-muted); font-size: 14px; }
+    .sidebar__item--active { background: var(--brand); color: var(--brand-fg); }
+
+    .main { padding: 32px; }
+    .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 20px;
+    }
+    .stat__label { color: var(--text-muted); font-size: 13px; }
+    .stat__value { font-size: 28px; font-weight: 600; margin-top: 6px; }
+    .stat__delta { color: var(--positive); font-size: 13px; margin-top: 4px; }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="sidebar__item sidebar__item--active">Overview</div>
+      <div class="sidebar__item">Analytics</div>
+      <div class="sidebar__item">Customers</div>
+      <div class="sidebar__item">Settings</div>
+    </aside>
+    <main class="main">
+      <div class="stat-grid">
+        <div class="stat"><div class="stat__label">Revenue</div><div class="stat__value">$48.2k</div><div class="stat__delta">+12.4%</div></div>
+        <div class="stat"><div class="stat__label">Active users</div><div class="stat__value">3,184</div><div class="stat__delta">+5.1%</div></div>
+        <div class="stat"><div class="stat__label">Churn</div><div class="stat__value">1.8%</div><div class="stat__delta">-0.3%</div></div>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

@@ -1,0 +1,10 @@
+{
+  "eval_id": 2,
+  "eval_name": "test-zod-schema",
+  "prompt": "Write unit tests for the products Zod schema.",
+  "assertions": [
+    "Asserts valid input parses successfully",
+    "Asserts invalid/drifted input fails (throws / safeParse false)",
+    "Pure schema test (no React/RTL import)"
+  ]
+}

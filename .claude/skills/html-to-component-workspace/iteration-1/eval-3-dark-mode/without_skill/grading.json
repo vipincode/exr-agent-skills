@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root",
+      "passed": true,
+      "evidence": ".dark --background oklch(0.179\u2026), --foreground oklch(0.928\u2026)."
+    },
+    {
+      "text": "Every role variable present in :root is also present in .dark (no role missing in dark)",
+      "passed": true,
+      "evidence": "All roles present in both blocks (+ --positive)."
+    },
+    {
+      "text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source",
+      "passed": true,
+      "evidence": "All oklch in both blocks."
+    },
+    {
+      "text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block",
+      "passed": true,
+      "evidence": "@custom-variant dark present."
+    },
+    {
+      "text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data",
+      "passed": true,
+      "evidence": "StatCard {label,value,delta,trend} in shared/data-display, mapped over data."
+    },
+    {
+      "text": "A Sidebar component is created in components/shared/layout/",
+      "passed": false,
+      "evidence": "Sidebar placed in components/shared/navigation/sidebar.tsx, not layout/ as the assertion specifies."
+    },
+    {
+      "text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex",
+      "passed": true,
+      "evidence": "Color tokens used (no hex); minor: uses text-[13px]/text-[28px] arbitrary font sizes instead of the type scale."
+    }
+  ],
+  "summary": {
+    "passed": 6,
+    "failed": 1,
+    "total": 7,
+    "pass_rate": 0.8571
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

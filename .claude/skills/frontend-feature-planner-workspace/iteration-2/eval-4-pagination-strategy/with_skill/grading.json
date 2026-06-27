@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Plan file produced",
+      "passed": true,
+      "evidence": "files: FEATURE_PLAN_products-pagination.md RUN_NOTES.md"
+    },
+    {
+      "text": "Identifies offset/page-based pagination (skip/limit), not cursor",
+      "passed": true,
+      "evidence": "tion mechanism (the load-bearing fact): OFFSET / PAGE-NUMBER based.** The service does"
+    },
+    {
+      "text": "Notes response returns total/page/limit",
+      "passed": true,
+      "evidence": "ocuments(filter)` and returns `{ items, total, page, limit }`. There is **no cursor**, no `nextCur"
+    },
+    {
+      "text": "Recommends a concrete approach with query key including page+filters",
+      "passed": true,
+      "evidence": "arch?, category? }`   - **Query key:** `[\"products\", \"list\", { page, limit, search, category }]` \u2014 feature-"
+    },
+    {
+      "text": "Covers loading/empty/error/end-of-pages states",
+      "passed": true,
+      "evidence": "...filters, page: pageParam })`.   - **`getNextPageParam:`** derive from observed meta \u2014 `(last)"
+    },
+    {
+      "text": "Does NOT invent a cursor API the backend lacks",
+      "passed": true,
+      "evidence": "no fabrication pattern matched"
+    },
+    {
+      "text": "Includes a Testing checklist section",
+      "passed": true,
+      "evidence": "ime rather than rendering `undefined`.  ## Testing checklist - [ ] Grid renders live data from `GET"
+    }
+  ],
+  "score": 7,
+  "total": 7
+}

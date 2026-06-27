@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "A Hero component is created under components/shared/ (marketing/ or layout/)",
+      "passed": true,
+      "evidence": "components/shared/marketing/hero.tsx created."
+    },
+    {
+      "text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup",
+      "passed": true,
+      "evidence": "<section> wrapper; CTA is <Button asChild><a>\u2026</a></Button>."
+    },
+    {
+      "text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used",
+      "passed": true,
+      "evidence": "Uses max-w-5xl and text-4xl md:text-5xl lg:text-6xl \u2014 responsive, no hardcoded px."
+    },
+    {
+      "text": "The gradient is a theme token/utility, not an inline style with raw hex",
+      "passed": true,
+      "evidence": "bg-[image:var(--gradient-brand)] \u2014 references the theme gradient token, no inline hex."
+    },
+    {
+      "text": "A typed props interface (heading/subheading/CTA) is defined",
+      "passed": true,
+      "evidence": "HeroProps with title/subtitle/action (HeroAction)."
+    },
+    {
+      "text": "Hero is registered in MODULE_REGISTRY.md",
+      "passed": false,
+      "evidence": "No Hero row in MODULE_REGISTRY.md \u2014 the skill's own registration step was skipped here."
+    }
+  ],
+  "summary": {
+    "passed": 5,
+    "failed": 1,
+    "total": 6,
+    "pass_rate": 0.8333
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "expectations": [
+    {
+      "text": "Plan file produced",
+      "passed": true,
+      "evidence": "files: FEATURE_PLAN_products-create.md RUN_NOTES.md"
+    },
+    {
+      "text": "Notes POST /products requires admin (requireRole/admin)",
+      "passed": true,
+      "evidence": "`protect`) - **403/401** role failure (`requireRole('admin')` \u2014 not an admin) - **422** Validation"
+    },
+    {
+      "text": "Mirrors the create body schema (name/price-cents/category...)",
+      "passed": true,
+      "evidence": "oduct`** |  **POST body schema** (from `createProductBody` in `products.schema.ts` \u2014 the exact se"
+    },
+    {
+      "text": "Flags the missing create-form design (design gap -> figma/html)",
+      "passed": true,
+      "evidence": "eate form (RHF + shared `*Field`) \u2014 see Design gaps | | frontend/src/features/products/tem"
+    },
+    {
+      "text": "Reuses shared *Field components",
+      "passed": true,
+      "evidence": "sx | **NEW** create form (RHF + shared `*Field`) \u2014 see Design gaps | | frontend/src/fe"
+    },
+    {
+      "text": "Plans a mutation invalidating the products query",
+      "passed": true,
+      "evidence": "UX, not security. - **Cache strategy**: invalidate-on-success \u2014 `invalidateQueries([\"products\"])` so the (future) list   refetches. N"
+    }
+  ],
+  "score": 6,
+  "total": 6
+}

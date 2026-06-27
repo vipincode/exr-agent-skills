@@ -1,0 +1,48 @@
+{
+  "expectations": [
+    {
+      "text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root",
+      "passed": true,
+      "evidence": ".dark --background oklch(0.18\u2026), --foreground oklch(0.93\u2026) \u2014 distinct dark palette."
+    },
+    {
+      "text": "Every role variable present in :root is also present in .dark (no role missing in dark)",
+      "passed": true,
+      "evidence": "All roles (bg/card/popover/primary/secondary/muted/accent/destructive/border/input/ring + sidebar-*) present in both."
+    },
+    {
+      "text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source",
+      "passed": true,
+      "evidence": "All values oklch in both blocks; mapped from the design's light + dark palettes."
+    },
+    {
+      "text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block",
+      "passed": true,
+      "evidence": "@custom-variant dark present in globals.css."
+    },
+    {
+      "text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data",
+      "passed": true,
+      "evidence": "StatCard with {label,value,delta,trend} in shared/data-display, mapped over data."
+    },
+    {
+      "text": "A Sidebar component is created in components/shared/layout/",
+      "passed": true,
+      "evidence": "components/shared/layout/sidebar.tsx created."
+    },
+    {
+      "text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex",
+      "passed": true,
+      "evidence": "StatCard uses bg-card/border-border/text-muted-foreground + token type scale (text-sm/text-3xl)."
+    }
+  ],
+  "summary": {
+    "passed": 7,
+    "failed": 0,
+    "total": 7,
+    "pass_rate": 1.0
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "eval_id": 1,
+  "eval_name": "duplication-and-placement",
+  "prompt": "Code review the products feature changes before I merge.",
+  "assertions": [
+    "Flags the duplicated/re-implemented shared field component",
+    "Flags the cross-feature import (products -> cart)",
+    "Flags raw useController / field not using shared *Field",
+    "Flags the binding bypass (raw fetch instead of axios/Query)",
+    "Read-only: no source files modified"
+  ]
+}

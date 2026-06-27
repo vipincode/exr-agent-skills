@@ -1,0 +1,27 @@
+{
+  "skill_name": "frontend-test-writer",
+  "notes": "Runs inside a COPY of the fixture monorepo (frontend/ has the contract files). Each eval seeds a built+bound feature (products grid wired to useProductsQuery, a create-product form, and the Zod schema) into frontend/src/features/products/, plus the Vitest+RTL devDeps in package.json. The skill must write matching test files and NEVER modify source or the registry. Baseline = no skill.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "test-bound-list-and-query-hook",
+      "prompt": "Write tests for the products grid and the useProductsQuery hook.",
+      "expected_output": "Creates colocated *.test.tsx files using Vitest + React Testing Library. A render test for ProductsGrid asserting it shows loading then data, the empty state on [], and the error state on failure. A hook test rendering useProductsQuery inside a QueryClientProvider (retry: false) with the shared `api` instance (or MSW) mocked, asserting it returns the UNWRAPPED+validated data and goes to isError when the envelope drifts (malformed payload). Queries by role/text, not test ids/class names. Does NOT modify source files or MODULE_REGISTRY.md. Reports how to run (pm run test).",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "test-create-form",
+      "prompt": "Add tests for the create-product form.",
+      "expected_output": "A component test that fills the form via user-event, asserts a Zod validation message appears on invalid input, asserts the mutation/api.post is called with the validated body on valid submit, and that admin-only controls respect useAuth (mock it to a non-admin -> hidden; admin -> shown). Uses the QueryClientProvider wrapper. No source or registry edits.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "test-zod-schema",
+      "prompt": "Write unit tests for the products Zod schema.",
+      "expected_output": "A *.test.ts asserting productSchema.parse accepts a valid product and throws on drift (e.g. non-integer price, missing required field, wrong type). Pure schema unit test, no React. No source or registry edits.",
+      "files": []
+    }
+  ]
+}

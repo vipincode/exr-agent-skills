@@ -1,0 +1,42 @@
+{
+  "skill_name": "frontend-feature-planner",
+  "notes": "Each eval runs inside a COPY of the fixture monorepo (backend/ has a real products module; frontend/ has a built-but-unbound products design). The skill must read the real backend to learn the contract, then write _docs/FEATURE_PLAN_<name>.md under the frontend project dir. Baseline = no skill.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "list-binding-happy-path",
+      "prompt": "The products grid design is built but it's showing hardcoded samples. Plan how to bind the products feature to our API so it shows real data.",
+      "expected_output": "A _docs/FEATURE_PLAN_products.md in frontend/ that records the OBSERVED API contract from the backend source: exact success envelope {success,data,message}, the list endpoint GET /api/products (public, paginated query page/limit/search/category) returning {items, total, page, limit}, the Product data shape with price in CENTS. Reuse section names lib/axios.ts, the catch-all BFF (no new route needed), query-client. Plans feature-module files (types/schema/api/hooks), query key [\"products\", filters], and a data-binding map wiring ProductsGrid/ProductCard to a useProductsQuery, replacing the SAMPLE array. Flags price-in-cents formatting. Minimal questions.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "create-mutation-auth-and-design-gap",
+      "prompt": "I want an admin-only create product form wired up to the backend. Plan it.",
+      "expected_output": "Plan records POST /api/products is auth-guarded (protect + requireRole('admin')) and the create body schema (name, price int cents, currency, category, inStock, imageUrl?). Plans a Zod schema mirroring it, a useCreateProductMutation that invalidates [\"products\"], UI auth-gating via useAuth, and reuses the shared *Field components (InputField/SelectField...) for the form. Crucially flags a DESIGN GAP: no create-form component exists yet -> points to figma-to-component / html-to-component, but still plans the binding. Does not write code.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "honesty-missing-backend-capability",
+      "prompt": "Plan the binding for our orders feature so the orders screen talks to the API.",
+      "expected_output": "There is NO orders module in the backend and NO orders design in the frontend. The skill must NOT invent an orders API. It should report that rung-1 (monorepo source) found no orders module, and either ask the user for the endpoint(s) + a sample response (resolution ladder rung 4) or flag it as an open question / blocker, plus note the missing design. Honesty over hallucination is the pass condition.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "name": "openapi-spec-driven",
+      "fixture": "fixture-openapi",
+      "prompt": "We only have the OpenAPI spec for the backend (backend/openapi.json) — no source. Plan how to bind the products design to it.",
+      "expected_output": "Runs in fixture-openapi (backend has ONLY openapi.json, no source). The skill must fall through the ladder to rung 3 and PARSE the spec: derive the same envelope {success,data,message}, the paginated GET /products (page/limit/search/category -> {items,total,page,limit}), GET /products/{id} (404), POST /products (bearer/admin security), and the Product schema with price in CENTS. Plan cites the spec as the source. Types/Zod mirror the spec components. Reuses axios/BFF/query-client. Must NOT claim it read source code it didn't have.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "name": "pagination-strategy",
+      "prompt": "Based on how the products API works, plan how the frontend should do pagination for the products list — page vs infinite scroll, query keys, caching, and loading states.",
+      "expected_output": "Grounds the answer in the OBSERVED contract: offset pagination via page/limit (max limit 100), response carries total/page/limit so total pages is derivable. Plan should recommend a concrete approach (e.g. page-based with useQuery + placeholderData/keepPreviousData for smooth transitions, OR infinite scroll with useInfiniteQuery using page) and justify it; query key includes page + filters ([\"products\", { page, ...filters }]); covers loading (skeleton), empty, error, and end-of-pages (page*limit >= total) states. May ask the single genuine UX unknown (paged vs infinite) rather than assuming. Must not invent a cursor API the backend doesn't expose (it's offset-based).",
+      "files": []
+    }
+  ]
+}

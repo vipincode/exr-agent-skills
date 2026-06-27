@@ -1,0 +1,11 @@
+{
+  "eval_id": 1,
+  "eval_name": "test-create-form",
+  "prompt": "Add tests for the create-product form.",
+  "assertions": [
+    "Tests validation messages on invalid input",
+    "Asserts the mutation is called with the validated body",
+    "Tests admin auth-gating via useAuth",
+    "Drives interactions with user-event"
+  ]
+}

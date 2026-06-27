@@ -1,0 +1,1325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Eval Review</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600&family=Lora:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js" integrity="sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT" crossorigin="anonymous"></script>
+  <style>
+    :root {
+      --bg: #faf9f5;
+      --surface: #ffffff;
+      --border: #e8e6dc;
+      --text: #141413;
+      --text-muted: #b0aea5;
+      --accent: #d97757;
+      --accent-hover: #c4613f;
+      --green: #788c5d;
+      --green-bg: #eef2e8;
+      --red: #c44;
+      --red-bg: #fceaea;
+      --header-bg: #141413;
+      --header-text: #faf9f5;
+      --radius: 6px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Lora', Georgia, serif;
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ---- Header ---- */
+    .header {
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .header h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    .header .instructions {
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 0.25rem;
+    }
+    .header .progress {
+      font-size: 0.875rem;
+      opacity: 0.8;
+      text-align: right;
+    }
+
+    /* ---- Main content ---- */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* ---- Sections ---- */
+    .section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      flex-shrink: 0;
+    }
+    .section-header {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.75rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .section-body {
+      padding: 1rem;
+    }
+
+    /* ---- Config badge ---- */
+    .config-badge {
+      display: inline-block;
+      padding: 0.2rem 0.625rem;
+      border-radius: 9999px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.6875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+      margin-left: 0.75rem;
+      vertical-align: middle;
+    }
+    .config-badge.config-primary {
+      background: rgba(33, 150, 243, 0.12);
+      color: #1976d2;
+    }
+    .config-badge.config-baseline {
+      background: rgba(255, 193, 7, 0.15);
+      color: #f57f17;
+    }
+
+    /* ---- Prompt ---- */
+    .prompt-text {
+      white-space: pre-wrap;
+      font-size: 0.9375rem;
+      line-height: 1.6;
+    }
+
+    /* ---- Outputs ---- */
+    .output-file {
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+    .output-file + .output-file {
+      margin-top: 1rem;
+    }
+    .output-file-header {
+      padding: 0.5rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .output-file-header .dl-btn {
+      font-size: 0.7rem;
+      color: var(--accent);
+      text-decoration: none;
+      cursor: pointer;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-weight: 500;
+      opacity: 0.8;
+    }
+    .output-file-header .dl-btn:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+    .output-file-content {
+      padding: 0.75rem;
+      overflow-x: auto;
+    }
+    .output-file-content pre {
+      font-size: 0.8125rem;
+      line-height: 1.5;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-family: 'SF Mono', SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace;
+    }
+    .output-file-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 4px;
+    }
+    .output-file-content iframe {
+      width: 100%;
+      height: 600px;
+      border: none;
+    }
+    .output-file-content table {
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+      width: 100%;
+    }
+    .output-file-content table td,
+    .output-file-content table th {
+      border: 1px solid var(--border);
+      padding: 0.375rem 0.5rem;
+      text-align: left;
+    }
+    .output-file-content table th {
+      background: var(--bg);
+      font-weight: 600;
+    }
+    .output-file-content .download-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.875rem;
+      cursor: pointer;
+    }
+    .output-file-content .download-link:hover {
+      background: var(--border);
+    }
+    .empty-state {
+      color: var(--text-muted);
+      font-style: italic;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* ---- Feedback ---- */
+    .prev-feedback {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 0.625rem 0.75rem;
+      margin-top: 0.75rem;
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .prev-feedback-label {
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin-bottom: 0.25rem;
+      color: var(--text-muted);
+    }
+    .feedback-textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      line-height: 1.5;
+      resize: vertical;
+      color: var(--text);
+    }
+    .feedback-textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+    .feedback-status {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      margin-top: 0.5rem;
+      min-height: 1.1em;
+    }
+
+    /* ---- Grades (collapsible) ---- */
+    .grades-toggle {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .grades-toggle:hover {
+      color: var(--accent);
+    }
+    .grades-toggle .arrow {
+      margin-right: 0.5rem;
+      transition: transform 0.15s;
+      font-size: 0.75rem;
+    }
+    .grades-toggle .arrow.open {
+      transform: rotate(90deg);
+    }
+    .grades-content {
+      display: none;
+      margin-top: 0.75rem;
+    }
+    .grades-content.open {
+      display: block;
+    }
+    .grades-summary {
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .grade-badge {
+      display: inline-block;
+      padding: 0.125rem 0.5rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    .grade-pass { background: var(--green-bg); color: var(--green); }
+    .grade-fail { background: var(--red-bg); color: var(--red); }
+    .assertion-list {
+      list-style: none;
+    }
+    .assertion-item {
+      padding: 0.625rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8125rem;
+    }
+    .assertion-item:last-child { border-bottom: none; }
+    .assertion-status {
+      font-weight: 600;
+      margin-right: 0.5rem;
+    }
+    .assertion-status.pass { color: var(--green); }
+    .assertion-status.fail { color: var(--red); }
+    .assertion-evidence {
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      padding-left: 1.5rem;
+    }
+
+    /* ---- View tabs ---- */
+    .view-tabs {
+      display: flex;
+      gap: 0;
+      padding: 0 2rem;
+      background: var(--bg);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .view-tab {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.625rem 1.25rem;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--text-muted);
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s;
+    }
+    .view-tab:hover { color: var(--text); }
+    .view-tab.active {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
+    }
+    .view-panel { display: none; }
+    .view-panel.active { display: flex; flex-direction: column; flex: 1; overflow: hidden; }
+
+    /* ---- Benchmark view ---- */
+    .benchmark-view {
+      padding: 1.5rem 2rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .benchmark-table {
+      border-collapse: collapse;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.8125rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+    }
+    .benchmark-table th, .benchmark-table td {
+      padding: 0.625rem 0.75rem;
+      text-align: left;
+      border: 1px solid var(--border);
+    }
+    .benchmark-table th {
+      font-family: 'Poppins', sans-serif;
+      background: var(--header-bg);
+      color: var(--header-text);
+      font-weight: 500;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .benchmark-table tr:hover { background: var(--bg); }
+    .benchmark-table tr.benchmark-row-with { background: rgba(33, 150, 243, 0.06); }
+    .benchmark-table tr.benchmark-row-without { background: rgba(255, 193, 7, 0.06); }
+    .benchmark-table tr.benchmark-row-with:hover { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-without:hover { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-table tr.benchmark-row-avg { font-weight: 600; border-top: 2px solid var(--border); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-with { background: rgba(33, 150, 243, 0.12); }
+    .benchmark-table tr.benchmark-row-avg.benchmark-row-without { background: rgba(255, 193, 7, 0.12); }
+    .benchmark-delta-positive { color: var(--green); font-weight: 600; }
+    .benchmark-delta-negative { color: var(--red); font-weight: 600; }
+    .benchmark-notes {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .benchmark-notes h3 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.875rem;
+      margin-bottom: 0.75rem;
+    }
+    .benchmark-notes ul {
+      list-style: disc;
+      padding-left: 1.25rem;
+    }
+    .benchmark-notes li {
+      font-size: 0.8125rem;
+      line-height: 1.6;
+      margin-bottom: 0.375rem;
+    }
+    .benchmark-empty {
+      color: var(--text-muted);
+      font-style: italic;
+      text-align: center;
+      padding: 3rem;
+    }
+
+    /* ---- Navigation ---- */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      border-top: 1px solid var(--border);
+      background: var(--surface);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text);
+      transition: all 0.15s;
+    }
+    .nav-btn:hover:not(:disabled) {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+    .done-btn {
+      font-family: 'Poppins', sans-serif;
+      padding: 0.5rem 1.5rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 0.875rem;
+      font-weight: 500;
+      transition: all 0.15s;
+    }
+    .done-btn:hover {
+      background: var(--bg);
+      border-color: var(--text-muted);
+    }
+    .done-btn.ready {
+      border: none;
+      background: var(--accent);
+      color: white;
+      font-weight: 600;
+    }
+    .done-btn.ready:hover {
+      background: var(--accent-hover);
+    }
+    /* ---- Done overlay ---- */
+    .done-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+    }
+    .done-overlay.visible {
+      display: flex;
+    }
+    .done-card {
+      background: var(--surface);
+      border-radius: 12px;
+      padding: 2rem 3rem;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      max-width: 500px;
+    }
+    .done-card h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+    .done-card p {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .done-card .btn-row {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+    .done-card button {
+      padding: 0.5rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: var(--surface);
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .done-card button:hover {
+      background: var(--bg);
+    }
+    /* ---- Toast ---- */
+    .toast {
+      position: fixed;
+      bottom: 5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--header-bg);
+      color: var(--header-text);
+      padding: 0.625rem 1.25rem;
+      border-radius: var(--radius);
+      font-size: 0.875rem;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+      z-index: 200;
+    }
+    .toast.visible {
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div id="app" style="height:100vh; display:flex; flex-direction:column;">
+    <div class="header">
+      <div>
+        <h1>Eval Review: <span id="skill-name"></span></h1>
+        <div class="instructions">Review each output and leave feedback below. Navigate with arrow keys or buttons. When done, copy feedback and paste into Claude Code.</div>
+      </div>
+      <div class="progress" id="progress"></div>
+    </div>
+
+    <!-- View tabs (only shown when benchmark data exists) -->
+    <div class="view-tabs" id="view-tabs" style="display:none;">
+      <button class="view-tab active" onclick="switchView('outputs')">Outputs</button>
+      <button class="view-tab" onclick="switchView('benchmark')">Benchmark</button>
+    </div>
+
+    <!-- Outputs panel (qualitative review) -->
+    <div class="view-panel active" id="panel-outputs">
+    <div class="main">
+      <!-- Prompt -->
+      <div class="section">
+        <div class="section-header">Prompt <span class="config-badge" id="config-badge" style="display:none;"></span></div>
+        <div class="section-body">
+          <div class="prompt-text" id="prompt-text"></div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="section">
+        <div class="section-header">Output</div>
+        <div class="section-body" id="outputs-body">
+          <div class="empty-state">No output files found</div>
+        </div>
+      </div>
+
+      <!-- Previous Output (collapsible) -->
+      <div class="section" id="prev-outputs-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="togglePrevOutputs()">
+            <span class="arrow" id="prev-outputs-arrow">&#9654;</span>
+            Previous Output
+          </div>
+        </div>
+        <div class="grades-content" id="prev-outputs-content"></div>
+      </div>
+
+      <!-- Grades (collapsible) -->
+      <div class="section" id="grades-section" style="display:none;">
+        <div class="section-header">
+          <div class="grades-toggle" onclick="toggleGrades()">
+            <span class="arrow" id="grades-arrow">&#9654;</span>
+            Formal Grades
+          </div>
+        </div>
+        <div class="grades-content" id="grades-content"></div>
+      </div>
+
+      <!-- Feedback -->
+      <div class="section">
+        <div class="section-header">Your Feedback</div>
+        <div class="section-body">
+          <textarea
+            class="feedback-textarea"
+            id="feedback"
+            placeholder="What do you think of this output? Any issues, suggestions, or things that look great?"
+          ></textarea>
+          <div class="feedback-status" id="feedback-status"></div>
+          <div class="prev-feedback" id="prev-feedback" style="display:none;">
+            <div class="prev-feedback-label">Previous feedback</div>
+            <div id="prev-feedback-text"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="nav" id="outputs-nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)">&#8592; Previous</button>
+      <button class="done-btn" id="done-btn" onclick="showDoneDialog()">Submit All Reviews</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Next &#8594;</button>
+    </div>
+    </div><!-- end panel-outputs -->
+
+    <!-- Benchmark panel (quantitative stats) -->
+    <div class="view-panel" id="panel-benchmark">
+      <div class="benchmark-view" id="benchmark-content">
+        <div class="benchmark-empty">No benchmark data available. Run a benchmark to see quantitative results here.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Done overlay -->
+  <div class="done-overlay" id="done-overlay">
+    <div class="done-card">
+      <h2>Review Complete</h2>
+      <p>Your feedback has been saved. Go back to your Claude Code session and tell Claude you're done reviewing.</p>
+      <div class="btn-row">
+        <button onclick="closeDoneDialog()">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // ---- Embedded data (injected by generate_review.py) ----
+    const EMBEDDED_DATA = {"skill_name": "html-to-component", "runs": [{"id": "eval-0-theme-from-full-page-with_skill", "prompt": "Set up the theme from the design in _docs/designs/landing.html \u00e2\u20ac\u201d pull the colors, fonts, radius, shadow and gradient out of it and apply them to the project's theme. Colors must be in oklch.", "eval_id": 0, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme applied from `_docs/designs/landing.html` (Acme landing). Colors are **oklch** in `globals.css` (`:root` light, `.dark` derived, `@theme inline`).\n- Palette: brand indigo `#4f46e5` \u00e2\u2020\u2019 `--primary` (ring = primary tint); slate ink `#0f172a` \u00e2\u2020\u2019 `--foreground`; slate-500 `#64748b` \u00e2\u2020\u2019 `--muted-foreground`; slate-50 `#f8fafc` \u00e2\u2020\u2019 `--secondary`/`--muted`; slate-200 `#e2e8f0` \u00e2\u2020\u2019 `--border`/`--input`; violet-100 `#ede9fe` (hero accent) \u00e2\u2020\u2019 `--accent`; `#dc2626` \u00e2\u2020\u2019 `--destructive`. `--background`/`--card` = white.\n- Radius: `--radius: 0.625rem` (10px buttons); cards use `rounded-xl` (14px).\n- Extras: `--shadow-button`, `--shadow-card`, and `--gradient-brand` (hero `linear-gradient(135deg, indigo \u00e2\u2020\u2019 violet)`) exposed as utilities (`shadow-card`, `bg-[image:var(--gradient-brand)]`).\n- Fonts (`next/font`): **Inter** (400/500/600) \u00e2\u2020\u2019 `--font-sans` (body); **Poppins** (600/700) \u00e2\u2020\u2019 `--font-display` (headings); Geist Mono \u00e2\u2020\u2019 `--font-mono`.\n- Dark mode was **derived** (source is light-only): neutrals flipped, brand hue/chroma kept with lightness nudged up, borders as low-alpha white.\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: applied from `_docs/designs/landing.html`. Primary = indigo `#4f46e5`; neutrals = slate scale; accent = violet-100; oklch throughout. Fonts: Inter (sans/body), Poppins (display/headings), Geist Mono (mono). Added `--shadow-button`, `--shadow-card`, `--gradient-brand`. Dark mode derived (source is light-only). Files: `src/app/globals.css`, `src/app/layout.tsx`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem; /* 10px \u00e2\u20ac\u201d buttons; cards use rounded-xl (14px) */\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2077 0.0398 265.75);\n  --card: oklch(1 0 0);\n  --card-foreground: oklch(0.2077 0.0398 265.75);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.2077 0.0398 265.75);\n  --primary: oklch(0.5106 0.2301 276.97);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.9842 0.0034 247.86);\n  --secondary-foreground: oklch(0.2077 0.0398 265.75);\n  --muted: oklch(0.9842 0.0034 247.86);\n  --muted-foreground: oklch(0.5544 0.0407 257.42);\n  --accent: oklch(0.9433 0.0284 294.59);\n  --accent-foreground: oklch(0.4568 0.2146 277.02);\n  --destructive: oklch(0.5771 0.2152 27.33);\n  --border: oklch(0.9288 0.0126 255.51);\n  --input: oklch(0.9288 0.0126 255.51);\n  --ring: oklch(0.5106 0.2301 276.97);\n\n  /* design extras */\n  --shadow-button: 0 1px 2px 0 oklch(0.2077 0.0398 265.75 / 0.08);\n  --shadow-card: 0 4px 12px 0 oklch(0.2077 0.0398 265.75 / 0.06);\n  --gradient-brand: linear-gradient(135deg, oklch(0.5106 0.2301 276.97) 0%, oklch(0.5413 0.2466 293.01) 100%);\n}\n\n.dark {\n  /* derived from the single-mode (light-only) source design */\n  --background: oklch(0.2077 0.0398 265.75);\n  --foreground: oklch(0.9842 0.0034 247.86);\n  --card: oklch(0.2682 0.0421 265.75);\n  --card-foreground: oklch(0.9842 0.0034 247.86);\n  --popover: oklch(0.2682 0.0421 265.75);\n  --popover-foreground: oklch(0.9842 0.0034 247.86);\n  --primary: oklch(0.5906 0.2301 276.97);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.2682 0.0421 265.75);\n  --secondary-foreground: oklch(0.9842 0.0034 247.86);\n  --muted: oklch(0.2682 0.0421 265.75);\n  --muted-foreground: oklch(0.708 0.0407 257.42);\n  --accent: oklch(0.3300 0.0700 277.0);\n  --accent-foreground: oklch(0.9842 0.0034 247.86);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.5906 0.2301 276.97);\n\n  --shadow-button: 0 1px 2px 0 oklch(0 0 0 / 0.4);\n  --shadow-card: 0 4px 12px 0 oklch(0 0 0 / 0.5);\n  --gradient-brand: linear-gradient(135deg, oklch(0.5906 0.2301 276.97) 0%, oklch(0.5413 0.2466 293.01) 100%);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --font-sans: var(--font-sans);\n  --font-display: var(--font-display);\n  --font-mono: var(--font-mono);\n\n  /* custom shadow + gradient utilities */\n  --shadow-button: var(--shadow-button);\n  --shadow-card: var(--shadow-card);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Inter, Poppins, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst inter = Inter({\n  subsets: [\"latin\"],\n  weight: [\"400\", \"500\", \"600\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst poppins = Poppins({\n  subsets: [\"latin\"],\n  weight: [\"600\", \"700\"],\n  variable: \"--font-display\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Ship faster\",\n  description: \"The all-in-one platform for modern product teams.\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html\n      lang=\"en\"\n      className={`${inter.variable} ${poppins.variable} ${geistMono.variable}`}\n      suppressHydrationWarning\n    >\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "export default function Home() {\n  return (\n    <main className=\"flex min-h-screen items-center justify-center\">\n      <p className=\"text-muted-foreground\">Replace me.</p>\n    </main>\n  );\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}], "grading": {"expectations": [{"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)", "passed": true, "evidence": "--primary: oklch(0.5106 0.2301 276.97) \u2014 indigo, not the stock near-black."}, {"text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks", "passed": true, "evidence": "grep for ': #hex;' value lines in the theme blocks returned nothing; every color is oklch()."}, {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts", "passed": true, "evidence": "layout.tsx imports Inter + Poppins from next/font/google with --font-sans / --font-display."}, {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display", "passed": true, "evidence": "globals.css @theme inline has --font-display: var(--font-display)."}, {"text": "The .dark block is still present and re-valued (theme remains dual-mode)", "passed": true, "evidence": ".dark block present, derived from the light palette (bg\u2192dark, fg\u2192light, primary lifted)."}, {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced", "passed": true, "evidence": "Fonts wired via next/font only; no <link> tag or @import url() in layout/globals."}, {"text": "--radius, a shadow token, and a gradient token reflect the design's values", "passed": true, "evidence": "--radius:0.625rem, --shadow-button/--shadow-card, --gradient-brand all set from the design."}], "summary": {"passed": 7, "failed": 0, "total": 7, "pass_rate": 1.0}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-0-theme-from-full-page-without_skill", "prompt": "Set up the theme from the design in _docs/designs/landing.html \u00e2\u20ac\u201d pull the colors, fonts, radius, shadow and gradient out of it and apply them to the project's theme. Colors must be in oklch.", "eval_id": 0, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme set up from design files in `_docs/designs/`. (Update this note once a theme is applied.)\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: stock shadcn defaults so far \u00e2\u20ac\u201d to be set from `_docs/designs/`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem; /* 10px \u00e2\u20ac\u201d buttons/inputs from design */\n\n  /* Surfaces */\n  --background: oklch(1 0 0);                       /* #ffffff */\n  --foreground: oklch(0.208 0.042 265.755);         /* #0f172a slate-900 (ink) */\n  --card: oklch(1 0 0);                             /* #ffffff */\n  --card-foreground: oklch(0.208 0.042 265.755);    /* #0f172a */\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.208 0.042 265.755);\n\n  /* Brand / primary \u00e2\u20ac\u201d indigo-600 */\n  --primary: oklch(0.511 0.262 276.966);            /* #4f46e5 */\n  --primary-foreground: oklch(1 0 0);               /* #ffffff */\n  --primary-press: oklch(0.457 0.24 277.023);       /* #4338ca indigo-700 (hover) */\n\n  /* Secondary / muted surfaces \u00e2\u20ac\u201d slate-50 */\n  --secondary: oklch(0.984 0.003 247.858);          /* #f8fafc */\n  --secondary-foreground: oklch(0.208 0.042 265.755);\n  --muted: oklch(0.984 0.003 247.858);              /* #f8fafc */\n  --muted-foreground: oklch(0.554 0.046 257.417);   /* #64748b slate-500 */\n  --accent: oklch(0.984 0.003 247.858);             /* #f8fafc */\n  --accent-foreground: oklch(0.511 0.262 276.966);  /* brand */\n\n  /* Feedback */\n  --destructive: oklch(0.577 0.245 27.325);         /* #dc2626 red-600 */\n\n  /* Lines & focus */\n  --border: oklch(0.929 0.013 255.508);             /* #e2e8f0 slate-200 */\n  --input: oklch(0.929 0.013 255.508);              /* #e2e8f0 */\n  --ring: oklch(0.511 0.262 276.966);               /* brand focus ring */\n\n  /* Hero gradient surface (on-gradient text) */\n  --gradient-from: oklch(0.511 0.262 276.966);      /* #4f46e5 indigo-600 */\n  --gradient-to: oklch(0.541 0.281 293.009);        /* #7c3aed violet-600 */\n  --gradient-hero: linear-gradient(135deg, var(--gradient-from) 0%, var(--gradient-to) 100%);\n  --on-gradient: oklch(1 0 0);                       /* #ffffff */\n  --on-gradient-muted: oklch(0.943 0.029 294.588);   /* #ede9fe violet-100 */\n\n  /* Shadows (slate-900 / ink tint) */\n  --shadow-xs: 0 1px 2px oklch(0.208 0.042 265.755 / 0.08);  /* buttons */\n  --shadow-sm: 0 1px 2px oklch(0.208 0.042 265.755 / 0.08);\n  --shadow-md: 0 4px 12px oklch(0.208 0.042 265.755 / 0.06); /* cards */\n  --shadow-lg: 0 8px 24px oklch(0.208 0.042 265.755 / 0.08);\n\n  /* Charts (brand-derived palette) */\n  --chart-1: oklch(0.511 0.262 276.966);            /* indigo-600 */\n  --chart-2: oklch(0.541 0.281 293.009);            /* violet-600 */\n  --chart-3: oklch(0.673 0.182 276.935);            /* indigo-400 */\n  --chart-4: oklch(0.554 0.046 257.417);            /* slate-500 */\n  --chart-5: oklch(0.577 0.245 27.325);             /* red-600 */\n\n  /* Sidebar */\n  --sidebar: oklch(0.984 0.003 247.858);\n  --sidebar-foreground: oklch(0.208 0.042 265.755);\n  --sidebar-primary: oklch(0.511 0.262 276.966);\n  --sidebar-primary-foreground: oklch(1 0 0);\n  --sidebar-accent: oklch(0.929 0.013 255.508);\n  --sidebar-accent-foreground: oklch(0.208 0.042 265.755);\n  --sidebar-border: oklch(0.929 0.013 255.508);\n  --sidebar-ring: oklch(0.511 0.262 276.966);\n}\n\n.dark {\n  --background: oklch(0.208 0.042 265.755);          /* slate-900 */\n  --foreground: oklch(0.984 0.003 247.858);          /* slate-50 */\n  --card: oklch(0.279 0.041 260.031);                /* slate-800 */\n  --card-foreground: oklch(0.984 0.003 247.858);\n  --popover: oklch(0.279 0.041 260.031);\n  --popover-foreground: oklch(0.984 0.003 247.858);\n\n  --primary: oklch(0.673 0.182 276.935);             /* indigo-400 */\n  --primary-foreground: oklch(0.208 0.042 265.755);\n  --primary-press: oklch(0.585 0.233 277.117);       /* indigo-500 */\n\n  --secondary: oklch(0.279 0.041 260.031);\n  --secondary-foreground: oklch(0.984 0.003 247.858);\n  --muted: oklch(0.279 0.041 260.031);\n  --muted-foreground: oklch(0.704 0.04 256.788);     /* slate-400 */\n  --accent: oklch(0.279 0.041 260.031);\n  --accent-foreground: oklch(0.673 0.182 276.935);\n\n  --destructive: oklch(0.704 0.191 22.216);\n\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.673 0.182 276.935);\n\n  --gradient-from: oklch(0.511 0.262 276.966);\n  --gradient-to: oklch(0.541 0.281 293.009);\n  --gradient-hero: linear-gradient(135deg, var(--gradient-from) 0%, var(--gradient-to) 100%);\n  --on-gradient: oklch(1 0 0);\n  --on-gradient-muted: oklch(0.943 0.029 294.588);\n\n  --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.3);\n  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.3);\n  --shadow-md: 0 4px 12px oklch(0 0 0 / 0.35);\n  --shadow-lg: 0 8px 24px oklch(0 0 0 / 0.4);\n\n  --chart-1: oklch(0.673 0.182 276.935);\n  --chart-2: oklch(0.606 0.25 292.717);\n  --chart-3: oklch(0.511 0.262 276.966);\n  --chart-4: oklch(0.704 0.04 256.788);\n  --chart-5: oklch(0.704 0.191 22.216);\n\n  --sidebar: oklch(0.279 0.041 260.031);\n  --sidebar-foreground: oklch(0.984 0.003 247.858);\n  --sidebar-primary: oklch(0.673 0.182 276.935);\n  --sidebar-primary-foreground: oklch(0.208 0.042 265.755);\n  --sidebar-accent: oklch(0.279 0.041 260.031);\n  --sidebar-accent-foreground: oklch(0.984 0.003 247.858);\n  --sidebar-border: oklch(1 0 0 / 10%);\n  --sidebar-ring: oklch(0.673 0.182 276.935);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-primary-press: var(--primary-press);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --color-on-gradient: var(--on-gradient);\n  --color-on-gradient-muted: var(--on-gradient-muted);\n\n  --color-chart-1: var(--chart-1);\n  --color-chart-2: var(--chart-2);\n  --color-chart-3: var(--chart-3);\n  --color-chart-4: var(--chart-4);\n  --color-chart-5: var(--chart-5);\n\n  --color-sidebar: var(--sidebar);\n  --color-sidebar-foreground: var(--sidebar-foreground);\n  --color-sidebar-primary: var(--sidebar-primary);\n  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);\n  --color-sidebar-accent: var(--sidebar-accent);\n  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);\n  --color-sidebar-border: var(--sidebar-border);\n  --color-sidebar-ring: var(--sidebar-ring);\n\n  --background-image-gradient-hero: var(--gradient-hero);\n\n  --shadow-xs: var(--shadow-xs);\n  --shadow-sm: var(--shadow-sm);\n  --shadow-md: var(--shadow-md);\n  --shadow-lg: var(--shadow-lg);\n\n  --font-sans: var(--font-sans);\n  --font-display: var(--font-display);\n  --font-mono: var(--font-mono);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n  h1, h2, h3 { font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif; line-height: 1.1; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Inter, Poppins, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst inter = Inter({\n  subsets: [\"latin\"],\n  weight: [\"400\", \"500\", \"600\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst poppins = Poppins({\n  subsets: [\"latin\"],\n  weight: [\"600\", \"700\"],\n  variable: \"--font-display\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Ship faster\",\n  description: \"The all-in-one platform for modern product teams.\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html\n      lang=\"en\"\n      className={`${inter.variable} ${poppins.variable} ${geistMono.variable}`}\n      suppressHydrationWarning\n    >\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "export default function Home() {\n  return (\n    <main className=\"flex min-h-screen items-center justify-center\">\n      <p className=\"text-muted-foreground\">Replace me.</p>\n    </main>\n  );\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}], "grading": {"expectations": [{"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)", "passed": true, "evidence": "--primary: oklch(0.511 0.262 276.966) \u2014 indigo-600."}, {"text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks", "passed": true, "evidence": "All values oklch(); hex appears only in trailing comments, never as a value."}, {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts", "passed": true, "evidence": "layout.tsx is byte-identical to with_skill: Inter + Poppins via next/font/google."}, {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display", "passed": true, "evidence": "@theme inline has --font-display: var(--font-display); also adds h1-h3 font-family rule."}, {"text": "The .dark block is still present and re-valued (theme remains dual-mode)", "passed": true, "evidence": ".dark block present and re-valued."}, {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced", "passed": true, "evidence": "No <link> or @import url(); next/font only."}, {"text": "--radius, a shadow token, and a gradient token reflect the design's values", "passed": true, "evidence": "--radius set, --shadow-xs..lg, --gradient-hero defined; even richer (charts/sidebar tokens too)."}], "summary": {"passed": 7, "failed": 0, "total": 7, "pass_rate": 1.0}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-1-dedup-reuse-header-with_skill", "prompt": "Build _docs/designs/pricing.html into Next.js components and assemble the page.", "eval_id": 1, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme derived from `_docs/designs/pricing.html`. Palette in **oklch** (`globals.css`):\n`primary` = indigo `#4f46e5`, neutrals = slate scale (`foreground` slate-900, `muted-foreground`\nslate-500, `border` slate-200), `accent` = indigo-50. Light mode is from the design; dark mode is\n**derived** (neutrals flipped, brand hue/chroma kept with lightness nudged up). Custom tokens:\n`--shadow-card`, `--shadow-card-featured`. Fonts via `next/font` in `layout.tsx` \u00e2\u20ac\u201d **Inter** backs\nboth `--font-sans` (body) and `--font-display` (headings/brand); `Geist_Mono` backs `--font-mono`.\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Feature components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| PricingCard | features/pricing/components/pricing-card.tsx | composes ui/button | single pricing plan card; `featured` cva variant (border/shadow emphasis) |\n| PricingSection | features/pricing/components/pricing-section.tsx | composes Container + PricingCard | pricing heading + responsive 3-up plan grid |\n| PricingTemplate | features/pricing/template/pricing-template.tsx | composes shared/Header + PricingSection | assembles the `/pricing` screen |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: applied from `_docs/designs/pricing.html` \u00e2\u20ac\u201d indigo `#4f46e5` primary + slate\n  neutrals (oklch), Inter font (sans + display). Dark mode derived. Added `--shadow-card` /\n  `--shadow-card-featured` tokens. (was stock shadcn defaults.)\n- `pricing.html`: **reused** shared `Header` (passed nav links) and `Logo` \u00e2\u20ac\u201d no new header built.\n  `Container` was registered but unimplemented; implemented it at the registered path.\n- Pricing plan cards are domain-specific \u00e2\u2020\u2019 `features/pricing/` (PricingCard + PricingSection +\n  template + `data.ts`). PricingCard renders one plan from typed props; the section `.map()`s the\n  3 plans over it rather than emitting three inline blocks.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem;\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2077 0.0398 265.75);\n  --card: oklch(1 0 0);\n  --card-foreground: oklch(0.2077 0.0398 265.75);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.2077 0.0398 265.75);\n  --primary: oklch(0.5106 0.2301 276.97);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.9683 0.0069 247.9);\n  --secondary-foreground: oklch(0.2077 0.0398 265.75);\n  --muted: oklch(0.9683 0.0069 247.9);\n  --muted-foreground: oklch(0.5544 0.0407 257.42);\n  --accent: oklch(0.9619 0.0179 272.31);\n  --accent-foreground: oklch(0.5106 0.2301 276.97);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.9288 0.0126 255.51);\n  --input: oklch(0.9288 0.0126 255.51);\n  --ring: oklch(0.5106 0.2301 276.97);\n\n  /* shadows from the design (box-shadow \u00e2\u2020\u2019 oklch black/brand at low alpha) */\n  --shadow-card: 0 4px 12px 0 oklch(0.2077 0.0398 265.75 / 0.06);\n  --shadow-card-featured: 0 8px 24px 0 oklch(0.5106 0.2301 276.97 / 0.15);\n}\n\n.dark {\n  --background: oklch(0.2077 0.0398 265.75);\n  --foreground: oklch(0.985 0 0);\n  --card: oklch(0.2708 0.0353 266.1);\n  --card-foreground: oklch(0.985 0 0);\n  --popover: oklch(0.2708 0.0353 266.1);\n  --popover-foreground: oklch(0.985 0 0);\n  --primary: oklch(0.6231 0.214 277);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.2708 0.0353 266.1);\n  --secondary-foreground: oklch(0.985 0 0);\n  --muted: oklch(0.2708 0.0353 266.1);\n  --muted-foreground: oklch(0.708 0.04 257.42);\n  --accent: oklch(0.32 0.06 277);\n  --accent-foreground: oklch(0.985 0 0);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.6231 0.214 277);\n\n  --shadow-card: 0 4px 12px 0 oklch(0 0 0 / 0.3);\n  --shadow-card-featured: 0 8px 24px 0 oklch(0.5106 0.2301 276.97 / 0.35);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --font-sans: var(--font-sans);\n  --font-mono: var(--font-mono);\n  --font-display: var(--font-display);\n\n  --shadow-card: var(--shadow-card);\n  --shadow-card-featured: var(--shadow-card-featured);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Inter, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\n// Body + brand/headings \u00e2\u20ac\u201d the design uses Inter throughout.\nconst inter = Inter({\n  subsets: [\"latin\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\n// Inter is a variable font, so it also backs the display role.\nconst interDisplay = Inter({\n  subsets: [\"latin\"],\n  variable: \"--font-display\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"App\",\n  description: \"Scaffold\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html\n      lang=\"en\"\n      className={`${inter.variable} ${interDisplay.variable} ${geistMono.variable}`}\n      suppressHydrationWarning\n    >\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "export default function Home() {\n  return (\n    <main className=\"flex min-h-screen items-center justify-center\">\n      <p className=\"text-muted-foreground\">Replace me.</p>\n    </main>\n  );\n}\n"}, {"name": "src~app~pricing~page.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { PricingTemplate } from \"@/features/pricing/template/pricing-template\";\n\nexport const metadata: Metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Pricing\",\n  description: \"Simple, transparent pricing.\",\n};\n\nexport default function PricingPage() {\n  return <PricingTemplate />;\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~container.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {}\n\n/** Max-width page container \u00e2\u20ac\u201d centers content and applies horizontal gutters. */\nexport function Container({ className, ...props }: ContainerProps) {\n  return (\n    <div\n      className={cn(\"mx-auto w-full max-w-[1120px] px-6\", className)}\n      {...props}\n    />\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~features~pricing~components~pricing-card.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { cn } from \"@/lib/utils\";\n\nconst cardVariants = cva(\n  \"flex flex-col rounded-xl border bg-card p-8 text-left\",\n  {\n    variants: {\n      featured: {\n        true: \"border-primary shadow-card-featured\",\n        false: \"border-border shadow-card\",\n      },\n    },\n    defaultVariants: { featured: false },\n  }\n);\n\nexport interface PricingPlan {\n  name: string;\n  /** Headline price, e.g. \"$29\" or \"Custom\". */\n  price: string;\n  /** Optional billing period suffix, e.g. \"/mo\". */\n  period?: string;\n  features: string[];\n  cta: { label: string; href: string };\n  featured?: boolean;\n}\n\nexport interface PricingCardProps\n  extends Omit<React.HTMLAttributes<HTMLDivElement>, \"children\">,\n    VariantProps<typeof cardVariants>,\n    PricingPlan {}\n\nexport function PricingCard({\n  name,\n  price,\n  period,\n  features,\n  cta,\n  featured = false,\n  className,\n  ...props\n}: PricingCardProps) {\n  return (\n    <article className={cn(cardVariants({ featured }), className)} {...props}>\n      <h3 className=\"text-lg font-semibold\">{name}</h3>\n      <p className=\"my-3 text-[2.5rem] font-bold leading-none\">\n        {price}\n        {period && (\n          <span className=\"text-sm font-normal text-muted-foreground\">\n            {period}\n          </span>\n        )}\n      </p>\n      <ul className=\"mb-6 space-y-1.5\">\n        {features.map((feature) => (\n          <li key={feature} className=\"py-1 text-[0.9375rem] text-muted-foreground\">\n            {feature}\n          </li>\n        ))}\n      </ul>\n      <Button asChild size=\"lg\" className=\"mt-auto w-full\">\n        <a href={cta.href}>{cta.label}</a>\n      </Button>\n    </article>\n  );\n}\n"}, {"name": "src~features~pricing~components~pricing-section.tsx", "type": "text", "content": "import { Container } from \"@/components/shared/layout\";\nimport { PricingCard, type PricingPlan } from \"./pricing-card\";\n\nexport interface PricingSectionProps {\n  plans: PricingPlan[];\n  heading?: string;\n}\n\nexport function PricingSection({\n  plans,\n  heading = \"Simple, transparent pricing\",\n}: PricingSectionProps) {\n  return (\n    <section className=\"py-20 text-center\">\n      <Container>\n        <h1 className=\"font-display text-3xl font-bold md:text-4xl\">{heading}</h1>\n        <div className=\"mt-12 grid gap-6 md:grid-cols-3\">\n          {plans.map((plan) => (\n            <PricingCard key={plan.name} {...plan} />\n          ))}\n        </div>\n      </Container>\n    </section>\n  );\n}\n"}, {"name": "src~features~pricing~data.ts", "type": "text", "content": "import type { PricingPlan } from \"./components/pricing-card\";\n\nexport const pricingPlans: PricingPlan[] = [\n  {\n    name: \"Starter\",\n    price: \"$0\",\n    period: \"/mo\",\n    features: [\"1 project\", \"Community support\", \"1 GB storage\"],\n    cta: { label: \"Start free\", href: \"/signup\" },\n  },\n  {\n    name: \"Pro\",\n    price: \"$29\",\n    period: \"/mo\",\n    features: [\"Unlimited projects\", \"Priority support\", \"100 GB storage\"],\n    cta: { label: \"Start Pro\", href: \"/signup\" },\n    featured: true,\n  },\n  {\n    name: \"Enterprise\",\n    price: \"Custom\",\n    features: [\"SSO & SAML\", \"Dedicated support\", \"Unlimited storage\"],\n    cta: { label: \"Contact sales\", href: \"/contact\" },\n  },\n];\n"}, {"name": "src~features~pricing~template~pricing-template.tsx", "type": "text", "content": "import { Header } from \"@/components/shared/layout\";\nimport { PricingSection } from \"../components/pricing-section\";\nimport { pricingPlans } from \"../data\";\n\nconst navLinks = [\n  { label: \"Features\", href: \"#features\" },\n  { label: \"Pricing\", href: \"#pricing\" },\n  { label: \"Get started\", href: \"/signup\" },\n];\n\nexport function PricingTemplate() {\n  return (\n    <main className=\"min-h-screen\">\n      <Header links={navLinks} />\n      <PricingSection plans={pricingPlans} />\n    </main>\n  );\n}\n"}], "grading": {"expectations": [{"text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused", "passed": true, "evidence": "Only the original header.tsx exists; no new header file."}, {"text": "The existing Header is imported and used in the page/template", "passed": true, "evidence": "pricing-template.tsx imports Header from @/components/shared/layout and renders it."}, {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies", "passed": true, "evidence": "Single PricingCard; PricingSection maps pricingPlans data into a grid."}, {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)", "passed": false, "evidence": "Placed in features/pricing/components/pricing-card.tsx \u2014 feature folder, not shared/data-display. (Defensible as pricing-domain, but not what the assertion asked.)"}, {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px", "passed": true, "evidence": "Uses bg-card, border-border/border-primary, text-muted-foreground, shadow-card; 0 raw hex."}, {"text": "MODULE_REGISTRY.md gets a new row for PricingCard", "passed": true, "evidence": "Registry has a PricingCard row (under Feature components)."}, {"text": "page.tsx (or a template) composes Header + pricing section and stays thin", "passed": true, "evidence": "app/pricing/page.tsx just renders <PricingTemplate/>; template composes Header + PricingSection."}], "summary": {"passed": 6, "failed": 1, "total": 7, "pass_rate": 0.8571}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-1-dedup-reuse-header-without_skill", "prompt": "Build _docs/designs/pricing.html into Next.js components and assemble the page.", "eval_id": 1, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme set up from design files in `_docs/designs/`. (Update this note once a theme is applied.)\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Feature components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| PricingCard | features/pricing/components/pricing-card.tsx | composes ui/button | single pricing plan card; `featured` variant |\n| PricingSection | features/pricing/components/pricing-section.tsx | composes Container + PricingCard | pricing heading + 3-plan grid |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: stock shadcn defaults, with `--primary` set to the design indigo (#4f46e5) and `--shadow-card` / `--shadow-card-featured` tokens added for pricing cards.\n- Pricing page (`/pricing`) reuses the shared `Header` (passing `links`) instead of a new navbar, and the new shared `Container`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem;\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.145 0 0);\n  --card: oklch(1 0 0);\n  --card-foreground: oklch(0.145 0 0);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.145 0 0);\n  --primary: oklch(0.511 0.214 277);\n  --primary-foreground: oklch(0.985 0 0);\n  --secondary: oklch(0.97 0 0);\n  --secondary-foreground: oklch(0.205 0 0);\n  --muted: oklch(0.97 0 0);\n  --muted-foreground: oklch(0.556 0 0);\n  --accent: oklch(0.97 0 0);\n  --accent-foreground: oklch(0.205 0 0);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.922 0 0);\n  --input: oklch(0.922 0 0);\n  --ring: oklch(0.708 0 0);\n}\n\n.dark {\n  --background: oklch(0.145 0 0);\n  --foreground: oklch(0.985 0 0);\n  --card: oklch(0.205 0 0);\n  --card-foreground: oklch(0.985 0 0);\n  --popover: oklch(0.205 0 0);\n  --popover-foreground: oklch(0.985 0 0);\n  --primary: oklch(0.985 0 0);\n  --primary-foreground: oklch(0.205 0 0);\n  --secondary: oklch(0.269 0 0);\n  --secondary-foreground: oklch(0.985 0 0);\n  --muted: oklch(0.269 0 0);\n  --muted-foreground: oklch(0.708 0 0);\n  --accent: oklch(0.269 0 0);\n  --accent-foreground: oklch(0.985 0 0);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.556 0 0);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --font-sans: var(--font-sans);\n  --font-mono: var(--font-mono);\n\n  --shadow-card: 0 4px 12px rgba(15, 23, 42, 0.06);\n  --shadow-card-featured: 0 8px 24px rgba(79, 70, 229, 0.15);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Geist, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst geistSans = Geist({\n  subsets: [\"latin\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"App\",\n  description: \"Scaffold\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html lang=\"en\" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "export default function Home() {\n  return (\n    <main className=\"flex min-h-screen items-center justify-center\">\n      <p className=\"text-muted-foreground\">Replace me.</p>\n    </main>\n  );\n}\n"}, {"name": "src~app~pricing~page.tsx", "type": "text", "content": "import { Header } from \"@/components/shared/layout\";\nimport { PricingSection } from \"@/features/pricing/components\";\n\nconst navLinks = [\n  { label: \"Features\", href: \"#features\" },\n  { label: \"Pricing\", href: \"#pricing\" },\n  { label: \"Get started\", href: \"/signup\" },\n];\n\nexport const metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Pricing\",\n  description: \"Simple, transparent pricing.\",\n};\n\nexport default function PricingPage() {\n  return (\n    <main className=\"min-h-screen\">\n      <Header links={navLinks} />\n      <PricingSection />\n    </main>\n  );\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~container.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport type ContainerProps = React.HTMLAttributes<HTMLDivElement>;\n\n/** Max-width page container \u00e2\u20ac\u201d centers content and applies horizontal padding. */\nexport function Container({ className, ...props }: ContainerProps) {\n  return (\n    <div\n      className={cn(\"mx-auto w-full max-w-[1120px] px-6\", className)}\n      {...props}\n    />\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~features~pricing~components~pricing-card.tsx", "type": "text", "content": "import { cva } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { cn } from \"@/lib/utils\";\n\nconst pricingCardVariants = cva(\n  \"rounded-xl border p-8 text-left\",\n  {\n    variants: {\n      featured: {\n        true: \"border-primary shadow-card-featured\",\n        false: \"border-border shadow-card\",\n      },\n    },\n    defaultVariants: { featured: false },\n  }\n);\n\nexport interface PricingPlan {\n  name: string;\n  price: string;\n  /** e.g. \"/mo\" \u00e2\u20ac\u201d omitted for custom pricing. */\n  period?: string;\n  features: string[];\n  ctaLabel: string;\n  ctaHref: string;\n  featured?: boolean;\n}\n\nexport type PricingCardProps = PricingPlan;\n\nexport function PricingCard({\n  name,\n  price,\n  period,\n  features,\n  ctaLabel,\n  ctaHref,\n  featured,\n}: PricingCardProps) {\n  return (\n    <div className={cn(pricingCardVariants({ featured }))}>\n      <div className=\"text-lg font-semibold\">{name}</div>\n      <div className=\"my-3 text-4xl font-bold leading-none\">\n        {price}\n        {period && (\n          <span className=\"text-sm font-normal text-muted-foreground\">{period}</span>\n        )}\n      </div>\n      <ul className=\"my-4 space-y-1.5\">\n        {features.map((feature) => (\n          <li key={feature} className=\"text-[15px] text-muted-foreground\">\n            {feature}\n          </li>\n        ))}\n      </ul>\n      <Button asChild className=\"w-full\">\n        <a href={ctaHref}>{ctaLabel}</a>\n      </Button>\n    </div>\n  );\n}\n"}, {"name": "src~features~pricing~components~pricing-section.tsx", "type": "text", "content": "import { Container } from \"@/components/shared/layout\";\nimport { PricingCard, type PricingPlan } from \"./pricing-card\";\n\nconst plans: PricingPlan[] = [\n  {\n    name: \"Starter\",\n    price: \"$0\",\n    period: \"/mo\",\n    features: [\"1 project\", \"Community support\", \"1 GB storage\"],\n    ctaLabel: \"Start free\",\n    ctaHref: \"/signup\",\n  },\n  {\n    name: \"Pro\",\n    price: \"$29\",\n    period: \"/mo\",\n    features: [\"Unlimited projects\", \"Priority support\", \"100 GB storage\"],\n    ctaLabel: \"Start Pro\",\n    ctaHref: \"/signup\",\n    featured: true,\n  },\n  {\n    name: \"Enterprise\",\n    price: \"Custom\",\n    features: [\"SSO & SAML\", \"Dedicated support\", \"Unlimited storage\"],\n    ctaLabel: \"Contact sales\",\n    ctaHref: \"/contact\",\n  },\n];\n\nexport function PricingSection() {\n  return (\n    <section className=\"py-20 text-center\">\n      <Container>\n        <h1 className=\"text-4xl font-bold\">Simple, transparent pricing</h1>\n        <div className=\"mt-12 grid grid-cols-1 gap-6 md:grid-cols-3\">\n          {plans.map((plan) => (\n            <PricingCard key={plan.name} {...plan} />\n          ))}\n        </div>\n      </Container>\n    </section>\n  );\n}\n"}], "grading": {"expectations": [{"text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused", "passed": true, "evidence": "Only original header.tsx; no duplicate."}, {"text": "The existing Header is imported and used in the page/template", "passed": true, "evidence": "app/pricing/page.tsx imports and renders Header."}, {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies", "passed": true, "evidence": "Single PricingCard + PricingSection mapping plans."}, {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)", "passed": false, "evidence": "Placed in features/pricing/components/pricing-card.tsx."}, {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px", "passed": true, "evidence": "Tokens used; 0 raw hex in pricing-card.tsx."}, {"text": "MODULE_REGISTRY.md gets a new row for PricingCard", "passed": true, "evidence": "Registry has PricingCard + PricingSection rows."}, {"text": "page.tsx (or a template) composes Header + pricing section and stays thin", "passed": true, "evidence": "app/pricing/page.tsx composes Header + PricingSection thinly (no template layer)."}], "summary": {"passed": 6, "failed": 1, "total": 7, "pass_rate": 0.8571}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-2-hero-snippet-with_skill", "prompt": "Turn the pasted hero HTML section into a reusable component (see prompt for the markup).", "eval_id": 2, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme set up from design files in `_docs/designs/`. (Update this note once a theme is applied.)\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: stock shadcn defaults so far \u00e2\u20ac\u201d to be set from `_docs/designs/`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem;\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.145 0 0);\n  --card: oklch(1 0 0);\n  --card-foreground: oklch(0.145 0 0);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.145 0 0);\n  --primary: oklch(0.6231 0.188 259.81);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.97 0 0);\n  --secondary-foreground: oklch(0.205 0 0);\n  --muted: oklch(0.97 0 0);\n  --muted-foreground: oklch(0.556 0 0);\n  --accent: oklch(0.97 0 0);\n  --accent-foreground: oklch(0.205 0 0);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.922 0 0);\n  --input: oklch(0.922 0 0);\n  --ring: oklch(0.6231 0.188 259.81);\n\n  /* brand gradient (hero) \u00e2\u20ac\u201d from the design's blue\u00e2\u2020\u2019purple linear-gradient */\n  --gradient-brand: linear-gradient(135deg, oklch(0.6231 0.188 259.81), oklch(0.5575 0.2525 302.32));\n}\n\n.dark {\n  --background: oklch(0.145 0 0);\n  --foreground: oklch(0.985 0 0);\n  --card: oklch(0.205 0 0);\n  --card-foreground: oklch(0.985 0 0);\n  --popover: oklch(0.205 0 0);\n  --popover-foreground: oklch(0.985 0 0);\n  --primary: oklch(0.6231 0.188 259.81);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.269 0 0);\n  --secondary-foreground: oklch(0.985 0 0);\n  --muted: oklch(0.269 0 0);\n  --muted-foreground: oklch(0.708 0 0);\n  --accent: oklch(0.269 0 0);\n  --accent-foreground: oklch(0.985 0 0);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.6231 0.188 259.81);\n\n  --gradient-brand: linear-gradient(135deg, oklch(0.6231 0.188 259.81), oklch(0.5575 0.2525 302.32));\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --font-sans: var(--font-sans);\n  --font-mono: var(--font-mono);\n  --font-display: var(--font-display);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Geist, Geist_Mono, Poppins } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst geistSans = Geist({\n  subsets: [\"latin\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nconst poppins = Poppins({\n  subsets: [\"latin\"],\n  weight: [\"600\", \"700\"],\n  variable: \"--font-display\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"App\",\n  description: \"Scaffold\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html lang=\"en\" className={`${geistSans.variable} ${geistMono.variable} ${poppins.variable}`} suppressHydrationWarning>\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "import { Hero } from \"@/components/shared/marketing\";\n\nexport default function Home() {\n  return (\n    <main>\n      <Hero\n        title=\"Ship faster with Acme\"\n        subtitle=\"The all-in-one platform for modern teams.\"\n        action={{ label: \"Get started\", href: \"/signup\" }}\n      />\n    </main>\n  );\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~components~shared~marketing~hero.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { cn } from \"@/lib/utils\";\n\nconst heroVariants = cva(\n  \"w-full bg-[image:var(--gradient-brand)] text-white\",\n  {\n    variants: {\n      size: {\n        md: \"px-6 py-20 md:py-24\",\n        sm: \"px-6 py-12 md:py-16\",\n      },\n    },\n    defaultVariants: { size: \"md\" },\n  }\n);\n\nexport interface HeroAction {\n  label: string;\n  href: string;\n}\n\nexport interface HeroProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof heroVariants> {\n  title: string;\n  subtitle?: string;\n  action?: HeroAction;\n}\n\nexport function Hero({\n  size,\n  title,\n  subtitle,\n  action,\n  className,\n  ...props\n}: HeroProps) {\n  return (\n    <section className={cn(heroVariants({ size }), className)} {...props}>\n      <div className=\"mx-auto flex max-w-5xl flex-col items-center text-center\">\n        <h1 className=\"font-display text-4xl font-bold leading-[1.05] tracking-tight md:text-5xl lg:text-6xl\">\n          {title}\n        </h1>\n        {subtitle ? (\n          <p className=\"mt-4 max-w-2xl text-lg text-white/80\">{subtitle}</p>\n        ) : null}\n        {action ? (\n          <Button\n            asChild\n            size=\"lg\"\n            className=\"mt-8 rounded-xl bg-white px-7 font-semibold text-primary hover:bg-white/90\"\n          >\n            <a href={action.href}>{action.label}</a>\n          </Button>\n        ) : null}\n      </div>\n    </section>\n  );\n}\n"}], "grading": {"expectations": [{"text": "A Hero component is created under components/shared/ (marketing/ or layout/)", "passed": true, "evidence": "components/shared/marketing/hero.tsx created."}, {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup", "passed": true, "evidence": "<section> wrapper; CTA is <Button asChild><a>\u2026</a></Button>."}, {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used", "passed": true, "evidence": "Uses max-w-5xl and text-4xl md:text-5xl lg:text-6xl \u2014 responsive, no hardcoded px."}, {"text": "The gradient is a theme token/utility, not an inline style with raw hex", "passed": true, "evidence": "bg-[image:var(--gradient-brand)] \u2014 references the theme gradient token, no inline hex."}, {"text": "A typed props interface (heading/subheading/CTA) is defined", "passed": true, "evidence": "HeroProps with title/subtitle/action (HeroAction)."}, {"text": "Hero is registered in MODULE_REGISTRY.md", "passed": false, "evidence": "No Hero row in MODULE_REGISTRY.md \u2014 the skill's own registration step was skipped here."}], "summary": {"passed": 5, "failed": 1, "total": 6, "pass_rate": 0.8333}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-2-hero-snippet-without_skill", "prompt": "Turn the pasted hero HTML section into a reusable component (see prompt for the markup).", "eval_id": 2, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme set up from design files in `_docs/designs/`. (Update this note once a theme is applied.)\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Hero | components/shared/marketing/hero.tsx | composes ui/button | marketing hero section; gradient bg, title/subtitle/CTA props |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: stock shadcn defaults so far \u00e2\u20ac\u201d to be set from `_docs/designs/`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n:root {\n  --radius: 0.625rem;\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.145 0 0);\n  --card: oklch(1 0 0);\n  --card-foreground: oklch(0.145 0 0);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.145 0 0);\n  --primary: oklch(0.205 0 0);\n  --primary-foreground: oklch(0.985 0 0);\n  --secondary: oklch(0.97 0 0);\n  --secondary-foreground: oklch(0.205 0 0);\n  --muted: oklch(0.97 0 0);\n  --muted-foreground: oklch(0.556 0 0);\n  --accent: oklch(0.97 0 0);\n  --accent-foreground: oklch(0.205 0 0);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.922 0 0);\n  --input: oklch(0.922 0 0);\n  --ring: oklch(0.708 0 0);\n}\n\n.dark {\n  --background: oklch(0.145 0 0);\n  --foreground: oklch(0.985 0 0);\n  --card: oklch(0.205 0 0);\n  --card-foreground: oklch(0.985 0 0);\n  --popover: oklch(0.205 0 0);\n  --popover-foreground: oklch(0.985 0 0);\n  --primary: oklch(0.985 0 0);\n  --primary-foreground: oklch(0.205 0 0);\n  --secondary: oklch(0.269 0 0);\n  --secondary-foreground: oklch(0.985 0 0);\n  --muted: oklch(0.269 0 0);\n  --muted-foreground: oklch(0.708 0 0);\n  --accent: oklch(0.269 0 0);\n  --accent-foreground: oklch(0.985 0 0);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(1 0 0 / 10%);\n  --input: oklch(1 0 0 / 15%);\n  --ring: oklch(0.556 0 0);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n\n  --font-sans: var(--font-sans);\n  --font-mono: var(--font-mono);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Geist, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst geistSans = Geist({\n  subsets: [\"latin\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"App\",\n  description: \"Scaffold\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html lang=\"en\" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "import { Hero } from \"@/components/shared/marketing\";\n\nexport default function Home() {\n  return (\n    <main>\n      <Hero\n        title=\"Ship faster with Acme\"\n        subtitle=\"The all-in-one platform for modern teams.\"\n        ctaLabel=\"Get started\"\n        ctaHref=\"/signup\"\n      />\n    </main>\n  );\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~components~shared~marketing~hero.tsx", "type": "text", "content": "import { Button } from \"@/components/ui/button\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface HeroProps extends React.HTMLAttributes<HTMLElement> {\n  title: string;\n  subtitle?: string;\n  ctaLabel?: string;\n  ctaHref?: string;\n}\n\nexport function Hero({\n  title,\n  subtitle,\n  ctaLabel,\n  ctaHref = \"#\",\n  className,\n  ...props\n}: HeroProps) {\n  return (\n    <section\n      className={cn(\n        \"bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-24\",\n        className\n      )}\n      {...props}\n    >\n      <div className=\"mx-auto max-w-[1100px] text-center\">\n        <h1 className=\"font-display text-[56px] font-semibold leading-[1.05] text-white\">\n          {title}\n        </h1>\n        {subtitle ? (\n          <p className=\"mt-4 text-lg text-gray-200\">{subtitle}</p>\n        ) : null}\n        {ctaLabel ? (\n          <Button\n            asChild\n            className=\"mt-8 h-auto rounded-xl bg-white px-7 py-3.5 font-semibold text-blue-500 hover:bg-white/90\"\n          >\n            <a href={ctaHref}>{ctaLabel}</a>\n          </Button>\n        ) : null}\n      </div>\n    </section>\n  );\n}\n"}], "grading": {"expectations": [{"text": "A Hero component is created under components/shared/ (marketing/ or layout/)", "passed": true, "evidence": "components/shared/marketing/hero.tsx created."}, {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup", "passed": true, "evidence": "<section> + <Button asChild><a>."}, {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used", "passed": false, "evidence": "Hardcodes text-[56px] and max-w-[1100px] \u2014 pinned to desktop px, not responsive."}, {"text": "The gradient is a theme token/utility, not an inline style with raw hex", "passed": false, "evidence": "Uses from-blue-500 to-purple-600 (default Tailwind palette), not the brand gradient token."}, {"text": "A typed props interface (heading/subheading/CTA) is defined", "passed": true, "evidence": "HeroProps with title/subtitle/ctaLabel/ctaHref."}, {"text": "Hero is registered in MODULE_REGISTRY.md", "passed": true, "evidence": "Registry has a Hero row at components/shared/marketing/hero.tsx."}], "summary": {"passed": 4, "failed": 2, "total": 6, "pass_rate": 0.6667}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-3-dark-mode-with_skill", "prompt": "Set up the theme from _docs/designs/dashboard-dark.html and build the dashboard (sidebar + stat cards) into components. This design has a dark mode \u00e2\u20ac\u201d make sure both light and dark work.", "eval_id": 3, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme applied from `_docs/designs/dashboard-dark.html`. Font: **Inter** via `next/font/google` (bound to `--font-sans`); `Geist_Mono` kept for `--font-mono`. Palette: indigo brand (`primary`), slate neutrals, in **oklch** across `:root` (light) and `.dark` (dark) \u00e2\u20ac\u201d both captured from the design's own dual-mode palette (it ships a `prefers-color-scheme: dark` variant). `--radius` = 0.75rem (12px). Custom tokens: `--positive` (up-delta green) and the full `--sidebar-*` role set, exposed as `text-positive`, `bg-sidebar`, etc. via `@theme inline`.\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Sidebar | components/shared/layout/sidebar.tsx | `next/link` + sidebar-* tokens | vertical nav rail; `items` prop with active state |\n| StatCard | components/shared/data-display/stat-card.tsx | card/border tokens + cva | metric card (label/value/delta); `trend` up/down for delta color |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Decisions log\n- Theme/fonts: applied from `_docs/designs/dashboard-dark.html` \u00e2\u20ac\u201d Inter (next/font/google), indigo brand primary, slate neutrals, `--radius` 0.75rem, all colors oklch. Light (`:root`) + dark (`.dark`) both from the design's own dual-mode palette. Added custom `--positive` (delta) and full `--sidebar-*` role set.\n- Dashboard (sidebar + stat cards) built from the same design: `Sidebar` + `StatCard` shared components composed in `features/dashboard/template/`.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n/* Theme source: _docs/designs/dashboard-dark.html (Inter, indigo brand, slate neutrals).\n   Colors in oklch. Light = :root, dark = .dark (design shipped both via prefers-color-scheme). */\n:root {\n  --radius: 0.75rem; /* design --radius: 12px */\n\n  --background: oklch(1 0 0);\n  --foreground: oklch(0.2077 0.0398 265.75);\n  --card: oklch(0.9842 0.0034 247.86);\n  --card-foreground: oklch(0.2077 0.0398 265.75);\n  --popover: oklch(0.9842 0.0034 247.86);\n  --popover-foreground: oklch(0.2077 0.0398 265.75);\n  --primary: oklch(0.5854 0.2041 277.12);\n  --primary-foreground: oklch(1 0 0);\n  --secondary: oklch(0.9842 0.0034 247.86);\n  --secondary-foreground: oklch(0.2077 0.0398 265.75);\n  --muted: oklch(0.9842 0.0034 247.86);\n  --muted-foreground: oklch(0.5544 0.0407 257.42);\n  --accent: oklch(0.9842 0.0034 247.86);\n  --accent-foreground: oklch(0.2077 0.0398 265.75);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.9288 0.0126 255.51);\n  --input: oklch(0.9288 0.0126 255.51);\n  --ring: oklch(0.5854 0.2041 277.12);\n\n  /* custom: positive/up delta (design --positive: #16a34a) */\n  --positive: oklch(0.6271 0.1699 149.21);\n\n  /* sidebar surface set (maps to the design's --surface / --brand) */\n  --sidebar: oklch(0.9842 0.0034 247.86);\n  --sidebar-foreground: oklch(0.5544 0.0407 257.42);\n  --sidebar-primary: oklch(0.5854 0.2041 277.12);\n  --sidebar-primary-foreground: oklch(1 0 0);\n  --sidebar-accent: oklch(0.9288 0.0126 255.51);\n  --sidebar-accent-foreground: oklch(0.2077 0.0398 265.75);\n  --sidebar-border: oklch(0.9288 0.0126 255.51);\n  --sidebar-ring: oklch(0.5854 0.2041 277.12);\n}\n\n.dark {\n  --background: oklch(0.1802 0.0325 266.62);\n  --foreground: oklch(0.9276 0.0058 264.53);\n  --card: oklch(0.2101 0.0318 264.66);\n  --card-foreground: oklch(0.9276 0.0058 264.53);\n  --popover: oklch(0.2101 0.0318 264.66);\n  --popover-foreground: oklch(0.9276 0.0058 264.53);\n  --primary: oklch(0.6801 0.1583 276.93);\n  --primary-foreground: oklch(0.1802 0.0325 266.62);\n  --secondary: oklch(0.2101 0.0318 264.66);\n  --secondary-foreground: oklch(0.9276 0.0058 264.53);\n  --muted: oklch(0.2101 0.0318 264.66);\n  --muted-foreground: oklch(0.7107 0.0351 256.79);\n  --accent: oklch(0.2101 0.0318 264.66);\n  --accent-foreground: oklch(0.9276 0.0058 264.53);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(0.2781 0.0296 256.85);\n  --input: oklch(0.2781 0.0296 256.85);\n  --ring: oklch(0.6801 0.1583 276.93);\n\n  --positive: oklch(0.8003 0.1821 151.71);\n\n  --sidebar: oklch(0.2101 0.0318 264.66);\n  --sidebar-foreground: oklch(0.7107 0.0351 256.79);\n  --sidebar-primary: oklch(0.6801 0.1583 276.93);\n  --sidebar-primary-foreground: oklch(0.1802 0.0325 266.62);\n  --sidebar-accent: oklch(0.2781 0.0296 256.85);\n  --sidebar-accent-foreground: oklch(0.9276 0.0058 264.53);\n  --sidebar-border: oklch(0.2781 0.0296 256.85);\n  --sidebar-ring: oklch(0.6801 0.1583 276.93);\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n  --color-positive: var(--positive);\n\n  --color-sidebar: var(--sidebar);\n  --color-sidebar-foreground: var(--sidebar-foreground);\n  --color-sidebar-primary: var(--sidebar-primary);\n  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);\n  --color-sidebar-accent: var(--sidebar-accent);\n  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);\n  --color-sidebar-border: var(--sidebar-border);\n  --color-sidebar-ring: var(--sidebar-ring);\n\n  --font-sans: var(--font-sans);\n  --font-mono: var(--font-mono);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Inter, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst inter = Inter({\n  subsets: [\"latin\"],\n  weight: [\"400\", \"500\", \"600\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Dashboard\",\n  description: \"Acme dashboard\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html lang=\"en\" className={`${inter.variable} ${geistMono.variable}`} suppressHydrationWarning>\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "import { DashboardTemplate } from \"@/features/dashboard/template\";\n\nexport default function Home() {\n  return <DashboardTemplate />;\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~data-display~stat-card.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nconst deltaVariants = cva(\"mt-1 text-sm\", {\n  variants: {\n    trend: {\n      up: \"text-positive\",\n      down: \"text-destructive\",\n    },\n  },\n  defaultVariants: { trend: \"up\" },\n});\n\nexport interface StatCardProps\n  extends React.HTMLAttributes<HTMLDivElement>,\n    VariantProps<typeof deltaVariants> {\n  label: string;\n  value: string;\n  delta?: string;\n}\n\nexport function StatCard({\n  label,\n  value,\n  delta,\n  trend,\n  className,\n  ...props\n}: StatCardProps) {\n  return (\n    <div\n      className={cn(\n        \"rounded-lg border border-border bg-card p-5 text-card-foreground\",\n        className\n      )}\n      {...props}\n    >\n      <p className=\"text-sm text-muted-foreground\">{label}</p>\n      <p className=\"mt-1.5 text-3xl font-semibold\">{value}</p>\n      {delta ? <p className={deltaVariants({ trend })}>{delta}</p> : null}\n    </div>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~components~shared~layout~sidebar.tsx", "type": "text", "content": "import Link from \"next/link\";\nimport { cn } from \"@/lib/utils\";\n\nexport interface SidebarNavItem {\n  label: string;\n  href: string;\n  active?: boolean;\n}\n\nexport interface SidebarProps extends React.HTMLAttributes<HTMLElement> {\n  items: SidebarNavItem[];\n}\n\nexport function Sidebar({ items, className, ...props }: SidebarProps) {\n  return (\n    <aside\n      className={cn(\n        \"flex flex-col border-r border-sidebar-border bg-sidebar px-4 py-6\",\n        className\n      )}\n      {...props}\n    >\n      <nav className=\"flex flex-col gap-1\">\n        {items.map((item) => (\n          <Link\n            key={item.href}\n            href={item.href}\n            aria-current={item.active ? \"page\" : undefined}\n            className={cn(\n              \"flex items-center gap-2.5 rounded-sm px-3 py-2.5 text-sm transition-colors\",\n              item.active\n                ? \"bg-sidebar-primary text-sidebar-primary-foreground\"\n                : \"text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground\"\n            )}\n          >\n            {item.label}\n          </Link>\n        ))}\n      </nav>\n    </aside>\n  );\n}\n"}, {"name": "src~features~dashboard~template~dashboard-template.tsx", "type": "text", "content": "import { Sidebar, type SidebarNavItem } from \"@/components/shared/layout\";\nimport { StatCard, type StatCardProps } from \"@/components/shared/data-display\";\n\nconst navItems: SidebarNavItem[] = [\n  { label: \"Overview\", href: \"/\", active: true },\n  { label: \"Analytics\", href: \"/analytics\" },\n  { label: \"Customers\", href: \"/customers\" },\n  { label: \"Settings\", href: \"/settings\" },\n];\n\nconst stats: StatCardProps[] = [\n  { label: \"Revenue\", value: \"$48.2k\", delta: \"+12.4%\", trend: \"up\" },\n  { label: \"Active users\", value: \"3,184\", delta: \"+5.1%\", trend: \"up\" },\n  { label: \"Churn\", value: \"1.8%\", delta: \"-0.3%\", trend: \"up\" },\n];\n\nexport function DashboardTemplate() {\n  return (\n    <div className=\"grid min-h-screen grid-cols-1 md:grid-cols-[240px_1fr]\">\n      <Sidebar items={navItems} />\n      <main className=\"p-6 md:p-8\">\n        <div className=\"grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3\">\n          {stats.map((stat) => (\n            <StatCard key={stat.label} {...stat} />\n          ))}\n        </div>\n      </main>\n    </div>\n  );\n}\n"}], "grading": {"expectations": [{"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root", "passed": true, "evidence": ".dark --background oklch(0.18\u2026), --foreground oklch(0.93\u2026) \u2014 distinct dark palette."}, {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)", "passed": true, "evidence": "All roles (bg/card/popover/primary/secondary/muted/accent/destructive/border/input/ring + sidebar-*) present in both."}, {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source", "passed": true, "evidence": "All values oklch in both blocks; mapped from the design's light + dark palettes."}, {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block", "passed": true, "evidence": "@custom-variant dark present in globals.css."}, {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data", "passed": true, "evidence": "StatCard with {label,value,delta,trend} in shared/data-display, mapped over data."}, {"text": "A Sidebar component is created in components/shared/layout/", "passed": true, "evidence": "components/shared/layout/sidebar.tsx created."}, {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex", "passed": true, "evidence": "StatCard uses bg-card/border-border/text-muted-foreground + token type scale (text-sm/text-3xl)."}], "summary": {"passed": 7, "failed": 0, "total": 7, "pass_rate": 1.0}, "timing": {"total_duration_seconds": 0.0}}}, {"id": "eval-3-dark-mode-without_skill", "prompt": "Set up the theme from _docs/designs/dashboard-dark.html and build the dashboard (sidebar + stat cards) into components. This design has a dark mode \u00e2\u20ac\u201d make sure both light and dark work.", "eval_id": 3, "outputs": [{"name": "ARCHITECTURE.md", "type": "text", "content": "# Frontend Architecture\n\nNext.js (App Router) + TypeScript + Tailwind v4 + shadcn/ui.\n\n## Structure\n- `src/app/` \u00e2\u20ac\u201d routes, `layout.tsx`, `globals.css` (theme tokens live here).\n- `src/components/ui/` \u00e2\u20ac\u201d shadcn primitives (composed, never forked).\n- `src/components/shared/<group>/` \u00e2\u20ac\u201d generic reusable components (layout, data-display, marketing, feedback, navigation, brand). Each group has an `index.ts` barrel.\n- `src/features/<name>/` \u00e2\u20ac\u201d feature modules (`components/`, `api/`, `hooks/`, `types/`, `template/`).\n\n## Conventions\n- Style with Tailwind utilities + theme tokens (`bg-primary`, `text-muted-foreground`, `rounded-lg`, `shadow-card`, `font-display`). No raw hex/px when a token exists. No separate CSS files; no inline `style={{}}` for static styling.\n- Theme colors are **oklch** in `globals.css` (`:root` / `.dark` / `@theme inline`).\n- Fonts via `next/font` in `layout.tsx`, bound as `--font-*` variables.\n- Components with visual variants use `cva`. Default to Server Components; `\"use client\"` only when needed.\n- Reuse before creating \u00e2\u20ac\u201d check `MODULE_REGISTRY.md` first. Generic \u00e2\u2020\u2019 `components/shared/`, feature-coupled \u00e2\u2020\u2019 `features/<name>/components/`.\n\n## Theme / fonts\nTheme applied from `_docs/designs/dashboard-dark.html`: Inter (`next/font`, `--font-sans`/`--font-display`), indigo primary, `--radius: 0.75rem`, and full light + dark palettes in oklch (`:root` / `.dark`). Extra token: `positive` / `positive-foreground` (green) for KPI deltas \u00e2\u20ac\u201d use `text-positive`. Dark mode is class-based (`.dark`) with a `@media (prefers-color-scheme: dark)` fallback so the OS preference applies when no class is set.\n"}, {"name": "MODULE_REGISTRY.md", "type": "text", "content": "# Module Registry\n\nThe dedup ledger. Every reusable shared component, hook, and util is listed here. **Check here before creating anything.** Register new shared components immediately.\n\n## Shared components\n\n| Component | Path | Wraps / composes | Purpose |\n| --- | --- | --- | --- |\n| Header | components/shared/layout/header.tsx | composes ui/button + Logo | site header / top nav; variants size (`md`/`sm`), theme (`light`/`dark`) |\n| Logo | components/shared/brand/logo.tsx | inline SVG | brand mark; `variant` mono/color |\n| Container | components/shared/layout/container.tsx | \u00e2\u20ac\u201d | max-width page container |\n| Button | components/ui/button.tsx | shadcn primitive | base button |\n| Sidebar | components/shared/navigation/sidebar.tsx | \u00e2\u20ac\u201d | vertical nav rail; `items` (label/href/active/icon), active item highlighted with primary |\n| StatCard | components/shared/data-display/stat-card.tsx | \u00e2\u20ac\u201d | KPI card: label / value / delta; `trend` positive(green) / negative(red) |\n\n## Hooks / utils\n\n| Name | Path | Purpose |\n| --- | --- | --- |\n| cn | lib/utils.ts | className merge (clsx + tailwind-merge) |\n\n## Feature components\n\n| Component | Path | Composes | Purpose |\n| --- | --- | --- | --- |\n| DashboardShell | features/dashboard/components/dashboard-shell.tsx | Sidebar + StatCard | dashboard page: sidebar + stat-card grid |\n\n## Decisions log\n- Theme/fonts: set from `_docs/designs/dashboard-dark.html` \u00e2\u20ac\u201d Inter font, indigo primary, 12px radius, light + dark palettes in oklch. Added a `positive` (green) token pair for stat deltas. Dark mode via `.dark` class with a `prefers-color-scheme` fallback so the OS preference works out of the box.\n"}, {"name": "src~app~globals.css", "type": "text", "content": "@import \"tailwindcss\";\n@import \"tw-animate-css\";\n@custom-variant dark (&:is(.dark *));\n\n/* LIGHT \u00e2\u20ac\u201d from _docs/designs/dashboard-dark.html (:root) */\n:root {\n  --radius: 0.75rem; /* design --radius: 12px */\n\n  --background: oklch(1 0 0); /* #ffffff */\n  --foreground: oklch(0.208 0.042 265.755); /* #0f172a */\n  --card: oklch(0.984 0.003 247.858); /* #f8fafc \u00e2\u20ac\u201d surface */\n  --card-foreground: oklch(0.208 0.042 265.755);\n  --popover: oklch(1 0 0);\n  --popover-foreground: oklch(0.208 0.042 265.755);\n  --primary: oklch(0.585 0.233 277.117); /* #6366f1 \u00e2\u20ac\u201d indigo 500 */\n  --primary-foreground: oklch(1 0 0); /* #ffffff */\n  --secondary: oklch(0.984 0.003 247.858); /* surface */\n  --secondary-foreground: oklch(0.208 0.042 265.755);\n  --muted: oklch(0.984 0.003 247.858);\n  --muted-foreground: oklch(0.554 0.046 257.417); /* #64748b */\n  --accent: oklch(0.984 0.003 247.858);\n  --accent-foreground: oklch(0.208 0.042 265.755);\n  --destructive: oklch(0.577 0.245 27.325);\n  --border: oklch(0.929 0.013 255.508); /* #e2e8f0 */\n  --input: oklch(0.929 0.013 255.508);\n  --ring: oklch(0.585 0.233 277.117); /* primary */\n  --positive: oklch(0.627 0.194 149.214); /* #16a34a \u00e2\u20ac\u201d green 600 */\n  --positive-foreground: oklch(1 0 0);\n}\n\n/* DARK \u00e2\u20ac\u201d from _docs/designs/dashboard-dark.html (prefers-color-scheme: dark) */\n.dark {\n  --background: oklch(0.179 0.039 265.5); /* #0b1120 \u00e2\u20ac\u201d slate 950-ish */\n  --foreground: oklch(0.928 0.006 264.531); /* #e5e7eb */\n  --card: oklch(0.21 0.034 264.665); /* #111827 \u00e2\u20ac\u201d surface on dark */\n  --card-foreground: oklch(0.928 0.006 264.531);\n  --popover: oklch(0.21 0.034 264.665);\n  --popover-foreground: oklch(0.928 0.006 264.531);\n  --primary: oklch(0.673 0.182 276.935); /* #818cf8 \u00e2\u20ac\u201d indigo 400, lifted */\n  --primary-foreground: oklch(0.179 0.039 265.5); /* #0b1120 */\n  --secondary: oklch(0.21 0.034 264.665);\n  --secondary-foreground: oklch(0.928 0.006 264.531);\n  --muted: oklch(0.21 0.034 264.665);\n  --muted-foreground: oklch(0.704 0.04 256.788); /* #94a3b8 */\n  --accent: oklch(0.278 0.033 256.848); /* #1f2937 */\n  --accent-foreground: oklch(0.928 0.006 264.531);\n  --destructive: oklch(0.704 0.191 22.216);\n  --border: oklch(0.278 0.033 256.848); /* #1f2937 */\n  --input: oklch(0.278 0.033 256.848);\n  --ring: oklch(0.673 0.182 276.935); /* primary */\n  --positive: oklch(0.792 0.209 151.711); /* #4ade80 \u00e2\u20ac\u201d green 400 */\n  --positive-foreground: oklch(0.179 0.039 265.5);\n}\n\n/* Follow the OS preference by default (mirrors the design's\n   prefers-color-scheme). An explicit .light / .dark class still wins. */\n@media (prefers-color-scheme: dark) {\n  :root:not(.light):not(.dark) {\n    --background: oklch(0.179 0.039 265.5);\n    --foreground: oklch(0.928 0.006 264.531);\n    --card: oklch(0.21 0.034 264.665);\n    --card-foreground: oklch(0.928 0.006 264.531);\n    --popover: oklch(0.21 0.034 264.665);\n    --popover-foreground: oklch(0.928 0.006 264.531);\n    --primary: oklch(0.673 0.182 276.935);\n    --primary-foreground: oklch(0.179 0.039 265.5);\n    --secondary: oklch(0.21 0.034 264.665);\n    --secondary-foreground: oklch(0.928 0.006 264.531);\n    --muted: oklch(0.21 0.034 264.665);\n    --muted-foreground: oklch(0.704 0.04 256.788);\n    --accent: oklch(0.278 0.033 256.848);\n    --accent-foreground: oklch(0.928 0.006 264.531);\n    --destructive: oklch(0.704 0.191 22.216);\n    --border: oklch(0.278 0.033 256.848);\n    --input: oklch(0.278 0.033 256.848);\n    --ring: oklch(0.673 0.182 276.935);\n    --positive: oklch(0.792 0.209 151.711);\n    --positive-foreground: oklch(0.179 0.039 265.5);\n  }\n}\n\n@theme inline {\n  --radius-sm: calc(var(--radius) - 4px);\n  --radius-md: calc(var(--radius) - 2px);\n  --radius-lg: var(--radius);\n  --radius-xl: calc(var(--radius) + 4px);\n\n  --color-background: var(--background);\n  --color-foreground: var(--foreground);\n  --color-card: var(--card);\n  --color-card-foreground: var(--card-foreground);\n  --color-popover: var(--popover);\n  --color-popover-foreground: var(--popover-foreground);\n  --color-primary: var(--primary);\n  --color-primary-foreground: var(--primary-foreground);\n  --color-secondary: var(--secondary);\n  --color-secondary-foreground: var(--secondary-foreground);\n  --color-muted: var(--muted);\n  --color-muted-foreground: var(--muted-foreground);\n  --color-accent: var(--accent);\n  --color-accent-foreground: var(--accent-foreground);\n  --color-destructive: var(--destructive);\n  --color-border: var(--border);\n  --color-input: var(--input);\n  --color-ring: var(--ring);\n  --color-positive: var(--positive);\n  --color-positive-foreground: var(--positive-foreground);\n\n  --font-sans: var(--font-sans);\n  --font-display: var(--font-sans);\n  --font-mono: var(--font-mono);\n}\n\n@layer base {\n  * { @apply border-border outline-ring/50; }\n  body { @apply bg-background text-foreground; }\n}\n"}, {"name": "src~app~layout.tsx", "type": "text", "content": "import type { Metadata } from \"next\";\nimport { Inter, Geist_Mono } from \"next/font/google\";\nimport \"./globals.css\";\n\nconst inter = Inter({\n  subsets: [\"latin\"],\n  weight: [\"400\", \"500\", \"600\"],\n  variable: \"--font-sans\",\n  display: \"swap\",\n});\n\nconst geistMono = Geist_Mono({\n  subsets: [\"latin\"],\n  variable: \"--font-mono\",\n  display: \"swap\",\n});\n\nexport const metadata: Metadata = {\n  title: \"Acme \u00e2\u20ac\u201d Dashboard\",\n  description: \"Acme dashboard\",\n};\n\nexport default function RootLayout({\n  children,\n}: Readonly<{ children: React.ReactNode }>) {\n  return (\n    <html lang=\"en\" className={`${inter.variable} ${geistMono.variable}`} suppressHydrationWarning>\n      <body className=\"font-sans antialiased\">{children}</body>\n    </html>\n  );\n}\n"}, {"name": "src~app~page.tsx", "type": "text", "content": "import { DashboardShell } from \"@/features/dashboard/components\";\n\nexport default function Home() {\n  return <DashboardShell />;\n}\n"}, {"name": "src~components~shared~brand~logo.tsx", "type": "text", "content": "import { cn } from \"@/lib/utils\";\n\nexport interface LogoProps extends React.SVGProps<SVGSVGElement> {\n  variant?: \"color\" | \"mono\";\n}\n\nexport function Logo({ variant = \"color\", className, ...props }: LogoProps) {\n  return (\n    <svg viewBox=\"0 0 24 24\" className={cn(\"h-6 w-6\", className)} aria-label=\"Acme\" {...props}>\n      <path\n        d=\"M12 2 2 22h20L12 2Z\"\n        fill={variant === \"mono\" ? \"currentColor\" : \"var(--color-primary)\"}\n      />\n    </svg>\n  );\n}\n"}, {"name": "src~components~shared~data-display~stat-card.tsx", "type": "text", "content": "import { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nconst deltaVariants = cva(\"mt-1 text-[13px]\", {\n  variants: {\n    trend: {\n      positive: \"text-positive\",\n      negative: \"text-destructive\",\n    },\n  },\n  defaultVariants: { trend: \"positive\" },\n});\n\nexport interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {\n  label: string;\n  value: string;\n  delta?: string;\n  trend?: \"positive\" | \"negative\";\n}\n\nexport function StatCard({\n  label,\n  value,\n  delta,\n  trend = \"positive\",\n  className,\n  ...props\n}: StatCardProps) {\n  return (\n    <div\n      className={cn(\n        \"rounded-xl border border-border bg-card p-5\",\n        className\n      )}\n      {...props}\n    >\n      <div className=\"text-[13px] text-muted-foreground\">{label}</div>\n      <div className=\"mt-1.5 text-[28px] font-semibold leading-tight text-card-foreground\">\n        {value}\n      </div>\n      {delta ? <div className={deltaVariants({ trend })}>{delta}</div> : null}\n    </div>\n  );\n}\n"}, {"name": "src~components~shared~layout~header.tsx", "type": "text", "content": "import { cva, type VariantProps } from \"class-variance-authority\";\nimport { Button } from \"@/components/ui/button\";\nimport { Logo } from \"@/components/shared/brand/logo\";\nimport { cn } from \"@/lib/utils\";\n\nconst headerVariants = cva(\n  \"flex w-full items-center justify-between border-b\",\n  {\n    variants: {\n      size: { md: \"h-16 px-6\", sm: \"h-12 px-4\" },\n      theme: { light: \"bg-background text-foreground\", dark: \"bg-foreground text-background\" },\n    },\n    defaultVariants: { size: \"md\", theme: \"light\" },\n  }\n);\n\nexport interface HeaderProps\n  extends React.HTMLAttributes<HTMLElement>,\n    VariantProps<typeof headerVariants> {\n  links?: { label: string; href: string }[];\n}\n\nexport function Header({ size, theme, links = [], className, ...props }: HeaderProps) {\n  return (\n    <header className={cn(headerVariants({ size, theme }), className)} {...props}>\n      <a href=\"/\" className=\"flex items-center gap-2 font-display font-semibold\">\n        <Logo />\n        Acme\n      </a>\n      <nav className=\"flex items-center gap-6\">\n        {links.map((l) => (\n          <a key={l.href} href={l.href} className=\"text-sm text-muted-foreground hover:text-foreground\">\n            {l.label}\n          </a>\n        ))}\n        <Button size=\"sm\">Sign in</Button>\n      </nav>\n    </header>\n  );\n}\n"}, {"name": "src~components~shared~navigation~sidebar.tsx", "type": "text", "content": "import { cva } from \"class-variance-authority\";\nimport { cn } from \"@/lib/utils\";\n\nconst sidebarItem = cva(\n  \"flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors\",\n  {\n    variants: {\n      active: {\n        true: \"bg-primary text-primary-foreground\",\n        false: \"text-muted-foreground hover:bg-accent hover:text-foreground\",\n      },\n    },\n    defaultVariants: { active: false },\n  }\n);\n\nexport interface SidebarItem {\n  label: string;\n  href?: string;\n  active?: boolean;\n  icon?: React.ReactNode;\n}\n\nexport interface SidebarProps extends React.HTMLAttributes<HTMLElement> {\n  items: SidebarItem[];\n}\n\nexport function Sidebar({ items, className, ...props }: SidebarProps) {\n  return (\n    <aside\n      className={cn(\n        \"flex w-60 flex-col gap-1 border-r border-border bg-card px-4 py-6\",\n        className\n      )}\n      {...props}\n    >\n      <nav className=\"flex flex-col gap-1\">\n        {items.map((item) => (\n          <a\n            key={item.label}\n            href={item.href ?? \"#\"}\n            aria-current={item.active ? \"page\" : undefined}\n            className={sidebarItem({ active: item.active })}\n          >\n            {item.icon}\n            {item.label}\n          </a>\n        ))}\n      </nav>\n    </aside>\n  );\n}\n"}, {"name": "src~features~dashboard~components~dashboard-shell.tsx", "type": "text", "content": "import { Sidebar, type SidebarItem } from \"@/components/shared/navigation\";\nimport { StatCard, type StatCardProps } from \"@/components/shared/data-display\";\n\nconst navItems: SidebarItem[] = [\n  { label: \"Overview\", href: \"#\", active: true },\n  { label: \"Analytics\", href: \"#\" },\n  { label: \"Customers\", href: \"#\" },\n  { label: \"Settings\", href: \"#\" },\n];\n\nconst stats: StatCardProps[] = [\n  { label: \"Revenue\", value: \"$48.2k\", delta: \"+12.4%\", trend: \"positive\" },\n  { label: \"Active users\", value: \"3,184\", delta: \"+5.1%\", trend: \"positive\" },\n  { label: \"Churn\", value: \"1.8%\", delta: \"-0.3%\", trend: \"positive\" },\n];\n\nexport function DashboardShell() {\n  return (\n    <div className=\"grid min-h-screen grid-cols-[240px_1fr]\">\n      <Sidebar items={navItems} />\n      <main className=\"p-8\">\n        <div className=\"grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3\">\n          {stats.map((stat) => (\n            <StatCard key={stat.label} {...stat} />\n          ))}\n        </div>\n      </main>\n    </div>\n  );\n}\n"}], "grading": {"expectations": [{"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root", "passed": true, "evidence": ".dark --background oklch(0.179\u2026), --foreground oklch(0.928\u2026)."}, {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)", "passed": true, "evidence": "All roles present in both blocks (+ --positive)."}, {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source", "passed": true, "evidence": "All oklch in both blocks."}, {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block", "passed": true, "evidence": "@custom-variant dark present."}, {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data", "passed": true, "evidence": "StatCard {label,value,delta,trend} in shared/data-display, mapped over data."}, {"text": "A Sidebar component is created in components/shared/layout/", "passed": false, "evidence": "Sidebar placed in components/shared/navigation/sidebar.tsx, not layout/ as the assertion specifies."}, {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex", "passed": true, "evidence": "Color tokens used (no hex); minor: uses text-[13px]/text-[28px] arbitrary font sizes instead of the type scale."}], "summary": {"passed": 6, "failed": 1, "total": 7, "pass_rate": 0.8571}, "timing": {"total_duration_seconds": 0.0}}}], "previous_feedback": {}, "previous_outputs": {}, "benchmark": {"metadata": {"skill_name": "html-to-component", "skill_path": "D:/SKILLS/exr-agent-skills/.claude/skills/html-to-component", "executor_model": "claude (iteration-1, timing not captured)", "analyzer_model": "claude-opus-4-8", "timestamp": "2026-06-27T03:55:54Z", "evals_run": [0, 1, 2, 3], "runs_per_configuration": 1}, "runs": [{"eval_id": 0, "eval_name": "theme-from-full-page", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)", "passed": true, "evidence": "--primary: oklch(0.5106 0.2301 276.97) \u2014 indigo, not the stock near-black."}, {"text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks", "passed": true, "evidence": "grep for ': #hex;' value lines in the theme blocks returned nothing; every color is oklch()."}, {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts", "passed": true, "evidence": "layout.tsx imports Inter + Poppins from next/font/google with --font-sans / --font-display."}, {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display", "passed": true, "evidence": "globals.css @theme inline has --font-display: var(--font-display)."}, {"text": "The .dark block is still present and re-valued (theme remains dual-mode)", "passed": true, "evidence": ".dark block present, derived from the light palette (bg\u2192dark, fg\u2192light, primary lifted)."}, {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced", "passed": true, "evidence": "Fonts wired via next/font only; no <link> tag or @import url() in layout/globals."}, {"text": "--radius, a shadow token, and a gradient token reflect the design's values", "passed": true, "evidence": "--radius:0.625rem, --shadow-button/--shadow-card, --gradient-brand all set from the design."}], "notes": []}, {"eval_id": 0, "eval_name": "theme-from-full-page", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)", "passed": true, "evidence": "--primary: oklch(0.511 0.262 276.966) \u2014 indigo-600."}, {"text": "All theme color variables in :root and .dark are oklch() \u2014 no raw # hex left inside the theme variable blocks", "passed": true, "evidence": "All values oklch(); hex appears only in trailing comments, never as a value."}, {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts", "passed": true, "evidence": "layout.tsx is byte-identical to with_skill: Inter + Poppins via next/font/google."}, {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display", "passed": true, "evidence": "@theme inline has --font-display: var(--font-display); also adds h1-h3 font-family rule."}, {"text": "The .dark block is still present and re-valued (theme remains dual-mode)", "passed": true, "evidence": ".dark block present and re-valued."}, {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced", "passed": true, "evidence": "No <link> or @import url(); next/font only."}, {"text": "--radius, a shadow token, and a gradient token reflect the design's values", "passed": true, "evidence": "--radius set, --shadow-xs..lg, --gradient-hero defined; even richer (charts/sidebar tokens too)."}], "notes": []}, {"eval_id": 1, "eval_name": "dedup-reuse-header-build-cards", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 0.8571, "passed": 6, "failed": 1, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused", "passed": true, "evidence": "Only the original header.tsx exists; no new header file."}, {"text": "The existing Header is imported and used in the page/template", "passed": true, "evidence": "pricing-template.tsx imports Header from @/components/shared/layout and renders it."}, {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies", "passed": true, "evidence": "Single PricingCard; PricingSection maps pricingPlans data into a grid."}, {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)", "passed": false, "evidence": "Placed in features/pricing/components/pricing-card.tsx \u2014 feature folder, not shared/data-display. (Defensible as pricing-domain, but not what the assertion asked.)"}, {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px", "passed": true, "evidence": "Uses bg-card, border-border/border-primary, text-muted-foreground, shadow-card; 0 raw hex."}, {"text": "MODULE_REGISTRY.md gets a new row for PricingCard", "passed": true, "evidence": "Registry has a PricingCard row (under Feature components)."}, {"text": "page.tsx (or a template) composes Header + pricing section and stays thin", "passed": true, "evidence": "app/pricing/page.tsx just renders <PricingTemplate/>; template composes Header + PricingSection."}], "notes": []}, {"eval_id": 1, "eval_name": "dedup-reuse-header-build-cards", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8571, "passed": 6, "failed": 1, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "No second/duplicate header component file was created \u2014 the existing components/shared/layout/header.tsx is reused", "passed": true, "evidence": "Only original header.tsx; no duplicate."}, {"text": "The existing Header is imported and used in the page/template", "passed": true, "evidence": "app/pricing/page.tsx imports and renders Header."}, {"text": "The three repeated pricing plans become ONE PricingCard component rendered over data, not three inline copies", "passed": true, "evidence": "Single PricingCard + PricingSection mapping plans."}, {"text": "PricingCard lives in components/shared/data-display/ (generic, not in a feature folder)", "passed": false, "evidence": "Placed in features/pricing/components/pricing-card.tsx."}, {"text": "Styling uses theme tokens (bg-primary, text-muted-foreground, rounded-lg, border) not raw hex/px", "passed": true, "evidence": "Tokens used; 0 raw hex in pricing-card.tsx."}, {"text": "MODULE_REGISTRY.md gets a new row for PricingCard", "passed": true, "evidence": "Registry has PricingCard + PricingSection rows."}, {"text": "page.tsx (or a template) composes Header + pricing section and stays thin", "passed": true, "evidence": "app/pricing/page.tsx composes Header + PricingSection thinly (no template layer)."}], "notes": []}, {"eval_id": 2, "eval_name": "hero-snippet-to-shared-component", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 0.8333, "passed": 5, "failed": 1, "total": 6, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "A Hero component is created under components/shared/ (marketing/ or layout/)", "passed": true, "evidence": "components/shared/marketing/hero.tsx created."}, {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup", "passed": true, "evidence": "<section> wrapper; CTA is <Button asChild><a>\u2026</a></Button>."}, {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used", "passed": true, "evidence": "Uses max-w-5xl and text-4xl md:text-5xl lg:text-6xl \u2014 responsive, no hardcoded px."}, {"text": "The gradient is a theme token/utility, not an inline style with raw hex", "passed": true, "evidence": "bg-[image:var(--gradient-brand)] \u2014 references the theme gradient token, no inline hex."}, {"text": "A typed props interface (heading/subheading/CTA) is defined", "passed": true, "evidence": "HeroProps with title/subtitle/action (HeroAction)."}, {"text": "Hero is registered in MODULE_REGISTRY.md", "passed": false, "evidence": "No Hero row in MODULE_REGISTRY.md \u2014 the skill's own registration step was skipped here."}], "notes": []}, {"eval_id": 2, "eval_name": "hero-snippet-to-shared-component", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.6667, "passed": 4, "failed": 2, "total": 6, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "A Hero component is created under components/shared/ (marketing/ or layout/)", "passed": true, "evidence": "components/shared/marketing/hero.tsx created."}, {"text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup", "passed": true, "evidence": "<section> + <Button asChild><a>."}, {"text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used", "passed": false, "evidence": "Hardcodes text-[56px] and max-w-[1100px] \u2014 pinned to desktop px, not responsive."}, {"text": "The gradient is a theme token/utility, not an inline style with raw hex", "passed": false, "evidence": "Uses from-blue-500 to-purple-600 (default Tailwind palette), not the brand gradient token."}, {"text": "A typed props interface (heading/subheading/CTA) is defined", "passed": true, "evidence": "HeroProps with title/subtitle/ctaLabel/ctaHref."}, {"text": "Hero is registered in MODULE_REGISTRY.md", "passed": true, "evidence": "Registry has a Hero row at components/shared/marketing/hero.tsx."}], "notes": []}, {"eval_id": 3, "eval_name": "dark-mode-theme-and-sidebar", "configuration": "with_skill", "run_number": 1, "result": {"pass_rate": 1.0, "passed": 7, "failed": 0, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root", "passed": true, "evidence": ".dark --background oklch(0.18\u2026), --foreground oklch(0.93\u2026) \u2014 distinct dark palette."}, {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)", "passed": true, "evidence": "All roles (bg/card/popover/primary/secondary/muted/accent/destructive/border/input/ring + sidebar-*) present in both."}, {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source", "passed": true, "evidence": "All values oklch in both blocks; mapped from the design's light + dark palettes."}, {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block", "passed": true, "evidence": "@custom-variant dark present in globals.css."}, {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data", "passed": true, "evidence": "StatCard with {label,value,delta,trend} in shared/data-display, mapped over data."}, {"text": "A Sidebar component is created in components/shared/layout/", "passed": true, "evidence": "components/shared/layout/sidebar.tsx created."}, {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex", "passed": true, "evidence": "StatCard uses bg-card/border-border/text-muted-foreground + token type scale (text-sm/text-3xl)."}], "notes": []}, {"eval_id": 3, "eval_name": "dark-mode-theme-and-sidebar", "configuration": "without_skill", "run_number": 1, "result": {"pass_rate": 0.8571, "passed": 6, "failed": 1, "total": 7, "time_seconds": 0.0, "tokens": 0, "tool_calls": 0, "errors": 0}, "expectations": [{"text": "globals.css .dark block is re-valued from the design's dark palette (background dark ~oklch L<0.25, foreground light), distinct from :root", "passed": true, "evidence": ".dark --background oklch(0.179\u2026), --foreground oklch(0.928\u2026)."}, {"text": "Every role variable present in :root is also present in .dark (no role missing in dark)", "passed": true, "evidence": "All roles present in both blocks (+ --positive)."}, {"text": "Both :root and .dark colors are oklch, derived from the two palettes in the @media(prefers-color-scheme:dark) source", "passed": true, "evidence": "All oklch in both blocks."}, {"text": "@custom-variant dark (&:is(.dark *)) is present so the .dark class activates the block", "passed": true, "evidence": "@custom-variant dark present."}, {"text": "The three repeated stats become ONE StatCard ({label,value,delta}) in components/shared/data-display/, mapped over data", "passed": true, "evidence": "StatCard {label,value,delta,trend} in shared/data-display, mapped over data."}, {"text": "A Sidebar component is created in components/shared/layout/", "passed": false, "evidence": "Sidebar placed in components/shared/navigation/sidebar.tsx, not layout/ as the assertion specifies."}, {"text": "Components use theme tokens (bg-card, text-muted-foreground, bg-primary) not raw hex", "passed": true, "evidence": "Color tokens used (no hex); minor: uses text-[13px]/text-[28px] arbitrary font sizes instead of the type scale."}], "notes": []}], "run_summary": {"with_skill": {"pass_rate": {"mean": 0.9226, "stddev": 0.0899, "min": 0.8333, "max": 1.0}, "time_seconds": {"mean": 0, "stddev": 0, "min": 0, "max": 0}, "tokens": {"mean": 0, "stddev": 0, "min": 0, "max": 0}}, "without_skill": {"pass_rate": {"mean": 0.8452, "stddev": 0.1368, "min": 0.6667, "max": 1.0}, "time_seconds": {"mean": 0, "stddev": 0, "min": 0, "max": 0}, "tokens": {"mean": 0, "stddev": 0, "min": 0, "max": 0}}, "delta": {"pass_rate": "+0.08", "time_seconds": "+0.0", "tokens": "+0"}}, "notes": ["Timing/token data was lost when the previous session hit its limit; only pass-rate is meaningful here.", "with_skill mean pass-rate 92% vs without_skill 85% (delta +0.08). Plain Claude is already very strong on these tasks, so the lift is modest.", "Eval-0 (theme) and Eval-1 (dedup) are essentially tied \u2014 baseline reuses Header, makes one PricingCard over data, and themes in oklch on its own. The 'PricingCard in shared/data-display' assertion fails in BOTH (both chose features/pricing) \u2014 non-discriminating; consider relaxing or rewording it.", "Eval-2 (hero) is the clearest skill win: with_skill uses the gradient TOKEN + responsive utilities; baseline hardcodes text-[56px]/max-w-[1100px] and from-blue-500. BUT with_skill forgot to register Hero in MODULE_REGISTRY.md while baseline did \u2014 a real regression in the skill's own registration discipline worth fixing.", "Eval-3 (dark): both produce correct dual-mode oklch themes; only differ on Sidebar folder (layout/ vs navigation/)."]}};
+
+    // ---- State ----
+    let feedbackMap = {};  // run_id -> feedback text
+    let currentIndex = 0;
+    let visitedRuns = new Set();
+
+    // ---- Init ----
+    async function init() {
+      // Load saved feedback from server — but only if this isn't a fresh
+      // iteration (indicated by previous_feedback being present). When
+      // previous feedback exists, the feedback.json on disk is stale from
+      // the prior iteration and should not pre-fill the textareas.
+      const hasPrevious = Object.keys(EMBEDDED_DATA.previous_feedback || {}).length > 0
+        || Object.keys(EMBEDDED_DATA.previous_outputs || {}).length > 0;
+      if (!hasPrevious) {
+        try {
+          const resp = await fetch("/api/feedback");
+          const data = await resp.json();
+          if (data.reviews) {
+            for (const r of data.reviews) feedbackMap[r.run_id] = r.feedback;
+          }
+        } catch { /* first run, no feedback yet */ }
+      }
+
+      document.getElementById("skill-name").textContent = EMBEDDED_DATA.skill_name;
+      showRun(0);
+
+      // Wire up feedback auto-save
+      const textarea = document.getElementById("feedback");
+      let saveTimeout = null;
+      textarea.addEventListener("input", () => {
+        clearTimeout(saveTimeout);
+        document.getElementById("feedback-status").textContent = "";
+        saveTimeout = setTimeout(() => saveCurrentFeedback(), 800);
+      });
+    }
+
+    // ---- Navigation ----
+    function navigate(delta) {
+      const newIndex = currentIndex + delta;
+      if (newIndex >= 0 && newIndex < EMBEDDED_DATA.runs.length) {
+        saveCurrentFeedback();
+        showRun(newIndex);
+      }
+    }
+
+    function updateNavButtons() {
+      document.getElementById("prev-btn").disabled = currentIndex === 0;
+      document.getElementById("next-btn").disabled =
+        currentIndex === EMBEDDED_DATA.runs.length - 1;
+    }
+
+    // ---- Show a run ----
+    function showRun(index) {
+      currentIndex = index;
+      const run = EMBEDDED_DATA.runs[index];
+
+      // Progress
+      document.getElementById("progress").textContent =
+        `${index + 1} of ${EMBEDDED_DATA.runs.length}`;
+
+      // Prompt
+      document.getElementById("prompt-text").textContent = run.prompt;
+
+      // Config badge
+      const badge = document.getElementById("config-badge");
+      const configMatch = run.id.match(/(with_skill|without_skill|new_skill|old_skill)/);
+      if (configMatch) {
+        const config = configMatch[1];
+        const isBaseline = config === "without_skill" || config === "old_skill";
+        badge.textContent = config.replace(/_/g, " ");
+        badge.className = "config-badge " + (isBaseline ? "config-baseline" : "config-primary");
+        badge.style.display = "inline-block";
+      } else {
+        badge.style.display = "none";
+      }
+
+      // Outputs
+      renderOutputs(run);
+
+      // Previous outputs
+      renderPrevOutputs(run);
+
+      // Grades
+      renderGrades(run);
+
+      // Previous feedback
+      const prevFb = (EMBEDDED_DATA.previous_feedback || {})[run.id];
+      const prevEl = document.getElementById("prev-feedback");
+      if (prevFb) {
+        document.getElementById("prev-feedback-text").textContent = prevFb;
+        prevEl.style.display = "block";
+      } else {
+        prevEl.style.display = "none";
+      }
+
+      // Feedback
+      document.getElementById("feedback").value = feedbackMap[run.id] || "";
+      document.getElementById("feedback-status").textContent = "";
+
+      updateNavButtons();
+
+      // Track visited runs and promote done button when all visited
+      visitedRuns.add(index);
+      const doneBtn = document.getElementById("done-btn");
+      if (visitedRuns.size >= EMBEDDED_DATA.runs.length) {
+        doneBtn.classList.add("ready");
+      }
+
+      // Scroll main content to top
+      document.querySelector(".main").scrollTop = 0;
+    }
+
+    // ---- Render outputs ----
+    function renderOutputs(run) {
+      const container = document.getElementById("outputs-body");
+      container.innerHTML = "";
+
+      const outputs = run.outputs || [];
+      if (outputs.length === 0) {
+        container.innerHTML = '<div class="empty-state">No output files</div>';
+        return;
+      }
+
+      for (const file of outputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        // Always show file header with download link
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const content = document.createElement("div");
+        content.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          content.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          content.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          content.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(content, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          content.appendChild(a);
+        } else if (file.type === "error") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          pre.style.color = "var(--red)";
+          content.appendChild(pre);
+        }
+
+        fileDiv.appendChild(content);
+        container.appendChild(fileDiv);
+      }
+    }
+
+    // ---- XLSX rendering via SheetJS ----
+    function renderXlsx(container, b64Data) {
+      try {
+        const raw = Uint8Array.from(atob(b64Data), c => c.charCodeAt(0));
+        const wb = XLSX.read(raw, { type: "array" });
+
+        for (let i = 0; i < wb.SheetNames.length; i++) {
+          const sheetName = wb.SheetNames[i];
+          const ws = wb.Sheets[sheetName];
+
+          if (wb.SheetNames.length > 1) {
+            const sheetLabel = document.createElement("div");
+            sheetLabel.style.cssText =
+              "font-weight:600; font-size:0.8rem; color:#b0aea5; margin-top:0.5rem; margin-bottom:0.25rem;";
+            sheetLabel.textContent = "Sheet: " + sheetName;
+            container.appendChild(sheetLabel);
+          }
+
+          const htmlStr = XLSX.utils.sheet_to_html(ws, { editable: false });
+          const wrapper = document.createElement("div");
+          wrapper.innerHTML = htmlStr;
+          container.appendChild(wrapper);
+        }
+      } catch (err) {
+        container.textContent = "Error rendering spreadsheet: " + err.message;
+      }
+    }
+
+    // ---- Grades ----
+    function renderGrades(run) {
+      const section = document.getElementById("grades-section");
+      const content = document.getElementById("grades-content");
+
+      if (!run.grading) {
+        section.style.display = "none";
+        return;
+      }
+
+      const grading = run.grading;
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("grades-arrow").classList.remove("open");
+
+      const summary = grading.summary || {};
+      const expectations = grading.expectations || [];
+
+      let html = '<div style="padding: 1rem;">';
+
+      // Summary line
+      const passRate = summary.pass_rate != null
+        ? Math.round(summary.pass_rate * 100) + "%"
+        : "?";
+      const badgeClass = summary.pass_rate >= 0.8 ? "grade-pass" : summary.pass_rate >= 0.5 ? "" : "grade-fail";
+      html += '<div class="grades-summary">';
+      html += '<span class="grade-badge ' + badgeClass + '">' + passRate + '</span>';
+      html += '<span>' + (summary.passed || 0) + ' passed, ' + (summary.failed || 0) + ' failed of ' + (summary.total || 0) + '</span>';
+      html += '</div>';
+
+      // Assertions list
+      html += '<ul class="assertion-list">';
+      for (const exp of expectations) {
+        const statusClass = exp.passed ? "pass" : "fail";
+        const statusIcon = exp.passed ? "\u2713" : "\u2717";
+        html += '<li class="assertion-item">';
+        html += '<span class="assertion-status ' + statusClass + '">' + statusIcon + '</span>';
+        html += '<span>' + escapeHtml(exp.text) + '</span>';
+        if (exp.evidence) {
+          html += '<div class="assertion-evidence">' + escapeHtml(exp.evidence) + '</div>';
+        }
+        html += '</li>';
+      }
+      html += '</ul>';
+
+      html += '</div>';
+      content.innerHTML = html;
+    }
+
+    function toggleGrades() {
+      const content = document.getElementById("grades-content");
+      const arrow = document.getElementById("grades-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Previous outputs (collapsible) ----
+    function renderPrevOutputs(run) {
+      const section = document.getElementById("prev-outputs-section");
+      const content = document.getElementById("prev-outputs-content");
+      const prevOutputs = (EMBEDDED_DATA.previous_outputs || {})[run.id];
+
+      if (!prevOutputs || prevOutputs.length === 0) {
+        section.style.display = "none";
+        return;
+      }
+
+      section.style.display = "block";
+      // Reset to collapsed
+      content.classList.remove("open");
+      document.getElementById("prev-outputs-arrow").classList.remove("open");
+
+      // Render the files into the content area
+      content.innerHTML = "";
+      const wrapper = document.createElement("div");
+      wrapper.style.padding = "1rem";
+
+      for (const file of prevOutputs) {
+        const fileDiv = document.createElement("div");
+        fileDiv.className = "output-file";
+
+        const header = document.createElement("div");
+        header.className = "output-file-header";
+        const nameSpan = document.createElement("span");
+        nameSpan.textContent = file.name;
+        header.appendChild(nameSpan);
+        const dlBtn = document.createElement("a");
+        dlBtn.className = "dl-btn";
+        dlBtn.textContent = "Download";
+        dlBtn.download = file.name;
+        dlBtn.href = getDownloadUri(file);
+        header.appendChild(dlBtn);
+        fileDiv.appendChild(header);
+
+        const fc = document.createElement("div");
+        fc.className = "output-file-content";
+
+        if (file.type === "text") {
+          const pre = document.createElement("pre");
+          pre.textContent = file.content;
+          fc.appendChild(pre);
+        } else if (file.type === "image") {
+          const img = document.createElement("img");
+          img.src = file.data_uri;
+          img.alt = file.name;
+          fc.appendChild(img);
+        } else if (file.type === "pdf") {
+          const iframe = document.createElement("iframe");
+          iframe.src = file.data_uri;
+          fc.appendChild(iframe);
+        } else if (file.type === "xlsx") {
+          renderXlsx(fc, file.data_b64);
+        } else if (file.type === "binary") {
+          const a = document.createElement("a");
+          a.className = "download-link";
+          a.href = file.data_uri;
+          a.download = file.name;
+          a.textContent = "Download " + file.name;
+          fc.appendChild(a);
+        }
+
+        fileDiv.appendChild(fc);
+        wrapper.appendChild(fileDiv);
+      }
+
+      content.appendChild(wrapper);
+    }
+
+    function togglePrevOutputs() {
+      const content = document.getElementById("prev-outputs-content");
+      const arrow = document.getElementById("prev-outputs-arrow");
+      content.classList.toggle("open");
+      arrow.classList.toggle("open");
+    }
+
+    // ---- Feedback (saved to server -> feedback.json) ----
+    function saveCurrentFeedback() {
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // Build reviews array from map
+      const reviews = [];
+      for (const [run_id, feedback] of Object.entries(feedbackMap)) {
+        if (feedback.trim()) {
+          reviews.push({ run_id, feedback, timestamp: new Date().toISOString() });
+        }
+      }
+
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reviews, status: "in_progress" }),
+      }).then(() => {
+        document.getElementById("feedback-status").textContent = "Saved";
+      }).catch(() => {
+        // Static mode or server unavailable — no-op on auto-save,
+        // feedback will be downloaded on final submit
+        document.getElementById("feedback-status").textContent = "Will download on submit";
+      });
+    }
+
+    // ---- Done ----
+    function showDoneDialog() {
+      // Save current textarea to feedbackMap (but don't POST yet)
+      const run = EMBEDDED_DATA.runs[currentIndex];
+      const text = document.getElementById("feedback").value;
+      if (text.trim() === "") {
+        delete feedbackMap[run.id];
+      } else {
+        feedbackMap[run.id] = text;
+      }
+
+      // POST once with status: complete — include ALL runs so the model
+      // can distinguish "no feedback" (looks good) from "not reviewed"
+      const reviews = [];
+      const ts = new Date().toISOString();
+      for (const r of EMBEDDED_DATA.runs) {
+        reviews.push({ run_id: r.id, feedback: feedbackMap[r.id] || "", timestamp: ts });
+      }
+      const payload = JSON.stringify({ reviews, status: "complete" }, null, 2);
+      fetch("/api/feedback", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: payload,
+      }).then(() => {
+        document.getElementById("done-overlay").classList.add("visible");
+      }).catch(() => {
+        // Server not available (static mode) — download as file
+        const blob = new Blob([payload], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "feedback.json";
+        a.click();
+        URL.revokeObjectURL(url);
+        document.getElementById("done-overlay").classList.add("visible");
+      });
+    }
+
+    function closeDoneDialog() {
+      // Reset status back to in_progress
+      saveCurrentFeedback();
+      document.getElementById("done-overlay").classList.remove("visible");
+    }
+
+    // ---- Toast ----
+    function showToast(message) {
+      const toast = document.getElementById("toast");
+      toast.textContent = message;
+      toast.classList.add("visible");
+      setTimeout(() => toast.classList.remove("visible"), 2000);
+    }
+
+    // ---- Keyboard nav ----
+    document.addEventListener("keydown", (e) => {
+      // Don't capture when typing in textarea
+      if (e.target.tagName === "TEXTAREA") return;
+
+      if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        e.preventDefault();
+        navigate(-1);
+      } else if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        e.preventDefault();
+        navigate(1);
+      }
+    });
+
+    // ---- Util ----
+    function getDownloadUri(file) {
+      if (file.data_uri) return file.data_uri;
+      if (file.data_b64) return "data:application/octet-stream;base64," + file.data_b64;
+      if (file.type === "text") return "data:text/plain;charset=utf-8," + encodeURIComponent(file.content);
+      return "#";
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement("div");
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // ---- View switching ----
+    function switchView(view) {
+      document.querySelectorAll(".view-tab").forEach(t => t.classList.remove("active"));
+      document.querySelectorAll(".view-panel").forEach(p => p.classList.remove("active"));
+      document.querySelector(`[onclick="switchView('${view}')"]`).classList.add("active");
+      document.getElementById("panel-" + view).classList.add("active");
+    }
+
+    // ---- Benchmark rendering ----
+    function renderBenchmark() {
+      const data = EMBEDDED_DATA.benchmark;
+      if (!data) return;
+
+      // Show the tabs
+      document.getElementById("view-tabs").style.display = "flex";
+
+      const container = document.getElementById("benchmark-content");
+      const summary = data.run_summary || {};
+      const metadata = data.metadata || {};
+      const notes = data.notes || [];
+
+      let html = "";
+
+      // Header
+      html += "<h2 style='font-family: Poppins, sans-serif; margin-bottom: 0.5rem;'>Benchmark Results</h2>";
+      html += "<p style='color: var(--text-muted); font-size: 0.875rem; margin-bottom: 1.25rem;'>";
+      if (metadata.skill_name) html += "<strong>" + escapeHtml(metadata.skill_name) + "</strong> &mdash; ";
+      if (metadata.timestamp) html += metadata.timestamp + " &mdash; ";
+      if (metadata.evals_run) html += "Evals: " + metadata.evals_run.join(", ") + " &mdash; ";
+      html += (metadata.runs_per_configuration || "?") + " runs per configuration";
+      html += "</p>";
+
+      // Summary table
+      html += '<table class="benchmark-table">';
+
+      function fmtStat(stat, pct) {
+        if (!stat) return "—";
+        const suffix = pct ? "%" : "";
+        const m = pct ? (stat.mean * 100).toFixed(0) : stat.mean.toFixed(1);
+        const s = pct ? (stat.stddev * 100).toFixed(0) : stat.stddev.toFixed(1);
+        return m + suffix + " ± " + s + suffix;
+      }
+
+      function deltaClass(val) {
+        if (!val) return "";
+        const n = parseFloat(val);
+        if (n > 0) return "benchmark-delta-positive";
+        if (n < 0) return "benchmark-delta-negative";
+        return "";
+      }
+
+      // Discover config names dynamically (everything except "delta")
+      const configs = Object.keys(summary).filter(k => k !== "delta");
+      const configA = configs[0] || "config_a";
+      const configB = configs[1] || "config_b";
+      const labelA = configA.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const labelB = configB.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+      const a = summary[configA] || {};
+      const b = summary[configB] || {};
+      const delta = summary.delta || {};
+
+      html += "<thead><tr><th>Metric</th><th>" + escapeHtml(labelA) + "</th><th>" + escapeHtml(labelB) + "</th><th>Delta</th></tr></thead>";
+      html += "<tbody>";
+
+      html += "<tr><td><strong>Pass Rate</strong></td>";
+      html += "<td>" + fmtStat(a.pass_rate, true) + "</td>";
+      html += "<td>" + fmtStat(b.pass_rate, true) + "</td>";
+      html += '<td class="' + deltaClass(delta.pass_rate) + '">' + (delta.pass_rate || "—") + "</td></tr>";
+
+      // Time (only show row if data exists)
+      if (a.time_seconds || b.time_seconds) {
+        html += "<tr><td><strong>Time (s)</strong></td>";
+        html += "<td>" + fmtStat(a.time_seconds, false) + "</td>";
+        html += "<td>" + fmtStat(b.time_seconds, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.time_seconds) + '">' + (delta.time_seconds ? delta.time_seconds + "s" : "—") + "</td></tr>";
+      }
+
+      // Tokens (only show row if data exists)
+      if (a.tokens || b.tokens) {
+        html += "<tr><td><strong>Tokens</strong></td>";
+        html += "<td>" + fmtStat(a.tokens, false) + "</td>";
+        html += "<td>" + fmtStat(b.tokens, false) + "</td>";
+        html += '<td class="' + deltaClass(delta.tokens) + '">' + (delta.tokens || "—") + "</td></tr>";
+      }
+
+      html += "</tbody></table>";
+
+      // Per-eval breakdown (if runs data available)
+      const runs = data.runs || [];
+      if (runs.length > 0) {
+        const evalIds = [...new Set(runs.map(r => r.eval_id))].sort((a, b) => a - b);
+
+        html += "<h3 style='font-family: Poppins, sans-serif; margin-bottom: 0.75rem;'>Per-Eval Breakdown</h3>";
+
+        const hasTime = runs.some(r => r.result && r.result.time_seconds != null);
+        const hasErrors = runs.some(r => r.result && r.result.errors > 0);
+
+        for (const evalId of evalIds) {
+          const evalRuns = runs.filter(r => r.eval_id === evalId);
+          const evalName = evalRuns[0] && evalRuns[0].eval_name ? evalRuns[0].eval_name : "Eval " + evalId;
+
+          html += "<h4 style='font-family: Poppins, sans-serif; margin: 1rem 0 0.5rem; color: var(--text);'>" + escapeHtml(evalName) + "</h4>";
+          html += '<table class="benchmark-table">';
+          html += "<thead><tr><th>Config</th><th>Run</th><th>Pass Rate</th>";
+          if (hasTime) html += "<th>Time (s)</th>";
+          if (hasErrors) html += "<th>Crashes During Execution</th>";
+          html += "</tr></thead>";
+          html += "<tbody>";
+
+          // Group by config and render with average rows
+          const configGroups = [...new Set(evalRuns.map(r => r.configuration))];
+          for (let ci = 0; ci < configGroups.length; ci++) {
+            const config = configGroups[ci];
+            const configRuns = evalRuns.filter(r => r.configuration === config);
+            if (configRuns.length === 0) continue;
+
+            const rowClass = ci === 0 ? "benchmark-row-with" : "benchmark-row-without";
+            const configLabel = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+
+            for (const run of configRuns) {
+              const r = run.result || {};
+              const prClass = r.pass_rate >= 0.8 ? "benchmark-delta-positive" : r.pass_rate < 0.5 ? "benchmark-delta-negative" : "";
+              html += '<tr class="' + rowClass + '">';
+              html += "<td>" + configLabel + "</td>";
+              html += "<td>" + run.run_number + "</td>";
+              html += '<td class="' + prClass + '">' + ((r.pass_rate || 0) * 100).toFixed(0) + "% (" + (r.passed || 0) + "/" + (r.total || 0) + ")</td>";
+              if (hasTime) html += "<td>" + (r.time_seconds != null ? r.time_seconds.toFixed(1) : "—") + "</td>";
+              if (hasErrors) html += "<td>" + (r.errors || 0) + "</td>";
+              html += "</tr>";
+            }
+
+            // Average row
+            const rates = configRuns.map(r => (r.result || {}).pass_rate || 0);
+            const avgRate = rates.reduce((a, b) => a + b, 0) / rates.length;
+            const avgPrClass = avgRate >= 0.8 ? "benchmark-delta-positive" : avgRate < 0.5 ? "benchmark-delta-negative" : "";
+            html += '<tr class="benchmark-row-avg ' + rowClass + '">';
+            html += "<td>" + configLabel + "</td>";
+            html += "<td>Avg</td>";
+            html += '<td class="' + avgPrClass + '">' + (avgRate * 100).toFixed(0) + "%</td>";
+            if (hasTime) {
+              const times = configRuns.map(r => (r.result || {}).time_seconds).filter(t => t != null);
+              html += "<td>" + (times.length ? (times.reduce((a, b) => a + b, 0) / times.length).toFixed(1) : "—") + "</td>";
+            }
+            if (hasErrors) html += "<td></td>";
+            html += "</tr>";
+          }
+          html += "</tbody></table>";
+
+          // Per-assertion detail for this eval
+          const runsWithExpectations = {};
+          for (const config of configGroups) {
+            runsWithExpectations[config] = evalRuns.filter(r => r.configuration === config && r.expectations && r.expectations.length > 0);
+          }
+          const hasAnyExpectations = Object.values(runsWithExpectations).some(runs => runs.length > 0);
+          if (hasAnyExpectations) {
+            // Collect all unique assertion texts across all configs
+            const allAssertions = [];
+            const seen = new Set();
+            for (const config of configGroups) {
+              for (const run of runsWithExpectations[config]) {
+                for (const exp of (run.expectations || [])) {
+                  if (!seen.has(exp.text)) {
+                    seen.add(exp.text);
+                    allAssertions.push(exp.text);
+                  }
+                }
+              }
+            }
+
+            html += '<table class="benchmark-table" style="margin-top: 0.5rem;">';
+            html += "<thead><tr><th>Assertion</th>";
+            for (const config of configGroups) {
+              const label = config.replace(/_/g, " ").replace(/\b\w/g, c => c.toUpperCase());
+              html += "<th>" + escapeHtml(label) + "</th>";
+            }
+            html += "</tr></thead><tbody>";
+
+            for (const assertionText of allAssertions) {
+              html += "<tr><td>" + escapeHtml(assertionText) + "</td>";
+
+              for (const config of configGroups) {
+                html += "<td>";
+                for (const run of runsWithExpectations[config]) {
+                  const exp = (run.expectations || []).find(e => e.text === assertionText);
+                  if (exp) {
+                    const cls = exp.passed ? "benchmark-delta-positive" : "benchmark-delta-negative";
+                    const icon = exp.passed ? "\u2713" : "\u2717";
+                    html += '<span class="' + cls + '" title="Run ' + run.run_number + ': ' + escapeHtml(exp.evidence || "") + '">' + icon + "</span> ";
+                  } else {
+                    html += "— ";
+                  }
+                }
+                html += "</td>";
+              }
+              html += "</tr>";
+            }
+            html += "</tbody></table>";
+          }
+        }
+      }
+
+      // Notes
+      if (notes.length > 0) {
+        html += '<div class="benchmark-notes">';
+        html += "<h3>Analysis Notes</h3>";
+        html += "<ul>";
+        for (const note of notes) {
+          html += "<li>" + escapeHtml(note) + "</li>";
+        }
+        html += "</ul></div>";
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ---- Start ----
+    init();
+    renderBenchmark();
+  </script>
+</body>
+</html>

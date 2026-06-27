@@ -1,0 +1,89 @@
+---
+name: nextjs-bootstrap
+description: Scaffold a new production-grade Next.js (App Router) + TypeScript + Tailwind + shadcn/ui frontend from scratch, wired to a separate API backend (e.g. Express) via a BFF proxy, with axios, Zod, TanStack Query, and React Hook Form. Use this whenever the user wants to start a new Next.js / React frontend, bootstrap a web client/UI, set up a shadcn starter, or initialize a frontend project — even if they only say "new frontend", "Next.js starter", "React app", "admin dashboard UI", or name the stack loosely. It scaffolds the infrastructure ONCE per project and emits the two source-of-truth files (ARCHITECTURE.md and MODULE_REGISTRY.md) that the future frontend-* skills depend on. Do NOT use this to add a feature/page to an existing project (that is frontend-feature-planner + frontend-module-builder) or to write tests. This scaffolds a Next.js + React frontend specifically — do NOT use it to bootstrap a backend/API (that is express-ts-bootstrap) or projects in other frontend stacks (Vite/CRA/Remix/Vue/Svelte/Angular); those are out of scope.
+---
+
+# nextjs-bootstrap
+
+Scaffold a runnable, production-grade **Next.js (App Router) + TypeScript + Tailwind + shadcn/ui** frontend that talks to a separate API backend through a **BFF proxy**, and — critically — emit `ARCHITECTURE.md` and `MODULE_REGISTRY.md`. Those two files are the shared memory that lets the future frontend skills (`frontend-feature-planner`, `frontend-module-builder`, `frontend-test-writer`, `frontend-code-review`, plus net-new ones like `font-theme-setup`, `api-binder`, `ux-designer`) avoid re-asking decisions and stop generating duplicate components. Getting them right matters more than the boilerplate.
+
+This skill runs **once per project**. It does NOT build feature pages (auth screens, dashboards with real data, CRUD) — it lays the foundation: the BFF/auth wiring, the DRY shared form + typography components, the data-fetching and HTTP plumbing, and a role-based routing skeleton, so later skills have concrete patterns to copy.
+
+This is the frontend twin of `express-ts-bootstrap`. It mirrors that skill's philosophy: **infrastructure once, decisions once, a seeded registry so nothing gets built twice.** Read `../NAMING.md` and `../LAYOUT.md` for how it coexists with a backend in one repo.
+
+## Stack (fixed)
+
+Use **latest** for everything — this stack moves fast, so confirm current APIs with **context7 before generating** (see `references/stack-context7.md`). The bundled boilerplate is written against current stable APIs; if context7 shows an API has changed, follow context7, not the bundled snapshot.
+
+- **Next.js** (App Router, `src/` dir, TypeScript strict, import alias `@/*`). Role-based routing lives in `src/proxy.ts` (Next 16+ renamed the deprecated `middleware.ts` → `proxy.ts`, function `middleware` → `proxy`; on Next ≤15 use `middleware.ts`/`middleware` — same body). Server-to-backend calls go through Route Handlers under `app/api/` (the BFF). Treat `cookies()`/`headers()` as async.
+- **React 19** with Server and Client Components. Shared interactive components are Client Components (`"use client"`).
+- **Tailwind CSS** (v4, CSS-first config via `@import "tailwindcss"` and `@theme`). Deep theme/font customization is intentionally deferred to a future `font-theme-setup` skill — ship sensible shadcn defaults here.
+- **shadcn/ui** — primitives live in `src/components/ui/`, added via the shadcn CLI. They use `cva`. **Never hand-author or duplicate a `ui` primitive**; compose it.
+- **axios** — one configured instance in `src/lib/axios.ts`, same-origin `baseURL: "/api"` (it hits the BFF, never the backend directly from the browser).
+- **Zod 4** — validation. Root import `import * as z from "zod"`, top-level formats (`z.email()`), `z.treeifyError()`.
+- **T3 Env** (`@t3-oss/env-nextjs`, https://env.t3.gg) — the **only** way env is defined. `src/lib/env.ts` calls `createEnv` with `server`/`client` schemas; it enforces the server/client split so secrets can't leak into the browser. No raw `process.env` reads anywhere else. This is a strict rule for every frontend skill.
+- **TanStack Query v5** — server-state. One `QueryClient` (`src/lib/query-client.ts`), a `Providers` client component, query/mutation hooks live in feature/service folders.
+- **React Hook Form 7** + `@hookform/resolvers` (Zod resolver) — all forms. Fields are never wired by hand; they use the shared `*Field` components in `src/components/shared/form/`.
+
+## Decision gate (ask ONLY these)
+
+The whole point of this toolkit is to not interrogate the user. Ask exactly three questions, with defaults, then proceed. Everything else is a baked-in production default.
+
+1. **Project location** — repo root, or a `frontend/` subfolder. **Recommend `frontend/`** if a backend already exists in this repo (check `.claude/workspace.json` for a `backend` entry, or a `backend/` folder) so `.claude/` stays the shared anchor. This sets the **project dir** and is recorded in `.claude/workspace.json`. See `../LAYOUT.md`.
+2. **Package manager** — pnpm / npm / bun. Default **pnpm**.
+3. **Auth token strategy** — how tokens flow between the backend and this app. Default **(a)**. Offer:
+   - **(a) Body → cookies:** backend returns `accessToken` + `refreshToken` in the JSON body; a Next.js Route Handler sets them as httpOnly cookies. *(default)*
+   - **(b) Backend sets cookies:** the backend already sets httpOnly cookies on login; Next just forwards/proxies them.
+   - **(c) Header / client-stored:** tokens kept client-side and sent via `Authorization` header by an axios interceptor. Less secure; offer but note the tradeoff.
+   - **+ Refresh rotation (yes/no):** add an interceptor + Route Handler that silently refreshes the access token on a 401. Layers on top of (a)/(b)/(c). Default **yes**.
+
+The **backend connection is always a BFF proxy** (Route Handlers under `app/api/` forward to the backend; the browser only ever calls same-origin `/api`). Don't offer direct-to-backend — it leaks the backend URL and tokens into the browser.
+
+Roles default to `admin` and `user` (→ `/admin`, `/user`) via an editable map in `src/lib/auth/roles.ts`. Mention it's extensible; don't interrogate. If the user already named roles/dashboards earlier in the conversation, use them.
+
+If the user already stated any of these earlier, do not re-ask — use it.
+
+## Workflow
+
+> **All paths below are relative to the resolved project dir** (`<proj>` = repo root, or the
+> `frontend/` subfolder if chosen). `.claude/` and `.claude/workspace.json` always stay at the
+> repo root. See `../LAYOUT.md`.
+
+Unlike the backend scaffolder (pure file copy), this skill is **hybrid: run the official CLIs, then overlay our files.** The CLIs own framework + `ui` primitives; we own everything in `lib/`, `proxy.ts` (role routing), the BFF/auth, and `components/shared/`.
+
+1. **Resolve decisions.** Apply the decision gate. Confirm the resolved set in one line before scaffolding (e.g. "Next.js App Router, pnpm, body→cookies + refresh rotation, in `frontend/` — scaffolding now."). Create `<proj>` if needed.
+2. **Confirm current APIs via context7** for Next.js, shadcn, TanStack Query, React Hook Form, Zod, and Tailwind. See `references/stack-context7.md` for the exact libraries/topics. This guards against the bundled snapshots having drifted.
+3. **Run `create-next-app@latest`** into `<proj>`: TypeScript, App Router, Tailwind, `src/` dir, import alias `@/*`, ESLint. (Use the non-interactive flags so it doesn't prompt.)
+4. **Init shadcn** (`shadcn@latest init`) and **add the primitives** the shared components need: at minimum `button label input textarea select checkbox radio-group switch field popover command calendar badge dialog sonner` (`dialog` backs the shared `Modal` overlay wrapper). These land in `src/components/ui/`. Notes on current shadcn: `init` is interactive — drive it non-interactively with `-t next -b radix -p nova` (it now asks for a component-library *base* (radix/base) and a *preset* (nova/…)). If a registry fetch fails with a TLS "unable to verify the first certificate" error, re-run the CLI with `NODE_OPTIONS="--use-system-ca"`. Modern shadcn ships a form-library-agnostic **`field`** primitive (`Field`/`FieldLabel`/`FieldDescription`/`FieldError`) — there is **no** RHF-bound `form` component anymore, so our shared fields bind React Hook Form themselves via `useController`. `popover`+`command`+`badge` back MultiSelect/Combobox; `calendar` backs DateField.
+5. **Install the data/form/HTTP/env deps** with the chosen PM: `axios @tanstack/react-query @tanstack/react-query-devtools react-hook-form @hookform/resolvers zod @t3-oss/env-nextjs server-only`. (`@t3-oss/env-nextjs` backs `lib/env.ts`; `server-only` guards `lib/auth/session.ts` from being bundled into client code.)
+6. **Overlay `assets/files/src/`** into `<proj>/src/` — `lib/`, `proxy.ts` (role routing), the BFF routes, `components/shared/` (`form/`, `typography/`, **`overlay/` with the `Modal` wrapper**), `providers.tsx`, and `.env.example` into `<proj>`. Wire `<Providers>` into `app/layout.tsx`. (On Next ≤15, rename the overlaid `proxy.ts` → `middleware.ts` and its `proxy` export → `middleware`.) Read `references/form-fields.md`, `references/typography-cva.md`, and `references/module-structure.md` first so the shared components match the installed `ui` primitives and the folder rules exactly.
+7. **Generate the chosen auth/token variant.** The overlay ships variant (a) by default; for (b)/(c) or no-refresh, rewrite `lib/auth/session.ts`, `lib/auth/tokens.ts`, `app/api/auth/login/route.ts`, and the axios interceptor per `references/auth-bff.md`. The BFF proxy + `proxy.ts` role logic are the same across variants.
+8. **Generate `ARCHITECTURE.md`** from `assets/ARCHITECTURE.template.md`, filling every `{{placeholder}}` with the resolved decisions and the actual conventions from `references/conventions-core.md`. Every other frontend skill reads this before writing code — it must be concrete, not aspirational.
+9. **Generate `MODULE_REGISTRY.md`** from `assets/MODULE_REGISTRY.template.md`. Seed it with what the scaffold ships: every shared `*Field`, the typography primitives, the shared `Modal` overlay wrapper, the `lib/` utilities (axios, query-client, env, auth/session, auth/roles, auth/tokens), the BFF proxy route, `proxy.ts` (role routing), and the **actual list of `ui` primitives you added**. This is the dedup ledger; if a shared piece exists, it must be listed so later skills reuse it.
+10. **Record the project in the workspace manifest.** Create or update `.claude/workspace.json` at the **repo root** with `{ "domain": "frontend", "path": "<proj relative to repo root, or '.'>", "stack": "nextjs" }`. If the file exists, **merge** — never clobber a `backend` entry. See `../LAYOUT.md`.
+11. **Install, build, and smoke-check.** Run `<pm> install`, then `<pm> run build` (must pass typecheck + lint), then a quick `<pm> run dev` check that `/` renders and a protected route redirects per `proxy.ts`. Report the result.
+
+## What to read when
+
+- `references/conventions-core.md` — the canonical conventions (project layout, component placement rules, form pattern, data-fetching, naming, DRY rules). This is the substance distilled into the generated ARCHITECTURE.md. Read before generating ARCHITECTURE.md.
+- `references/module-structure.md` — the **strict** feature-module anatomy (`types/constants/hooks/api/schema/components/template`) and the shared-vs-feature component rule + the shared-component taxonomy. Read before overlaying `components/shared/` and before generating ARCHITECTURE.md; these rules bind every future frontend skill.
+- `references/auth-bff.md` — the BFF proxy, `proxy.ts` role routing, and all four token strategies with the exact files each one changes. Read before generating the auth wiring (step 7).
+- `references/form-fields.md` — how each shared `*Field` is built (RHF `useController` + shadcn's `Field` primitive + `cva` variants) and which `ui` primitive each needs. Read before overlaying `components/shared/form/`.
+- `references/typography-cva.md` — the `Text`/`Heading`/`Label` `cva` components and the "extend, don't duplicate shadcn" rule. Read before overlaying `components/shared/typography/`.
+- `references/stack-context7.md` — which context7 libraries/topics to query for current APIs (step 2).
+- `assets/files/` — the literal boilerplate overlaid into `<proj>/src` (lib, middleware, BFF, shared components).
+- `assets/ARCHITECTURE.template.md` / `assets/MODULE_REGISTRY.template.md` — templates for the two source-of-truth docs.
+
+## Non-negotiables (the reasons this toolkit exists)
+
+- **shadcn primitives are sacred.** They live in `src/components/ui/`, come from the CLI, and are never hand-duplicated. App-level reusable components live in `src/components/shared/`. If you need a variant of a primitive, **compose or extend it** — re-skinning `Button` or re-implementing `Select` is a bug. (This is the answer to "buttons already have variants": don't redo them; build `Text`/`Heading` as new typography primitives and let `Label`/`Button` keep their own.)
+- **One home per component, decided by dependency (strict).** A component that is generic / domain-agnostic — wrappers, boxes, layout containers, **modal wrappers** (a shadcn-Dialog wrapper that takes only inner content), cards, chips, tags, badges — lives in `src/components/shared/` (grouped by purpose: `form/`, `typography/`, `overlay/`, `layout/`, `data-display/`, …). A component that depends on a single feature's domain lives in `src/features/<name>/components/` and stays there until a second feature needs it (then it **moves** to `shared` and gets registered — never copied). The bootstrap ships `overlay/Modal` as the canonical shared example. See `references/module-structure.md`.
+- **Features are self-contained modules (strict).** Each domain is one folder `src/features/<name>/` with a fixed anatomy — `types/`, `constants/`, `hooks/`, `api/`, `schema/`, `components/` (feature-only components), and `template/` (full composed screens like login/register; `page.tsx` files stay thin and render a template). A feature never cross-imports another feature; shared needs go to `components/shared`/`lib`/`hooks`/`services`. This binds every future frontend skill.
+- **Env is T3 Env, nowhere else.** `lib/env.ts` is the single `createEnv` definition (`@t3-oss/env-nextjs`); it enforces the server/client split. No raw `process.env` reads in app code. Server-only secrets (backend URL, cookie names/secret) get no `NEXT_PUBLIC_` prefix; browser values do and are mirrored in `experimental__runtimeEnv`.
+- **Every form field goes through a shared `*Field`.** No bare `<Controller>` + `<Input>` wiring scattered in pages. The `*Field` components are the single definition of field UI + validation display, so forms stay consistent and later skills reuse them.
+- **The browser never calls the backend directly.** All calls go through the same-origin BFF (`/api/...` Route Handlers). Tokens live in httpOnly cookies (variants a/b) handled server-side; the backend URL stays a server secret. A browser `axios` call with the backend's absolute URL is a bug.
+- **One HTTP instance, one QueryClient.** `lib/axios.ts` and `lib/query-client.ts` are the only places these are constructed. Per-feature hooks import them.
+- **Seed the registry honestly.** Every reusable thing the scaffold creates goes into `MODULE_REGISTRY.md` immediately — including the exact `ui` primitives installed. An empty or inaccurate registry defeats the dedup workflow and duplicates come right back.
+- **Record the project location.** The `.claude/workspace.json` `frontend` entry is mandatory and must merge with any `backend` entry — without it, later skills can't find a project scaffolded into `frontend/`.
+- **Don't scaffold features.** Real dashboards, auth screens, CRUD pages are out of scope here. Stop at infrastructure + shared components + a routing skeleton.
+- **Latest, verified.** Don't pin fragile versions from memory; install latest and confirm fast-moving APIs via context7 (step 2).

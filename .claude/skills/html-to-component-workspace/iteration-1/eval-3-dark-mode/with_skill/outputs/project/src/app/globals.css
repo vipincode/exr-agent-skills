@@ -1,0 +1,117 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@custom-variant dark (&:is(.dark *));
+
+/* Theme source: _docs/designs/dashboard-dark.html (Inter, indigo brand, slate neutrals).
+   Colors in oklch. Light = :root, dark = .dark (design shipped both via prefers-color-scheme). */
+:root {
+  --radius: 0.75rem; /* design --radius: 12px */
+
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.2077 0.0398 265.75);
+  --card: oklch(0.9842 0.0034 247.86);
+  --card-foreground: oklch(0.2077 0.0398 265.75);
+  --popover: oklch(0.9842 0.0034 247.86);
+  --popover-foreground: oklch(0.2077 0.0398 265.75);
+  --primary: oklch(0.5854 0.2041 277.12);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.9842 0.0034 247.86);
+  --secondary-foreground: oklch(0.2077 0.0398 265.75);
+  --muted: oklch(0.9842 0.0034 247.86);
+  --muted-foreground: oklch(0.5544 0.0407 257.42);
+  --accent: oklch(0.9842 0.0034 247.86);
+  --accent-foreground: oklch(0.2077 0.0398 265.75);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.9288 0.0126 255.51);
+  --input: oklch(0.9288 0.0126 255.51);
+  --ring: oklch(0.5854 0.2041 277.12);
+
+  /* custom: positive/up delta (design --positive: #16a34a) */
+  --positive: oklch(0.6271 0.1699 149.21);
+
+  /* sidebar surface set (maps to the design's --surface / --brand) */
+  --sidebar: oklch(0.9842 0.0034 247.86);
+  --sidebar-foreground: oklch(0.5544 0.0407 257.42);
+  --sidebar-primary: oklch(0.5854 0.2041 277.12);
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.9288 0.0126 255.51);
+  --sidebar-accent-foreground: oklch(0.2077 0.0398 265.75);
+  --sidebar-border: oklch(0.9288 0.0126 255.51);
+  --sidebar-ring: oklch(0.5854 0.2041 277.12);
+}
+
+.dark {
+  --background: oklch(0.1802 0.0325 266.62);
+  --foreground: oklch(0.9276 0.0058 264.53);
+  --card: oklch(0.2101 0.0318 264.66);
+  --card-foreground: oklch(0.9276 0.0058 264.53);
+  --popover: oklch(0.2101 0.0318 264.66);
+  --popover-foreground: oklch(0.9276 0.0058 264.53);
+  --primary: oklch(0.6801 0.1583 276.93);
+  --primary-foreground: oklch(0.1802 0.0325 266.62);
+  --secondary: oklch(0.2101 0.0318 264.66);
+  --secondary-foreground: oklch(0.9276 0.0058 264.53);
+  --muted: oklch(0.2101 0.0318 264.66);
+  --muted-foreground: oklch(0.7107 0.0351 256.79);
+  --accent: oklch(0.2101 0.0318 264.66);
+  --accent-foreground: oklch(0.9276 0.0058 264.53);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0.2781 0.0296 256.85);
+  --input: oklch(0.2781 0.0296 256.85);
+  --ring: oklch(0.6801 0.1583 276.93);
+
+  --positive: oklch(0.8003 0.1821 151.71);
+
+  --sidebar: oklch(0.2101 0.0318 264.66);
+  --sidebar-foreground: oklch(0.7107 0.0351 256.79);
+  --sidebar-primary: oklch(0.6801 0.1583 276.93);
+  --sidebar-primary-foreground: oklch(0.1802 0.0325 266.62);
+  --sidebar-accent: oklch(0.2781 0.0296 256.85);
+  --sidebar-accent-foreground: oklch(0.9276 0.0058 264.53);
+  --sidebar-border: oklch(0.2781 0.0296 256.85);
+  --sidebar-ring: oklch(0.6801 0.1583 276.93);
+}
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-positive: var(--positive);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  body { @apply bg-background text-foreground; }
+}

@@ -1,0 +1,43 @@
+{
+  "expectations": [
+    {
+      "text": "A Hero component is created under components/shared/ (marketing/ or layout/)",
+      "passed": true,
+      "evidence": "components/shared/marketing/hero.tsx created."
+    },
+    {
+      "text": "Markup is semantic: a <section> wrapper and a real <a>/<button> CTA, not div soup",
+      "passed": true,
+      "evidence": "<section> + <Button asChild><a>."
+    },
+    {
+      "text": "Not pinned to fixed desktop px (no w-[1100px] / text-[56px] hardcodes) \u2014 responsive utilities used",
+      "passed": false,
+      "evidence": "Hardcodes text-[56px] and max-w-[1100px] \u2014 pinned to desktop px, not responsive."
+    },
+    {
+      "text": "The gradient is a theme token/utility, not an inline style with raw hex",
+      "passed": false,
+      "evidence": "Uses from-blue-500 to-purple-600 (default Tailwind palette), not the brand gradient token."
+    },
+    {
+      "text": "A typed props interface (heading/subheading/CTA) is defined",
+      "passed": true,
+      "evidence": "HeroProps with title/subtitle/ctaLabel/ctaHref."
+    },
+    {
+      "text": "Hero is registered in MODULE_REGISTRY.md",
+      "passed": true,
+      "evidence": "Registry has a Hero row at components/shared/marketing/hero.tsx."
+    }
+  ],
+  "summary": {
+    "passed": 4,
+    "failed": 2,
+    "total": 6,
+    "pass_rate": 0.6667
+  },
+  "timing": {
+    "total_duration_seconds": 0.0
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "skill_name": "frontend-code-review",
+  "notes": "Runs inside a COPY of the fixture monorepo (frontend/ has the contract files + a built design). Each eval seeds a binding of a given quality into frontend/src/features/products/ and asks for a review. The skill is read-only — it must produce a findings report, not edit code. Baseline = no skill. Calibration matters: eval 2 is intentionally CLEAN and the skill must not manufacture findings.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "binding-bypasses-standard",
+      "prompt": "Review frontend/src/features/products/ — I just wired up the products list.",
+      "expected_output": "The seeded binding violates the toolkit standard: it uses a raw fetch() to the backend's absolute URL (BACKEND_URL read in client code) instead of the shared `api`/BFF, consumes res.data as `any` with no Zod parse, and fetches with useEffect+useState instead of TanStack Query. Review must flag: Critical (backend URL/secret shipped to client, bypassing BFF), High (no envelope unwrap/Zod validation -> unsafe `any` data; server state in useEffect instead of useQuery; unhandled error/empty states), each with file:line and a concrete fix. Read-only: no source edits. Leads with a one-line verdict.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "duplication-and-placement",
+      "prompt": "Code review the products feature changes before I merge.",
+      "expected_output": "The seeded code duplicates an existing shared component (a hand-rolled card/modal that already exists in components/shared, or a re-implemented shadcn ui primitive), places a generic component inside the feature instead of components/shared, cross-imports from another feature, and wires a form field with raw useController/<input> instead of the shared *Field. Review must flag the DRY/placement issues (Medium) citing the existing registry/shared paths and recommending reuse or promotion to components/shared, plus the cross-feature import and the raw-field-instead-of-*Field. Specific locations + fixes. Read-only.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "clean-binding-calibration",
+      "prompt": "Review the products binding in frontend/src/features/products/.",
+      "expected_output": "The seeded binding is correct and idiomatic: goes through the shared `api`/BFF, unwraps + Zod-parses the envelope, uses useProductsQuery with an array key, handles loading/empty/error, reuses ProductCard, types via z.infer. The review must NOT manufacture Critical/High findings — it should give a clean/positive verdict, at most minor Low notes, and a 'What's good' summary. This tests honest calibration (no over-flagging).",
+      "files": []
+    }
+  ]
+}

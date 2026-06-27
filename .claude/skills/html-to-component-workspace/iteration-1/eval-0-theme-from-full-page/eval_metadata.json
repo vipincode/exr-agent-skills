@@ -1,0 +1,14 @@
+{
+  "eval_id": 0,
+  "eval_name": "theme-from-full-page",
+  "prompt": "Set up the theme from the design in _docs/designs/landing.html — pull the colors, fonts, radius, shadow and gradient out of it and apply them to the project's theme. Colors must be in oklch.",
+  "assertions": [
+    {"text": "globals.css :root --primary is re-valued from the design's indigo (#4f46e5), no longer the stock near-black oklch(0.205 0 0)"},
+    {"text": "All theme color variables in :root and .dark are oklch() — no raw # hex left inside the theme variable blocks"},
+    {"text": "layout.tsx loads Inter (body) and Poppins (display) via next/font/google, replacing the stock Geist fonts"},
+    {"text": "@theme inline binds a display font variable (e.g. --font-display) so headings can use font-display"},
+    {"text": "The .dark block is still present and re-valued (theme remains dual-mode)"},
+    {"text": "No <link rel=\"stylesheet\"> Google Fonts tag or @import url() was introduced"},
+    {"text": "--radius, a shadow token, and a gradient token reflect the design's values"}
+  ]
+}

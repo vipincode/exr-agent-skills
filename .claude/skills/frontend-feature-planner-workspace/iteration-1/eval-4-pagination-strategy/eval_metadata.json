@@ -1,0 +1,13 @@
+{
+  "eval_id": 4,
+  "eval_name": "pagination-strategy",
+  "prompt": "Based on how the products API works, plan how the frontend should do pagination for the products list \u00e2\u20ac\u201d page vs infinite scroll, query keys, caching, and loading states.",
+  "assertions": [
+    "Plan file produced",
+    "Identifies offset/page-based pagination (skip/limit), not cursor",
+    "Notes response returns total/page/limit",
+    "Recommends a concrete approach with query key including page+filters",
+    "Covers loading/empty/error/end-of-pages states",
+    "Does NOT invent a cursor API the backend lacks"
+  ]
+}

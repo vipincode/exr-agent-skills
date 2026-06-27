@@ -1,0 +1,41 @@
+{
+  "expectations": [
+    {
+      "text": "Plan file (FEATURE_PLAN) was produced",
+      "passed": true,
+      "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+    },
+    {
+      "text": "Records the exact success envelope {success, data, message}",
+      "passed": true,
+      "evidence": ") `ok(res, data, message)` \u2192 ```json { \"success\": true, \"data\": <data>, \"message\": \"Products fetched\" } ``` For the list"
+    },
+    {
+      "text": "Identifies price is in CENTS (and a format transform)",
+      "passed": true,
+      "evidence": "ring;   price: number;       // INTEGER CENTS (e.g. 2400 = $24.00)   currency: strin"
+    },
+    {
+      "text": "Cites the API source/rung (monorepo backend source)",
+      "passed": true,
+      "evidence": "L backend contract  Read directly from `backend/src/modules/products/*` (not guessed).  ### Endpoint (list)"
+    },
+    {
+      "text": "Reuse names the axios instance AND the catch-all BFF (no new route)",
+      "passed": true,
+      "evidence": ".tsx` \u2014 what the design consumes.    - `lib/axios.ts`, `app/api/[...path]/route.ts`, `hooks/use-auth.ts` \u2014 existi"
+    },
+    {
+      "text": "Uses a TanStack query key namespaced to products",
+      "passed": true,
+      "evidence": "y keys are arrays, feature-namespaced: `[\"products\", filters]`. - Types come from `z.infer`"
+    },
+    {
+      "text": "Has a data-binding map wiring grid/card to a query hook (replaces SAMPLE)",
+      "passed": true,
+      "evidence": "hooks/use-products-query.ts    # NEW \u2014 useProductsQuery(filters) wrapping useQuery   lib/format"
+    }
+  ],
+  "score": 7,
+  "total": 7
+}

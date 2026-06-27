@@ -1,0 +1,91 @@
+# Dedup protocol — reuse before you create
+
+This is the reason this skill exists. A Figma file repeats components (the same header on
+every frame, avatars and cards everywhere). Without a discipline, a frame→code pass re-emits
+each one inline and the codebase fills with duplicate `Header`/`Avatar`/`Card` variants. The
+discipline: **for every candidate component, search first; create last.**
+
+Run this for **each** discrete piece you identified during decomposition — before writing a
+single line of it.
+
+## The decision: reuse → extend → create
+
+```
+For each candidate component (e.g. "ProfileAvatar", "Header", "PricingCard"):
+
+  1. Is it (or an equivalent) already in MODULE_REGISTRY.md?
+       YES → import and use it. STOP. (If it needs a new visual variant, go to step 4-extend.)
+       NO  → continue.
+
+  2. Does a grep of the codebase reveal an existing implementation not yet registered?
+       YES → use it, and register it now (the registry was stale). STOP.
+       NO  → continue.
+
+  3. Is it really a primitive shadcn ships (carousel, avatar, chart, tabs, accordion, …)?
+       YES → `shadcn add <name>` into components/ui/, then compose it. (Don't hand-write it.)
+       NO  → continue.
+
+  4. Is there a CLOSE cousin — same role, slightly different look?
+       YES → EXTEND it: add a cva variant / a prop, don't fork a near-copy.
+              (e.g. need a small header → add `size="sm"` to the shared Header, don't make Header2.)
+       NO  → CREATE it (step 5).
+
+  5. CREATE. Decide its home with shared-taxonomy.md (shared/<group> vs feature/<name>),
+     build it (building-components.md), and if it's shared, REGISTER it in MODULE_REGISTRY.md.
+```
+
+## The search order (do all three, in order)
+
+1. **`MODULE_REGISTRY.md`** — the curated ledger. Scan the shared sections (form, typography,
+   overlay, layout, data-display, and any the builders added) and the features table. This is
+   fastest and authoritative.
+2. **Grep the tree** — the registry can lag. Search by likely name and by role:
+   ```
+   # by name (PascalCase component + kebab file)
+   rg -i "header|navbar|avatar|carousel|hero" src/components src/features --type tsx -l
+   # confirm what a hit actually is
+   rg -n "export (function|const) (Header|Navbar|Avatar)" src
+   ```
+   Look in `components/shared/**`, `components/ui/**`, and `features/*/components/**`.
+3. **shadcn registry** — for primitives, check whether shadcn ships it before building
+   (`carousel`, `avatar`, `chart`, `sidebar`, `tabs`, `accordion`, `tooltip`, `sheet`, …).
+
+Only after all three come back empty do you create.
+
+## Extend vs create — the judgment call
+
+The trap is creating `HeaderDark`, `SmallHero`, `CardCompact` as siblings of existing
+components. Most "new" components are really **variants** of an existing one:
+
+- Same semantic role + same content shape, different size/color/density → **add a `cva`
+  variant or a prop** to the existing component.
+- Genuinely different role/content/behavior → **new component**.
+
+Examples:
+- "small-hero" vs "hero" → if it's the hero with less padding and a smaller heading, that's
+  `<Hero size="sm">`, not a new file. If it has a fundamentally different layout (no media, no
+  CTA), it's its own component.
+- "profile avatar with status dot" vs "avatar" → extend `Avatar` with a `status` prop.
+- Two cards that differ only in padding/shadow → one `Card` with variants.
+
+When in doubt, prefer extend — one component with variants beats two near-duplicates. But don't
+overload: if a "variant" needs a wholly different prop set and markup, it's a new component.
+
+## The move rule (feature → shared)
+
+If a component currently lives in `features/<a>/components/` and this frame needs it in a
+second feature, **move it to `components/shared/<group>/` and register it** — update imports in
+feature `<a>`. Never copy it into feature `<b>`. Two copies = the duplication this protocol
+exists to stop. (See shared-taxonomy.md for which group it moves into.)
+
+## Registering (closing the loop)
+
+Every shared component you create or move gets a `MODULE_REGISTRY.md` row immediately:
+
+```
+| Header | components/shared/layout/header.tsx | composes ui/navigation-menu + Logo | site header, variants size/theme |
+```
+
+An unregistered shared component is invisible to the next run and **will** be rebuilt — which
+is exactly the duplicate you just avoided, reappearing. Registration is not optional cleanup;
+it's what makes the dedup work across runs.

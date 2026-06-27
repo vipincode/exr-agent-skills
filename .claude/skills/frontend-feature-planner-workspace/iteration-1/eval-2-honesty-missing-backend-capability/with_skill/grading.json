@@ -1,0 +1,26 @@
+{
+  "expectations": [
+    {
+      "text": "Reports the orders module is absent from the backend",
+      "passed": true,
+      "evidence": ".ts` mounts **just** `/api/products`. **No orders module, no orders route.** | | 2 | Backend con"
+    },
+    {
+      "text": "Does NOT fabricate a concrete observed orders endpoint contract",
+      "passed": true,
+      "evidence": "no fabrication pattern matched"
+    },
+    {
+      "text": "Asks for the endpoint/sample OR flags it as a blocker/prerequisite",
+      "passed": true,
+      "evidence": "ger*`, `*.yaml`, `*.yml`). | | 4 | User-pasted endpoint + sample | None provided in t"
+    },
+    {
+      "text": "Notes the missing orders design on the frontend",
+      "passed": true,
+      "evidence": "api/hooks/types/schema; not bound).   **No orders feature exists.**  ## What I searched for the o"
+    }
+  ],
+  "score": 4,
+  "total": 4
+}

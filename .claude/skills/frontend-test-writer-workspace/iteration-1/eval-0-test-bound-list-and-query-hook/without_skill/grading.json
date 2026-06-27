@@ -1,0 +1,29 @@
+{
+  "expectations": [
+    {
+      "text": "Hook test renders within a QueryClientProvider / renderHook",
+      "passed": true,
+      "evidence": "query provider wrapper"
+    },
+    {
+      "text": "Mocks the network boundary (api axios instance or MSW)",
+      "passed": true,
+      "evidence": "network mocked"
+    },
+    {
+      "text": "Tests loading, empty, and error states of the grid",
+      "passed": true,
+      "evidence": "3 states covered"
+    },
+    {
+      "text": "Asserts envelope/Zod drift surfaces as an error",
+      "passed": true,
+      "evidence": "drift/error asserted"
+    },
+    {
+      "text": "Uses RTL semantic queries (role/text), not class names",
+      "passed": true,
+      "evidence": "semantic queries used"
+    }
+  ]
+}

@@ -1,0 +1,632 @@
+{
+  "metadata": {
+    "skill_name": "frontend-feature-planner",
+    "skill_path": "D:/SKILLS/exr-agent-skills/.claude/skills/frontend-feature-planner",
+    "executor_model": "claude-opus-4-8",
+    "analyzer_model": "claude-opus-4-8",
+    "timestamp": "2026-06-27T08:45:35Z",
+    "evals_run": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ],
+    "runs_per_configuration": 1
+  },
+  "runs": [
+    {
+      "eval_id": 0,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 9,
+        "failed": 0,
+        "total": 9,
+        "time_seconds": 172.1,
+        "tokens": 49732,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file (FEATURE_PLAN) was produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+        },
+        {
+          "text": "Records the exact success envelope {success, data, message}",
+          "passed": true,
+          "evidence": "not guessed.  **Success envelope:** `{ \"success\": true, \"data\": <data>, \"message\": string }` \u2014 200 via `ok()`, 201 via `"
+        },
+        {
+          "text": "Identifies price is in CENTS (and a format transform)",
+          "passed": true,
+          "evidence": "e('admin') | body: `name`, `price` (int cents, >0), `currency` (3-letter, default \"U"
+        },
+        {
+          "text": "Cites the API source/rung (monorepo backend source)",
+          "passed": true,
+          "evidence": "## API contract (observed) > Source: **Rung 1 \u2014 monorepo backend source** (`backend/s"
+        },
+        {
+          "text": "Reuse names the axios instance AND the catch-all BFF (no new route)",
+          "passed": true,
+          "evidence": ").  ## Reuse (no recreation) axios `src/lib/axios.ts`, catch-all BFF `src/app/api/[...path]/route.ts` (covers `/api/products`, no n"
+        },
+        {
+          "text": "Uses a TanStack query key namespaced to products",
+          "passed": true,
+          "evidence": "uctsQuery(filters)` TanStack hook (key `[\"products\", filters]`) | | src/features/products/l"
+        },
+        {
+          "text": "Has a data mapping wiring grid/card to a query hook (replaces SAMPLE)",
+          "passed": true,
+          "evidence": "tures/products/hooks/use-products.ts | `useProductsQuery(filters)` TanStack hook (key `[\"product"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": true,
+          "evidence": "layer; the card component stays as-is.  ## Dependencies What must be in place for this binding"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": true,
+          "evidence": "evant only to the future admin create.  ## Testing checklist Behavior a correct binding must satisfy"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 0,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.7777777777777778,
+        "passed": 7,
+        "failed": 2,
+        "total": 9,
+        "time_seconds": 142.2,
+        "tokens": 37767,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file (FEATURE_PLAN) was produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+        },
+        {
+          "text": "Records the exact success envelope {success, data, message}",
+          "passed": true,
+          "evidence": ") `ok(res, data, message)` \u2192 ```json { \"success\": true, \"data\": <data>, \"message\": \"Products fetched\" } ``` For the list"
+        },
+        {
+          "text": "Identifies price is in CENTS (and a format transform)",
+          "passed": true,
+          "evidence": "ring;   price: number;       // INTEGER CENTS (e.g. 2400 = $24.00)   currency: strin"
+        },
+        {
+          "text": "Cites the API source/rung (monorepo backend source)",
+          "passed": true,
+          "evidence": "L backend contract  Read directly from `backend/src/modules/products/*` (not guessed).  ### Endpoint (list)"
+        },
+        {
+          "text": "Reuse names the axios instance AND the catch-all BFF (no new route)",
+          "passed": true,
+          "evidence": ".tsx` \u2014 what the design consumes.    - `lib/axios.ts`, `app/api/[...path]/route.ts`, `hooks/use-auth.ts` \u2014 existi"
+        },
+        {
+          "text": "Uses a TanStack query key namespaced to products",
+          "passed": true,
+          "evidence": "y keys are arrays, feature-namespaced: `[\"products\", filters]`. - Types come from `z.infer`"
+        },
+        {
+          "text": "Has a data mapping wiring grid/card to a query hook (replaces SAMPLE)",
+          "passed": true,
+          "evidence": "hooks/use-products-query.ts    # NEW \u2014 useProductsQuery(filters) wrapping useQuery   lib/format"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": false,
+          "evidence": "not found"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": false,
+          "evidence": "not found"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 160.2,
+        "tokens": 49968,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products-create.md RUN_NOTES.md"
+        },
+        {
+          "text": "Notes POST /products requires admin (requireRole/admin)",
+          "passed": true,
+          "evidence": "| | POST | /api/products | `protect` + `requireRole(\"admin\")` | see body schema below | `Product`"
+        },
+        {
+          "text": "Mirrors the create body schema (name/price-cents/category...)",
+          "passed": true,
+          "evidence": "ST body** (from `products.schema.ts` \u2192 `createProductBody`): | Field | Type / rule | Notes | |---"
+        },
+        {
+          "text": "Flags the missing create-form design (design gap -> figma/html)",
+          "passed": true,
+          "evidence": "blocked. There is, > however, a real **design gap** (no create-form component exists yet)"
+        },
+        {
+          "text": "Reuses shared *Field components",
+          "passed": true,
+          "evidence": "sx | **NEW** create form (RHF + shared `*Field`); see Design gaps | | src/features/pro"
+        },
+        {
+          "text": "Plans a mutation invalidating the products query",
+          "passed": true,
+          "evidence": "te mutation, admin UI gating, and cache invalidation of the existing products list.  ## API contract (observed) > Sou"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": true,
+          "evidence": "e API requires positive integer cents.  ## Dependencies What must be in place for this binding"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": true,
+          "evidence": "ast error, keep form values for retry.  ## Testing checklist Behavior a correct binding must satisfy"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 1,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 6,
+        "failed": 2,
+        "total": 8,
+        "time_seconds": 193.8,
+        "tokens": 35599,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_product-create.md RUN_NOTES.md"
+        },
+        {
+          "text": "Notes POST /products requires admin (requireRole/admin)",
+          "passed": true,
+          "evidence": "` ``` productsRouter.post(\"/\", protect, requireRole(\"admin\"), validate({ body: createProductBody }"
+        },
+        {
+          "text": "Mirrors the create body schema (name/price-cents/category...)",
+          "passed": true,
+          "evidence": "requireRole(\"admin\"), validate({ body: createProductBody }), ctrl.create); ``` - **Auth: require"
+        },
+        {
+          "text": "Flags the missing create-form design (design gap -> figma/html)",
+          "passed": true,
+          "evidence": "te-form component** \u2014 it must be built (design gap). This plan stops at   the binding desi"
+        },
+        {
+          "text": "Reuses shared *Field components",
+          "passed": true,
+          "evidence": "he form UI (RHF + Zod resolver, shared `*Field` only). **Admin-gated** (see \u00a74). Calls"
+        },
+        {
+          "text": "Plans a mutation invalidating the products query",
+          "passed": true,
+          "evidence": "**mutation**. `onSuccess`: `queryClient.invalidateQueries({ queryKey: [\"products\"] })` so the grid refetches. Map error"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": false,
+          "evidence": "not found"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": false,
+          "evidence": "not found"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 139.7,
+        "tokens": 46007,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Produces a FEATURE_PLAN file even though blocked (predictable artifact)",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_orders.md RUN_NOTES.md"
+        },
+        {
+          "text": "Marks the plan status BLOCKED",
+          "passed": true,
+          "evidence": "plan: orders (API binding)  > Status: **BLOCKED** \u2014 no `orders` API contract exists in"
+        },
+        {
+          "text": "Reports the orders capability is absent from the backend",
+          "passed": true,
+          "evidence": "alks to the API.\" Result: **BLOCKED** \u2014 no orders API contract exists. Plan written honestly"
+        },
+        {
+          "text": "Lists the missing dependency + a concrete unblock path",
+          "passed": true,
+          "evidence": "OCKED \u2014 does not exist.** Build it via `backend-feature-planner` \u2192 `backend-module-builder`. Then re-ru"
+        },
+        {
+          "text": "Does NOT fabricate a concrete observed orders endpoint contract",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Notes the missing orders design on the frontend",
+          "passed": true,
+          "evidence": "rders design/screen** in frontend (`src/features/orders/`) | something to bind the data to | \u274c Not built. Currently only `src/features/pr"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 2,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 6,
+        "failed": 0,
+        "total": 6,
+        "time_seconds": 129.2,
+        "tokens": 33656,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Produces a FEATURE_PLAN file even though blocked (predictable artifact)",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_orders.md RUN_NOTES.md"
+        },
+        {
+          "text": "Marks the plan status BLOCKED",
+          "passed": true,
+          "evidence": "Orders screen \u2192 API binding  Status: **BLOCKED \u2014 cannot plan a real binding yet.** Dat"
+        },
+        {
+          "text": "Reports the orders capability is absent from the backend",
+          "passed": true,
+          "evidence": "No backend orders capability.** Backend mounts only `/api/products`. The single module is   `products`; `M"
+        },
+        {
+          "text": "Lists the missing dependency + a concrete unblock path",
+          "passed": true,
+          "evidence": "rs binding can be planned 1. **Backend: build an orders module first.** It needs at minimum:    - An `Order`"
+        },
+        {
+          "text": "Does NOT fabricate a concrete observed orders endpoint contract",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Notes the missing orders design on the frontend",
+          "passed": true,
+          "evidence": "orders capability and the frontend has no orders screen.** Binding plans must be grounded in a"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 8,
+        "failed": 0,
+        "total": 8,
+        "time_seconds": 157.3,
+        "tokens": 47433,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+        },
+        {
+          "text": "Cites the OpenAPI spec as the source (rung 3)",
+          "passed": true,
+          "evidence": "ontract (observed) > Source: **Rung 3 \u2014 OpenAPI / Swagger spec**, `backend/openapi.json"
+        },
+        {
+          "text": "Does NOT claim to have read backend source code",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Derives the {success,data,message} envelope from the spec",
+          "passed": true,
+          "evidence": "i\"`.  **Success envelope (single):** `{ success: true, data: Product, message?: string }` \u2014 `ProductEnvelope` **Succe"
+        },
+        {
+          "text": "Derives price-in-cents from the spec",
+          "passed": true,
+          "evidence": "slug: string` - `price: integer` \u2014 **in CENTS** (per spec description) \u2192 format to c"
+        },
+        {
+          "text": "Anchors reuse to axios/BFF (no new route)",
+          "passed": true,
+          "evidence": "forwards `/api/products*` \u2192 backend; **no new BFF route needed** | | query client | src/lib/que"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": true,
+          "evidence": "esign's existing `price: string` prop.  ## Dependencies What must be in place for this binding"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": true,
+          "evidence": "fails \u2014 caught, not silently rendered.  ## Testing checklist Behavior a correct binding must satisfy"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 3,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.75,
+        "passed": 6,
+        "failed": 2,
+        "total": 8,
+        "time_seconds": 120.1,
+        "tokens": 35597,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products.md RUN_NOTES.md"
+        },
+        {
+          "text": "Cites the OpenAPI spec as the source (rung 3)",
+          "passed": true,
+          "evidence": "itten here). **Ground truth:** `backend/openapi.json` (OpenAPI 3.0.3, `demo-api` v1.0.0"
+        },
+        {
+          "text": "Does NOT claim to have read backend source code",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Derives the {success,data,message} envelope from the spec",
+          "passed": true,
+          "evidence": "onse is wrapped) - `ProductEnvelope` = `{ success: boolean, data: Product, message?: string }` - `ProductListEnvelope` = `"
+        },
+        {
+          "text": "Derives price-in-cents from the spec",
+          "passed": true,
+          "evidence": "slug: string` - `price: integer` \u2014 **in CENTS** (e.g. `2400` = $24.00) - `currency:"
+        },
+        {
+          "text": "Anchors reuse to axios/BFF (no new route)",
+          "passed": true,
+          "evidence": "`) already forwards `/api/products` \u2014 **no new BFF route needed**. Reuse the single axios (`lib/"
+        },
+        {
+          "text": "Includes a Dependencies section",
+          "passed": false,
+          "evidence": "not found"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": false,
+          "evidence": "not found"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "with_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 1.0,
+        "passed": 7,
+        "failed": 0,
+        "total": 7,
+        "time_seconds": 177.0,
+        "tokens": 52614,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: FEATURE_PLAN_products-pagination.md RUN_NOTES.md"
+        },
+        {
+          "text": "Identifies offset/page-based pagination (skip/limit), not cursor",
+          "passed": true,
+          "evidence": "tion mechanism (the load-bearing fact): OFFSET / PAGE-NUMBER based.** The service does"
+        },
+        {
+          "text": "Notes response returns total/page/limit",
+          "passed": true,
+          "evidence": "ocuments(filter)` and returns `{ items, total, page, limit }`. There is **no cursor**, no `nextCur"
+        },
+        {
+          "text": "Recommends a concrete approach with query key including page+filters",
+          "passed": true,
+          "evidence": "arch?, category? }`   - **Query key:** `[\"products\", \"list\", { page, limit, search, category }]` \u2014 feature-"
+        },
+        {
+          "text": "Covers loading/empty/error/end-of-pages states",
+          "passed": true,
+          "evidence": "...filters, page: pageParam })`.   - **`getNextPageParam:`** derive from observed meta \u2014 `(last)"
+        },
+        {
+          "text": "Does NOT invent a cursor API the backend lacks",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": true,
+          "evidence": "ime rather than rendering `undefined`.  ## Testing checklist - [ ] Grid renders live data from `GET"
+        }
+      ],
+      "notes": []
+    },
+    {
+      "eval_id": 4,
+      "configuration": "without_skill",
+      "run_number": 1,
+      "result": {
+        "pass_rate": 0.8571428571428571,
+        "passed": 6,
+        "failed": 1,
+        "total": 7,
+        "time_seconds": 127.2,
+        "tokens": 36430,
+        "tool_calls": 0,
+        "errors": 0
+      },
+      "expectations": [
+        {
+          "text": "Plan file produced",
+          "passed": true,
+          "evidence": "files: PAGINATION_PLAN_products.md RUN_NOTES.md"
+        },
+        {
+          "text": "Identifies offset/page-based pagination (skip/limit), not cursor",
+          "passed": true,
+          "evidence": "exact match | - **Pagination model:** **offset-based** \u2014 service does `.skip((page - 1"
+        },
+        {
+          "text": "Notes response returns total/page/limit",
+          "passed": true,
+          "evidence": ",     \"data\": { \"items\": ProductDTO[], \"total\": number, \"page\": number, \"limit\": number }   }   ``` - **ProductDTO:**"
+        },
+        {
+          "text": "Recommends a concrete approach with query key including page+filters",
+          "passed": true,
+          "evidence": "feed-style surface. - **Query keys:** `[\"products\",\"list\",filters]` (page in key) vs `[\"products\",\"infinite\",filt"
+        },
+        {
+          "text": "Covers loading/empty/error/end-of-pages states",
+          "passed": true,
+          "evidence": "d UX. Because the API exposes `total`, `getNextPageParam` can stop cleanly at the end \u2014 infinite"
+        },
+        {
+          "text": "Does NOT invent a cursor API the backend lacks",
+          "passed": true,
+          "evidence": "no fabrication pattern matched"
+        },
+        {
+          "text": "Includes a Testing checklist section",
+          "passed": false,
+          "evidence": "not found"
+        }
+      ],
+      "notes": []
+    }
+  ],
+  "run_summary": {
+    "with_skill": {
+      "pass_rate": {
+        "mean": 1.0,
+        "stddev": 0.0,
+        "min": 1.0,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 161.26,
+        "stddev": 14.5507,
+        "min": 139.7,
+        "max": 177.0
+      },
+      "tokens": {
+        "mean": 49150.8,
+        "stddev": 2541.3421,
+        "min": 46007,
+        "max": 52614
+      }
+    },
+    "without_skill": {
+      "pass_rate": {
+        "mean": 0.827,
+        "stddev": 0.1062,
+        "min": 0.75,
+        "max": 1.0
+      },
+      "time_seconds": {
+        "mean": 142.5,
+        "stddev": 29.7679,
+        "min": 120.1,
+        "max": 193.8
+      },
+      "tokens": {
+        "mean": 35809.8,
+        "stddev": 1495.3139,
+        "min": 33656,
+        "max": 37767
+      }
+    },
+    "delta": {
+      "pass_rate": "+0.17",
+      "time_seconds": "+18.8",
+      "tokens": "+13341"
+    }
+  },
+  "notes": [
+    "Iteration 2. with_skill = v2 skill (always-write-even-when-blocked + new Dependencies and Testing-checklist sections). without_skill = the carried-forward iteration-1 no-skill baselines (behavior unchanged).",
+    "Now a real positive delta: v2 passes all assertions including the two new structural sections (Dependencies, Testing checklist); the baselines fail exactly those on evals 0/1/3/4 because they never emit those headings. This is the skill's core value \u2014 predictable structure for the frontend-module-builder handoff \u2014 made measurable.",
+    "Honesty eval (eval-2): v2 now writes a predictable FEATURE_PLAN_orders.md marked BLOCKED (missing capability stated, unblock path in Dependencies, no fabricated contract) instead of staying silent. Both arms pass; the win is the consistent artifact.",
+    "Cost: v2 runs ~49k tokens vs ~36k baseline \u2014 the price of reading refs + producing the full template. Judge plan quality/depth in the Outputs tab; assertions only confirm coverage + structure."
+  ]
+}
