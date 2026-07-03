@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "ARCHITECTURE.md records Vite + React 18 + react-router-dom — does NOT prescribe Next.js/App Router",
+      "passed": true,
+      "evidence": "Stack: Vite 6 + React 18 SPA, react-router-dom v6; explicitly 'no meta-framework, no server layer'"
+    },
+    {
+      "text": "Data fetching recorded as SWR + shared axios apiClient — does NOT prescribe TanStack Query",
+      "passed": true,
+      "evidence": "'SWR through one axios instance' section; even keeps string SWR keys, rejecting array keys as a TanStack idiom"
+    },
+    {
+      "text": "Styling recorded as MUI + Emotion — does NOT introduce shadcn/Tailwind",
+      "passed": true,
+      "evidence": "MUI v6 + createTheme recorded; registry says 'do not introduce shadcn or Tailwind alongside it'"
+    },
+    {
+      "text": "Forms recorded as Formik + Yup — does NOT switch the contract to RHF + Zod",
+      "passed": true,
+      "evidence": "Formik+Yup by-hand wiring recorded as the pattern to follow; RHF/Zod only appear as what this repo is NOT"
+    },
+    {
+      "text": "Direct-to-backend (no BFF) recorded as reality and surfaced as a finding, not silently rewritten",
+      "passed": true,
+      "evidence": "'Backend connection — direct, no BFF' section + Finding #1 ('expected for a Vite SPA', 'recorded as-is')"
+    },
+    {
+      "text": "Folder paradigm recorded as type-grouped (components/ hooks/ pages/), not features/",
+      "passed": true,
+      "evidence": "Layout section names it type-grouped; registry forbids creating a features/ tree implicitly"
+    },
+    {
+      "text": "MODULE_REGISTRY.md seeds Card, PageHeader, LoginForm, useUsers, userSchema/loginSchema, apiClient+fetcher, theme",
+      "passed": true,
+      "evidence": "All entries present with paths, props/surfaces, and reuse notes; pages and app infra also seeded"
+    },
+    {
+      "text": "Non-destructive: no source file modified; .claude/workspace.json has a frontend entry with a vite stack",
+      "passed": true,
+      "evidence": "Hash-compare vs fixture: 0 modified; workspace.json = { domain: frontend, path: '.', stack: 'vite-react-mui-swr-formik' }"
+    }
+  ]
+}

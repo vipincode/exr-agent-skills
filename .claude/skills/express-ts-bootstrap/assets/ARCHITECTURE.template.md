@@ -96,15 +96,24 @@ backend-module-builder wires them onto these primitives. Never write new token l
 `config/env.ts` validates `process.env` through Zod at startup and exits on
 failure. **No raw `process.env` access anywhere else** — import the typed `env`.
 New vars are added to the schema and `.env.example` in the same change.
+`.env` itself is loaded by Node's native `--env-file=.env` flag in the `dev` and
+`start` scripts (no `dotenv`); `env.ts` only validates. Docker/production inject
+real env vars instead — the container CMD runs without the flag.
 
 ## Build & scripts
 
 `dist/` is always wiped before a build or dev run via `rimraf` (Windows-safe):
 
-- `{{PM}} run dev` — `rimraf dist && tsx watch src/server.ts` (runs from source)
+- `{{PM}} run dev` — `rimraf dist && tsx watch --env-file=.env src/server.ts` (runs from source, loads `.env`)
 - `{{PM}} run build` — `rimraf dist && tsc -p tsconfig.json`
-- `{{PM}} start` — `node dist/server.js` (run a build first)
+- `{{PM}} start` — `node --env-file=.env dist/server.js` (run a build first)
 - `{{PM}} run clean` — `rimraf dist`
+
+## Git hooks
+
+husky (v9) + lint-staged, installed via the `prepare` script on `{{PM}} install`.
+`.husky/pre-commit` runs `lint-staged`, which runs `eslint --fix` on staged
+`*.ts`/`*.js` files (config lives in `package.json` under `"lint-staged"`).
 
 ## Logging
 

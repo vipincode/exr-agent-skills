@@ -80,6 +80,8 @@ Detection is by shape/`name`, not a hard `instanceof mongoose.Error` import chai
 
 `config/env.ts` parses `process.env` through a Zod schema at startup and exits the process on failure (fail fast, never boot half-configured). Everything downstream imports the typed `env` object — **no raw `process.env` access anywhere else** in the codebase. New env vars are added to the schema and to `.env.example` in the same change.
 
+**`env.ts` validates — it does not load.** Nothing in the codebase reads `.env` off disk; that is the job of Node's native `--env-file=.env` flag, which the `dev` and `start` scripts pass (supported by both `tsx` and `node` on Node ≥ 20 — no `dotenv` dependency). A scaffold whose scripts omit this flag boots with `MONGODB_URI`/`JWT_SECRET` undefined and dies at the Zod check even though the user's `.env` is perfectly correct — this exact failure has happened, so treat the flag as part of the contract. In Docker/production the platform injects real env vars and the `Dockerfile` CMD runs `node dist/server.js` directly, no `.env` involved.
+
 ## Logging
 
 `lib/logger.ts` exports a pino instance (pretty in dev via `pino-pretty`, JSON in prod). `request-context.ts` attaches a per-request id and a child logger at `req.log`. Application code logs through `req.log` inside requests and the root `logger` elsewhere. No `console.log` in committed code.
@@ -104,20 +106,32 @@ The compiled output lives in `dist/` (TypeScript `outDir`). A stale `dist/` is a
 ```jsonc
 "scripts": {
   "clean": "rimraf dist",
-  "dev": "rimraf dist && tsx watch src/server.ts",
+  "dev": "rimraf dist && tsx watch --env-file=.env src/server.ts",
   "build": "rimraf dist && tsc -p tsconfig.json",
-  "start": "node dist/server.js",
+  "start": "node --env-file=.env dist/server.js",
   "typecheck": "tsc --noEmit",
-  "lint": "eslint ."
+  "lint": "eslint .",
+  "prepare": "husky || true"
 }
 ```
 
 - `clean` — standalone wipe, callable directly.
-- `dev` — clears `dist/` then runs via `tsx watch` (no emit; running fresh from source, never a stale build).
+- `dev` — clears `dist/` then runs via `tsx watch` (no emit; running fresh from source, never a stale build). `--env-file=.env` loads the env file natively — without it `env.ts` validates an empty `process.env` and the boot fails; see "Environment config".
 - `build` — clears `dist/` then emits a clean compile.
-- `start` — runs the compiled output (assumes a prior `build`).
+- `start` — runs the compiled output (assumes a prior `build`), also loading `.env` natively. The `Dockerfile` deliberately runs `node dist/server.js` (no flag) because containers get env vars from the platform, not a file.
+- `prepare` — installs the husky git hooks on `install`. The `|| true` keeps installs green where husky can't run (Docker image builds with `--omit=dev`, no `.git` directory, CI).
 
 Add `dist/` to `.gitignore`. The `rimraf` devDependency must be in `package.json`, and the registry/README note that `clean` runs automatically inside `dev` and `build`.
+
+## Git hooks (husky + lint-staged)
+
+The scaffold ships husky (v9+) and lint-staged as devDependencies so every project starts with working pre-commit checks instead of bolting them on later:
+
+- `.husky/pre-commit` contains just `lint-staged` (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing — those are deprecated).
+- `package.json` carries the lint-staged config: `"lint-staged": { "*.{ts,js}": "eslint --fix" }` — staged files only, so commits stay fast even as the repo grows.
+- Hooks activate via the `prepare` script on first install; nothing else to run manually.
+
+If the project dir is not itself the git root (e.g. scaffolded into `backend/` inside a monorepo), husky refuses to install from the subfolder — that's why `prepare` ends in `|| true`, so installs still succeed. To activate the hooks in that layout, change the project's prepare script to hop to the git root: `"prepare": "cd .. && husky backend/.husky || true"` (adjust the path to match), and make the hook `cd backend && npx lint-staged` (`npx`, because the hook now runs from the git root where `node_modules/.bin` isn't on PATH). When scaffolding into a subfolder, apply this adjusted form instead of the plain `husky` call.
 
 ## Graceful shutdown
 

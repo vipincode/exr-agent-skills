@@ -1,0 +1,15 @@
+{
+  "eval_id": 0,
+  "eval_name": "nextjs-shadcn-query",
+  "prompt": "Set up my existing Next.js app for the frontend toolkit (frontend-feature-planner / frontend-module-builder / frontend-test-writer / frontend-code-review) — establish the contract files the other skills read.",
+  "assertions": [
+    "ARCHITECTURE.md written, describing Next.js App Router + TypeScript + `@/*` alias as found in the repo",
+    "Data path recorded as-is: TanStack Query + shared axios `api` + BFF catch-all proxy (app/api/[...path])",
+    "Styling recorded as-is: Tailwind + shadcn/ui with the ui/ + shared/ component layering",
+    "MODULE_REGISTRY.md seeds ALL shared code: InputField, Heading, axios api, query-client, env, cn, use-auth",
+    "Registry seeds the existing products feature module with its public surface (components/hooks/api)",
+    "Non-destructive: no pre-existing source file modified",
+    ".claude/workspace.json written with a frontend domain entry (path + stack)",
+    "Contract is descriptive with zero invented conventions (clean repo onboards without questions)"
+  ]
+}

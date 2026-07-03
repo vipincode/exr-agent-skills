@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "ARCHITECTURE.md written, describing Next.js App Router + TypeScript + `@/*` alias as found in the repo",
+      "passed": true,
+      "evidence": "Stack section records Next.js 15.1.0 App Router, TS strict, alias `@/*` -> ./src/*"
+    },
+    {
+      "text": "Data path recorded as-is: TanStack Query + shared axios `api` + BFF catch-all proxy (app/api/[...path])",
+      "passed": true,
+      "evidence": "Dedicated 'Data fetching' + 'Backend connection — BFF proxy' sections; lib/axios.ts baseURL /api documented"
+    },
+    {
+      "text": "Styling recorded as-is: Tailwind + shadcn/ui with the ui/ + shared/ component layering",
+      "passed": true,
+      "evidence": "Tailwind v4 + shadcn new-york recorded; component-placement section covers ui/ vs shared/<category>/ vs feature-local"
+    },
+    {
+      "text": "MODULE_REGISTRY.md seeds ALL shared code: InputField, Heading, axios api, query-client, env, cn, use-auth",
+      "passed": true,
+      "evidence": "All seven present, each with path + purpose; useAuth explicitly flagged as placeholder"
+    },
+    {
+      "text": "Registry seeds the existing products feature module with its public surface (components/hooks/api)",
+      "passed": true,
+      "evidence": "Features table lists products with ProductCard/ProductList, useProducts, fetchProducts, schema, and barrel surface"
+    },
+    {
+      "text": "Non-destructive: no pre-existing source file modified",
+      "passed": true,
+      "evidence": "Hash-compare vs fixture: 0 modified files; only ARCHITECTURE.md, MODULE_REGISTRY.md, ONBOARDING_REPORT.md, .claude/workspace.json added"
+    },
+    {
+      "text": ".claude/workspace.json written with a frontend domain entry (path + stack)",
+      "passed": true,
+      "evidence": "{ \"domain\": \"frontend\", \"path\": \".\", \"stack\": \"nextjs\" }"
+    },
+    {
+      "text": "Contract is descriptive with zero invented conventions (clean repo onboards without questions)",
+      "passed": true,
+      "evidence": "No questions asked (repo consistent); gaps (globals.css, auth, lockfile, resolvers-v3-vs-zod-v4) recorded as findings, not filled in"
+    }
+  ]
+}

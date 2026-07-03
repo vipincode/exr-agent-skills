@@ -96,3 +96,13 @@ Before creating anything: check `MODULE_REGISTRY.md`, then grep `components/shar
 ## Build & scripts
 
 - Use the chosen package manager. `build` must pass typecheck + lint. `dev` for local. `start` for prod.
+
+## Git hooks (husky + lint-staged)
+
+The scaffold ships husky (v9+) and lint-staged as devDependencies so every project starts with working pre-commit checks instead of bolting them on later:
+
+- `.husky/pre-commit` contains just `lint-staged` (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing — those are deprecated).
+- `package.json` carries the lint-staged config: `"lint-staged": { "*.{ts,tsx,js,jsx}": "eslint --fix" }` — staged files only, so commits stay fast even as the repo grows.
+- `"prepare": "husky || true"` in scripts activates the hooks on first install; the `|| true` keeps installs green where husky can't run (CI, Docker, `--omit=dev`).
+
+If the project dir is not itself the git root (e.g. scaffolded into `frontend/` inside a monorepo), husky refuses to install from the subfolder — that's why `prepare` ends in `|| true`, so installs still succeed. To activate the hooks in that layout, change the prepare script to hop to the git root: `"prepare": "cd .. && husky frontend/.husky || true"` (adjust the path to match), and make the hook `cd frontend && npx lint-staged` (`npx`, because the hook now runs from the git root where `node_modules/.bin` isn't on PATH). When scaffolding into a subfolder, apply this adjusted form instead of the plain `husky` call.

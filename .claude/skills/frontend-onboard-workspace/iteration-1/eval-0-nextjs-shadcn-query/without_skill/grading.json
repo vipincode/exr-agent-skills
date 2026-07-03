@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "ARCHITECTURE.md written, describing Next.js App Router + TypeScript + `@/*` alias as found in the repo",
+      "passed": true,
+      "evidence": "Stack + path-alias sections record Next 15 App Router, TS strict, @/* -> src/*"
+    },
+    {
+      "text": "Data path recorded as-is: TanStack Query + shared axios `api` + BFF catch-all proxy (app/api/[...path])",
+      "passed": true,
+      "evidence": "BFF proxy pattern section documents catch-all forward to env.BACKEND_URL; axios baseURL /api"
+    },
+    {
+      "text": "Styling recorded as-is: Tailwind + shadcn/ui with the ui/ + shared/ component layering",
+      "passed": true,
+      "evidence": "Tailwind v4 + shadcn new-york recorded; placement rules for ui/ vs shared/<category>/ vs feature components"
+    },
+    {
+      "text": "MODULE_REGISTRY.md seeds ALL shared code: InputField, Heading, axios api, query-client, env, cn, use-auth",
+      "passed": true,
+      "evidence": "All seven listed with paths and reuse notes"
+    },
+    {
+      "text": "Registry seeds the existing products feature module with its public surface (components/hooks/api)",
+      "passed": true,
+      "evidence": "products section splits public barrel surface vs internal items (ProductCard, fetchProducts, productSchema)"
+    },
+    {
+      "text": "Non-destructive: no pre-existing source file modified",
+      "passed": true,
+      "evidence": "Hash-compare vs fixture: 0 modified files; only the two contract files added"
+    },
+    {
+      "text": ".claude/workspace.json written with a frontend domain entry (path + stack)",
+      "passed": false,
+      "evidence": "No .claude/workspace.json created — baseline doesn't know the toolkit's manifest convention, so subfolder discovery by the other skills is not wired"
+    },
+    {
+      "text": "Contract is descriptive with zero invented conventions (clean repo onboards without questions)",
+      "passed": true,
+      "evidence": "Strictly observed patterns with file citations; gaps (globals.css, env file, vitest config, unused productSchema) flagged instead of filled"
+    }
+  ]
+}

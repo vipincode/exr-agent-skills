@@ -16,23 +16,33 @@ Production-grade Express 5 + TypeScript + Mongoose 8 + JOSE 5 backend.
 ## Setup
 
 ```bash
-{{PM}} install
+{{PM}} install         # also installs the husky pre-commit hook
 cp .env.example .env   # then edit values; JWT_SECRET must be >= 32 chars
 ```
+
+`.env` is loaded automatically by the `dev`/`start` scripts via Node's native
+`--env-file=.env` flag — no `dotenv` needed. If the app exits at startup with an
+env validation error, your `.env` is missing or has bad values.
 
 ## Scripts
 
 | Script              | What it does                                                    |
 | ------------------- | --------------------------------------------------------------- |
-| `{{PM}} run dev`    | Wipes `dist/`, runs `tsx watch` from source (no build needed)   |
+| `{{PM}} run dev`    | Wipes `dist/`, runs `tsx watch` from source with `.env` loaded  |
 | `{{PM}} run build`  | Wipes `dist/`, compiles to `dist/` with `tsc`                   |
-| `{{PM}} start`      | Runs the compiled server (`node dist/server.js`); build first   |
+| `{{PM}} start`      | Runs the compiled server with `.env` loaded; build first        |
 | `{{PM}} run clean`  | Removes `dist/`                                                 |
 | `{{PM}} run typecheck` | Type-checks without emitting                                 |
 | `{{PM}} run lint`   | Lints with ESLint                                               |
 
 `dist/` is always removed before `dev` and `build` (via `rimraf`, Windows-safe),
 so you never run stale compiled output.
+
+## Git hooks
+
+husky + lint-staged run `eslint --fix` on staged `.ts`/`.js` files at every
+commit. Hooks install automatically on `{{PM}} install` (the `prepare` script);
+the hook itself lives in `.husky/pre-commit`.
 
 ## Health check
 

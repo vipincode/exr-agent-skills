@@ -117,6 +117,9 @@ Before creating any component/util/hook/type: **check `MODULE_REGISTRY.md` first
 
 - Package manager: **{{PACKAGE_MANAGER}}**. Common scripts: `{{PM}} run dev`, `{{PM}} run build`, `{{PM}} run start`, `{{PM}} run lint`.
 - `build` must pass typecheck + lint. CI runs `build`.
+- Git hooks: husky (v9) + lint-staged, installed via the `prepare` script on
+  `{{PM}} install`. `.husky/pre-commit` runs `lint-staged` → `eslint --fix` on
+  staged `*.ts`/`*.tsx`/`*.js`/`*.jsx` (config in `package.json` under `"lint-staged"`).
 
 ## Decisions log
 

@@ -1,0 +1,34 @@
+{
+  "expectations": [
+    {
+      "text": "Detects there is no frontend source (express-only scratch package.json) instead of treating it as an existing frontend",
+      "passed": true,
+      "evidence": "HANDOFF.md inventories the folder: express-only manifest, no next/react/vite dep, no app|pages|src tree"
+    },
+    {
+      "text": "Routes to nextjs-bootstrap for scaffolding rather than onboarding in place",
+      "passed": true,
+      "evidence": "Quotes SKILL.md Step 0 and routes to nextjs-bootstrap; 'Stop here' honored"
+    },
+    {
+      "text": "Does NOT fabricate a descriptive ARCHITECTURE.md / MODULE_REGISTRY.md for a nonexistent frontend",
+      "passed": true,
+      "evidence": "Only HANDOFF.md written — 'there is no existing frontend to describe'"
+    },
+    {
+      "text": "Does not hallucinate an inventory of components/hooks that don't exist",
+      "passed": true,
+      "evidence": "Inventory lists exactly the two real files (package.json, README.md) and nothing else"
+    },
+    {
+      "text": "Pre-existing files (package.json, README.md) untouched",
+      "passed": true,
+      "evidence": "Hash-compare vs fixture: 0 modified files"
+    },
+    {
+      "text": "The handoff and what happens next (bootstrap scaffolds + writes the contract itself) is stated clearly",
+      "passed": true,
+      "evidence": "'What happens next' explains bootstrap asks root-vs-frontend/, scaffolds, and emits the contract files itself"
+    }
+  ]
+}

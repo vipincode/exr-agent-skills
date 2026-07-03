@@ -1,0 +1,44 @@
+{
+  "expectations": [
+    {
+      "text": "ARCHITECTURE.md records Vite + React 18 + react-router-dom — does NOT prescribe Next.js/App Router",
+      "passed": true,
+      "evidence": "Stack table records Vite 6 / React 18 SPA / react-router v6, 'not Next.js'"
+    },
+    {
+      "text": "Data fetching recorded as SWR + shared axios apiClient — does NOT prescribe TanStack Query",
+      "passed": true,
+      "evidence": "'No BFF layer' data-fetching section documents useSWR + shared fetcher; 'No TanStack Query' in Explicitly Absent"
+    },
+    {
+      "text": "Styling recorded as MUI + Emotion — does NOT introduce shadcn/Tailwind",
+      "passed": true,
+      "evidence": "MUI + Emotion + sx recorded; 'no Tailwind, no CSS modules'; no shadcn/ui assumed"
+    },
+    {
+      "text": "Forms recorded as Formik + Yup — does NOT switch the contract to RHF + Zod",
+      "passed": true,
+      "evidence": "Formik useFormik + yup schemas recorded; registry: 'yup, not zod — do not introduce zod'"
+    },
+    {
+      "text": "Direct-to-backend (no BFF) recorded as reality and surfaced as a finding, not silently rewritten",
+      "passed": true,
+      "evidence": "Section 2 headline 'no BFF layer'; Known Gaps: 'Do not introduce Next.js-style API routes; this is a Vite SPA'"
+    },
+    {
+      "text": "Folder paradigm recorded as type-grouped (components/ hooks/ pages/), not features/",
+      "passed": true,
+      "evidence": "Structure section documents the flat type-grouped tree; 'no separate features/<name>/ module tree'"
+    },
+    {
+      "text": "MODULE_REGISTRY.md seeds Card, PageHeader, LoginForm, useUsers, userSchema/loginSchema, apiClient+fetcher, theme",
+      "passed": true,
+      "evidence": "All entries present with paths and reuse notes, plus an 'Explicitly Absent' section"
+    },
+    {
+      "text": "Non-destructive: no source file modified; .claude/workspace.json has a frontend entry with a vite stack",
+      "passed": false,
+      "evidence": "No fixture file modified, but no .claude/workspace.json manifest was written (also initially wrote its files outside its arm into the shared fixtures/ dir — relocated by the harness)"
+    }
+  ]
+}

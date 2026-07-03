@@ -1,0 +1,24 @@
+Both skills are usable right now. When you've got a Figma link, just paste it and say "run the evals" — I'll pick it up from
+  the parked task.
+
+
+Yes, run all 3
+     Build the three fixture frontends, run with-skill vs baseline, then open the eval viewer for you to review.
+
+
+What was wrong
+
+  Your backend/.env had correct values, but nothing was loading it. src/config/env.ts validates process.env directly (line 18),
+  yet there was no dotenv import and the dev script ran plain tsx watch src/server.ts with no env-file flag — so MONGODB_URI and
+  JWT_SECRET were undefined, failing Zod validation and exiting.
+
+  Fix
+
+  Added --env-file=.env to the run scripts in backend/package.json (Node ≥20 / tsx support this natively, no new dependency):
+  - dev: tsx watch --env-file=.env src/server.ts
+  - start: node --env-file=.env dist/server.js
+
+  npm run dev should boot past the env check now. One thing to note: the next step is the DB connection — make sure a local Mongo
+  is running on 27017 (your .env/comments mention docker-compose), or connectDb() will fail at startup.
+
+
