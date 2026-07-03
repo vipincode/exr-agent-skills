@@ -5,6 +5,7 @@ What each file in a feature module's binding layer should contain. The feature a
 ```
 features/<name>/
   types/        domain types — derived from the Zod schemas via z.infer (no parallel interfaces)
+  constants/    domain constants, enums, option lists, query-key roots (or constants.ts)
   schema/       Zod schemas: domain shape, the success envelope, request/form payloads, filters
   api/          request functions — call the shared axios `api`, unwrap the envelope, Zod-parse data
   hooks/        TanStack Query/mutation hooks (array keys, invalidation)
@@ -23,7 +24,10 @@ Mirror the **observed** envelope from the plan's "API contract (observed)" exact
 Export inferred types with `z.infer` — one source of truth for shapes.
 
 ## `types/<name>.ts` — types from Zod
-`export type Product = z.infer<typeof productSchema>` etc. Add module-local types here only if they aren't derived from a schema. If a type is needed by another feature, it isn't feature-local — move it to a shared location.
+`export type Product = z.infer<typeof productSchema>` etc. Add module-local types here only if they aren't derived from a schema. If a type is needed by another feature, it isn't feature-local — move it to `src/types/` and register it.
+
+## `constants/<name>.ts` — domain constants
+Enums, option lists (e.g. category/status options for selects), fixed limits, and the feature's query-key root. No magic literals in components or hooks — name them here. If a constant/enum is needed by another feature, move it to `src/constants/` and register it.
 
 ## `api/<name>.api.ts` — request functions
 Each fn calls the shared `api` axios instance (never a new instance, never the backend's absolute URL), then unwraps + validates:
@@ -56,6 +60,12 @@ export function useCreateProductMutation() {
 }
 ```
 Use `placeholderData: keepPreviousData` for smooth paging when the plan calls for it; `useInfiniteQuery` only if the plan chose infinite scroll. Do optimistic updates only when the plan specifies them (with rollback in `onError`).
+
+## `components/` — new feature components (rare; reuse first)
+Only created when the plan needs a piece that doesn't exist anywhere. When you do write one:
+- **Class grouping via `cn()`** (from `@/lib/utils`) — conditional and merged Tailwind classes go through `cn(...)`, never template-string concatenation, so conflicting utilities resolve correctly and a caller-supplied `className` can be composed last.
+- **Variants via `cva`** (class-variance-authority) — visual variants (size, tone, state) are a `cva` definition with `variants` + `defaultVariants`, applied as `cn(cardVariants({ size, tone }), className)`. No boolean-ternary class chains or hand-rolled `Record<Variant, string>` maps; this matches how every shadcn component in `components/ui/` is built.
+- **Tabular data → `DataTable` by default.** shadcn offers plain `Table` primitives (static markup) and the `DataTable` pattern (TanStack Table: column defs, sorting, pagination, row selection). Flag which one you intend to use before building; absent an answer or a plan directive, default to `DataTable` — API-bound lists almost always grow into sorting/paging needs.
 
 ## `template/<name>-*.tsx` — wire the built screen
 Edit the existing composed screen to consume the hook instead of hardcoded data. Render the three states explicitly:

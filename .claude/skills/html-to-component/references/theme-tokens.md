@@ -148,6 +148,31 @@ those.
 Use through `bg-[image:var(--gradient-brand)]` or a small utility class. Capture angle and stops
 exactly from the source.
 
+## Recurring utility classes (Tailwind v4 `@utility`)
+
+Single tokens cover single properties; designs also repeat **combinations** — a card treatment
+(border + radius + shadow), gradient text, a glass/blur panel. When the source CSS shows the same
+multi-property treatment on several selectors, define it once in `globals.css` as a named
+utility so components apply one class instead of re-assembling the recipe:
+
+```css
+@utility card-surface {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+@utility text-gradient-brand {
+  background: var(--gradient-brand);
+  background-clip: text;
+  color: transparent;
+}
+```
+
+Build utilities **from the tokens** (never re-hardcode values inside them) so re-theming stays a
+one-place change. Name by role (`card-surface`), not by look (`gray-bordered-box`). Two or three
+well-chosen utilities is typical — this is for genuinely recurring treatments, not a parallel CSS
+framework.
+
 ## Background images
 
 A recurring background (texture, hero pattern) referenced via `background-image: url(...)` →

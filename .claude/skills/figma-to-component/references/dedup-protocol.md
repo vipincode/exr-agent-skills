@@ -52,6 +52,15 @@ For each candidate component (e.g. "ProfileAvatar", "Header", "PricingCard"):
 
 Only after all three come back empty do you create.
 
+Two special cases that short-circuit the whole decision:
+- **Icons are never new components.** An icon is an export appended to the registry file
+  `components/shared/icons.tsx` (lucide first, react-icons for gaps, custom `currentColor` SVG
+  last) — check that file's exports before adding one. See building-components.md "Icons".
+- **A restyled primitive is not a new component.** If the "new" thing is a shadcn primitive
+  with different looks (a gradient button, a pill badge), the answer is a `cva` variant edited
+  into `components/ui/<primitive>.tsx` — see building-components.md "The design's variants
+  live in `ui/`".
+
 ## Extend vs create — the judgment call
 
 The trap is creating `HeaderDark`, `SmallHero`, `CardCompact` as siblings of existing

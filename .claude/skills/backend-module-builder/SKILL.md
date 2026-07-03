@@ -23,7 +23,7 @@ files, the registry, and the `src/app.ts` router mount — is **relative to that
 This is the heart of the skill. Before writing any util, middleware, helper, type, constant, or model that *could* be shared, follow `references/dedup-protocol.md`:
 1. Check the plan's **Reuse** section (the planner already identified candidates).
 2. Check `MODULE_REGISTRY.md`.
-3. Grep `src/lib`, `src/middleware`, and sibling modules for the capability.
+3. Grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules for the capability.
 4. If a suitable piece exists → import it. "It's only one feature" is **not** a reason to inline a duplicate. If it almost fits, prefer extending the shared piece over forking it, unless that would overload it.
 5. Only if nothing exists → create it, and mark it for registration (Step 5).
 
@@ -37,6 +37,7 @@ Create the files listed in the plan under `src/modules/<name>/`, following the p
 - **Errors** only by throwing the shared `AppError` subclasses. Controllers don't try/catch.
 - **Validation** via the shared `validate({...})` middleware with the module's Zod schemas; controllers consume typed, validated input.
 - **Types** derived from Zod schemas with `z.infer` — no parallel interfaces.
+- **Placement by reach:** non-Zod types in `<name>.types.ts`, constants/enums in `<name>.constants.ts`, private helpers in `<name>.utils.ts` — but anything used by 2+ modules goes global (`src/types/`, `src/constants/`, `src/lib/`) and is registered. No inline magic literals or ad-hoc inline types.
 - **Imports** follow the project's extension convention exactly.
 - **Auth** reuses `protect`/`requireRole`/`jwt.ts` — never new token logic.
 - Mount the new router in `src/app.ts` at the marked insertion point.

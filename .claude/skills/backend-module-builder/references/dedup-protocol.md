@@ -17,7 +17,7 @@ It does **not** apply to genuinely module-local, single-use code (e.g. a private
 3. **Search MODULE_REGISTRY.md** for that capability among shared pieces and existing modules' public surfaces.
 
 4. **Grep the codebase** (don't trust memory or the registry alone — the registry can lag):
-   - `src/lib/` and `src/middleware/` for shared infra.
+   - `src/lib/` and `src/middleware/` for shared infra; `src/types/` and `src/constants/` for shared types and constants/enums.
    - sibling `src/modules/*/` for a service that already does it.
    - search by likely identifiers and by intent (e.g. `paginate`, `pageSize`, `cursor` for pagination; `jwtVerify`, `verifyToken` for token checks).
 
@@ -25,7 +25,12 @@ It does **not** apply to genuinely module-local, single-use code (e.g. a private
    - Exact match → import and use it. Done.
    - Close match → extend the shared piece (add a param/option) rather than fork, *unless* extending would bloat it with unrelated concerns — then create a sibling and note why.
    - Cross-module data need → call the owning module's **service**, never reach into its model directly.
-   - No match → create it. If it's reusable, place it in `src/lib` or `src/middleware` (not inside the module) and flag it for registration. If single-use, keep it module-local.
+   - No match → create it, **placed by kind**:
+     - reusable util/helper → `src/lib/`; reusable middleware → `src/middleware/`
+     - type used (or usable) by 2+ modules → `src/types/`
+     - constant/enum used by 2+ modules → `src/constants/`
+     - single-use → stays in the module (`<name>.types.ts`, `<name>.constants.ts`, or a private helper) — never as inline magic literals or ad-hoc inline types
+     Anything placed globally gets flagged for registration.
 
 6. **Record the outcome** for the hand-off summary: "reused X from <path>" or "created new shared Y at <path> (registered)".
 
@@ -36,4 +41,6 @@ It does **not** apply to genuinely module-local, single-use code (e.g. a private
 - A per-module `catchAsync`/`asyncHandler` wrapper (Express 5 makes it unnecessary, and ARCHITECTURE.md forbids it).
 - A new error class that duplicates an `AppError` subclass.
 - Copy-pasting a validation or pagination helper "because this module is different".
+- Re-declaring an enum/status list/constant that another module already exports — one definition, in `src/constants/` if 2+ modules use it.
+- Magic literals in service/controller code that duplicate (or should be) a named constant.
 - A new `User`-like model when one already exists — extend or reference instead.

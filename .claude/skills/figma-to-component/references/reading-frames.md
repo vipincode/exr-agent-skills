@@ -59,8 +59,10 @@ For images, icons, logos, and background fills:
 - Call `download_assets` on the node; it returns an exported render plus the original source
   images (with a `format` field for the right extension).
 - Save under `public/` (global) or the feature folder, and render with `next/image`.
-- Small, single-color icons → prefer inlining as SVG components (recolorable via
-  `currentColor`/`text-*`), rather than image files.
+- Small, single-color icons → first check whether a **lucide icon matches** (most Figma UI icons
+  do); if not, add the SVG as a `currentColor` component in the icon registry
+  (`components/shared/icons.tsx` — see building-components.md "Icons"), not as an image file and
+  not inlined per component.
 - **Never hotlink** the temporary Figma URLs in committed code — they expire.
 
 ## Decomposition recipe

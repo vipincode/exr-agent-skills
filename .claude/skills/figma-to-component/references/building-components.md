@@ -22,6 +22,12 @@ The Figma reference code is full of `#3B82F6`, `padding: 14px`, `border-radius: 
   components are themed by `font-theme-setup`'s tokens. Reach for an arbitrary value
   (`bg-[oklch(...)]`) only when there is genuinely no token — and prefer adding a token over
   scattering arbitrary values.
+- **A recurring shadow/border/gradient with no token → add it to `globals.css` once** as a
+  token exposed through `@theme inline` (`--shadow-card` → `shadow-card`,
+  `--gradient-brand` → `bg-[image:var(--gradient-brand)]` or a small utility class) and use
+  that utility everywhere. The second time you type the same `shadow-[0_1px_2px…]` or
+  `bg-[linear-gradient(...)]` arbitrary value, it should have been a utility — that's how the
+  design stays consistent when the values change.
 - **No separate `.css` files** and **no inline `style={{}}`** for things Tailwind expresses.
   Inline style is acceptable only for truly dynamic values (a computed transform, a CSS var set
   from a prop).
@@ -58,6 +64,27 @@ away with no mobile affordance.
   primitive when the project uses it — it already wires the mobile Sheet behavior.
 - Close the Sheet on link click/navigation; keep focus states and `aria-label`s intact.
 
+## The design's variants live in `ui/` — retheme the primitive, don't override per use
+
+shadcn primitives are CLI-added but they are **your code**, and their `cva` blocks are where the
+project's design system lives. When the design's buttons/badges/inputs don't match shadcn's
+defaults, **edit the variant styles inside the primitive** (`components/ui/button.tsx`, `badge.tsx`,
+`input.tsx`, `textarea.tsx`, `select.tsx`, `checkbox.tsx`, `radio-group.tsx`, `dialog.tsx`, …):
+
+- **Re-value existing variants** with theme tokens so `variant="default"`, `"outline"`,
+  `"ghost"`, `"destructive"` render the design's button styles.
+- **Add design-specific variants** the design defines (`variant="gradient"`, `size="xl"`,
+  a pill `shape`) as new `cva` entries.
+- Keep the component's API, behavior, and a11y wiring intact — restyling variants in place is
+  **theming, not forking**. Forking (a hand-written sibling `Button2`, a copy-pasted file) is
+  still forbidden.
+
+The tell: if you're writing the same `className` overrides on a primitive at more than one call
+site, those styles belong in the primitive's variants. **Wrap instead of edit** only when you're
+adding structure or behavior, not looks — e.g. a `ConfirmModal` composing `ui/dialog`, an
+`IconButton` adding an enforced `aria-label`. Purely visual difference → variant in `ui/`;
+added composition/behavior → shared wrapper in `components/shared/`.
+
 ## Component shape
 
 - **TypeScript props.** Explicit prop interface; data comes in as props (keeps shared
@@ -69,7 +96,7 @@ away with no mobile affordance.
   interactivity/state/effects/browser APIs or framer-motion. Carousels, dropdowns, anything
   with `onClick`/`useState` → client. Static hero/card/section → server.
 - **Compose primitives.** Build on `components/ui/*` and existing shared components; never
-  re-skin a primitive.
+  fork a primitive (visual differences go into its `cva` variants — see the section above).
 - **Barrel + register.** Shared component → add to its subfolder `index.ts` and to
   `MODULE_REGISTRY.md`.
 
@@ -77,11 +104,38 @@ away with no mobile affordance.
 
 - `next/image` for raster images (set `width`/`height` or `fill` + `sizes`); import from
   `public/`.
-- Inline small/recolorable icons as SVG components using `currentColor` so `text-*` recolors
-  them.
+- Small/recolorable icons → the icon registry (`components/shared/icons.tsx` — see "Icons"
+  below), as `currentColor` components so `text-*` recolors them. Don't paste one-off `<svg>`
+  blocks into components.
 - Background images → a theme token/utility if recurring (font-theme-setup), or a local asset +
   `bg-[image:url()]` / `next/image` with `fill` for one-offs.
 - Alt text on every meaningful image; `alt=""` for decorative.
+
+## Icons — one library, one registry file
+
+- **Library:** `lucide-react` (shadcn's default) for everything it covers; `react-icons` only
+  for glyphs lucide lacks (brand/social marks). Never introduce a third icon set or mix styles —
+  a design's icons read as one family only if they come from one.
+- **Registry:** one file — `components/shared/icons.tsx` — re-exports every icon the app uses
+  and defines the custom SVGs:
+
+  ```tsx
+  // components/shared/icons.tsx — the app's entire icon set, in one place
+  export { Menu, X, ChevronDown, Search, Bell } from "lucide-react";
+  export { FaGithub } from "react-icons/fa";          // only when lucide lacks it
+
+  export function SparkleIcon(props: React.SVGProps<SVGSVGElement>) {
+    return <svg viewBox="0 0 24 24" fill="currentColor" {...props}>…</svg>;
+  }
+  ```
+
+  Components import from `@/components/shared/icons` — **never** from `lucide-react`/
+  `react-icons` directly, and never a pasted inline `<svg>`. Why: the whole icon set is
+  auditable and swappable in one file, a Figma icon that maps to an existing export gets reused
+  instead of re-drawn, and a design refresh touches one place. Register `icons.tsx` in
+  `MODULE_REGISTRY.md` once; append new exports as designs need them.
+- **Sizing/color via `className`** (`size-4`, `text-muted-foreground`) — custom SVGs use
+  `currentColor` so the same theming works for all of them.
 
 ## Accessibility & polish (the "production-grade" bar)
 

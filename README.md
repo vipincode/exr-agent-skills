@@ -2,14 +2,30 @@
 
 Reusable agent skills for software planning, onboarding, module building, testing, and code review.
 
+> **Team guide:** short per-skill docs with example prompts live in [`docs/`](docs/README.md) — start there.
+
 ## Skills
 
-- `backend-onboard` - inspect an existing project and build a practical understanding before making changes.
-- `backend-feature-planner` - turn a feature request into an implementation plan with risks and questions.
-- `backend-module-builder` - build Express TypeScript modules using the project's conventions.
-- `express-ts-bootstrap` - bootstrap an Express TypeScript backend structure.
+**Backend (Express + TypeScript + Mongoose)**
+
+- `express-ts-bootstrap` - bootstrap a new Express TypeScript backend structure.
+- `backend-onboard` - make an existing API ready for the toolkit (writes the contract files).
+- `backend-feature-planner` - turn a feature request into an editable implementation plan.
+- `backend-module-builder` - build the planned module using the project's conventions, no duplicates.
 - `backend-test-writer` - add focused tests that match the project's test style.
-- `backend-code-review` - review code for bugs, regressions, security risks, and missing tests.
+- `backend-code-review` - review code for bugs, regressions, security risks, and duplication.
+
+**Frontend (Next.js + TypeScript + Tailwind + shadcn/ui)**
+
+- `nextjs-bootstrap` - bootstrap a new Next.js frontend with BFF proxy, axios, Zod, TanStack Query.
+- `frontend-onboard` - make an existing frontend ready for the toolkit (writes the contract files).
+- `font-theme-setup` - apply a Figma design system's tokens to the theme (globals.css + fonts).
+- `figma-to-component` - build components from a Figma frame without creating duplicates.
+- `html-to-component` - build theme + components from an HTML file, pasted markup, or URL.
+- `frontend-feature-planner` - plan how a built design binds to the real backend API.
+- `frontend-module-builder` - implement the planned API binding and make the design functional.
+- `frontend-test-writer` - add Vitest + RTL tests for components, hooks, and schemas.
+- `frontend-code-review` - review frontend code for correctness, duplication, a11y, and performance.
 
 ## Installation
 

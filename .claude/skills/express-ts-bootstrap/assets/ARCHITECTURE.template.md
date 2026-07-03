@@ -40,15 +40,20 @@ src/
   middleware/  error-handler.ts, not-found.ts, request-context.ts,
                protect.ts, require-role.ts, validate.ts
   modules/     <name>/ — model, schema, service, controller, routes (per domain)
-  types/       express.d.ts
+               + optional module-local types/constants/utils files
+  types/       express.d.ts + types shared by 2+ modules (created on first need)
+  constants/   constants/enums shared by 2+ modules (created on first need)
   app.ts       build & configure the app (no listen)
   server.ts    bootstrap: connect db, listen, graceful shutdown
 ```
 
 A module folder owns its files and nothing another module owns. Cross-module
 needs go through the other module's **service**, never its model. Anything used
-by two or more modules lives in `lib/` or `middleware/` and **must** be listed in
-`MODULE_REGISTRY.md`.
+by two or more modules lives globally — utils in `lib/`, middleware in
+`middleware/`, types in `types/`, constants/enums in `constants/` — and **must**
+be listed in `MODULE_REGISTRY.md`. Single-use pieces stay in the module, in named
+files (`<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts`), never as
+inline magic literals.
 
 ## Response envelope (one shape)
 

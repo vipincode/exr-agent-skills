@@ -18,7 +18,13 @@ Maps request → service call → response envelope. Receives already-validated,
 An `express.Router`, default-exported. Each route: `validate({...})` (if it takes input) → auth guard (`protect`/`requireRole`) where needed → controller handler. Compose service/controller instances here if the paradigm uses classes. Mount this router in `src/app.ts` at the marked insertion line.
 
 ## `<name>.types.ts` — optional
-Module-local types not derived from Zod. If a type is needed by other modules, it's not module-local — register it / put it in a shared location instead.
+Module-local types not derived from Zod. If a type is needed by other modules, it's not module-local — move it to `src/types/` and register it. Never re-declare a shape another module already exports.
+
+## `<name>.constants.ts` — optional
+Module-local constants, enums, and fixed option lists (statuses, limits, role lists scoped to this domain). No magic literals scattered through the service/controller — name them here. If a constant/enum is needed by other modules, it's not module-local — move it to `src/constants/` and register it.
+
+## `<name>.utils.ts` — optional
+Module-local helper functions used only inside this module (e.g. a private `mapDoc()`). The moment a second module needs one, it moves to `src/lib/` and gets registered — never copy it.
 
 ## Ordering on a route
 `router.<method>(path, validate(...), protect?, requireRole(...)?, controller.handler)` — validation first (reject malformed input cheaply), then auth, then handler.

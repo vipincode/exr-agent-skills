@@ -32,15 +32,30 @@ component. Map each to a `components/shared/` subfolder:
 | Card (content/pricing/stat) | `data-display/` | compose `ui/card`; variants, don't fork per use |
 | Avatar / Profile avatar | `data-display/` | `shadcn add avatar`; add `status`/`size` props |
 | Chip / Tag / Badge | `data-display/` | compose `ui/badge` |
+| Metric / Stat / KPI card | `data-display/` | one `MetricCard` (`label`/`value`/`delta`/`icon` props + variants), not a file per metric |
+| Progress bar / Meter | `data-display/` | `shadcn add progress`; wrap once for label/value/tone variants |
+| Data table | `data-display/` | `shadcn add table`; one generic `DataTable` (typed `columns`/`data` props), not a bespoke table per screen |
+| Divider / Line / Separator | `layout/` | `shadcn add separator`; `orientation`/label props — never ad-hoc `<hr>`/border-only divs |
+| Toolbar / Filter bar / Search bar | `layout/` | composes shared fields + `ui/button`; recurs on every list screen |
+| User menu / Notifications dropdown | `layout/` | compose `ui/dropdown-menu` / `ui/popover` + Avatar |
 | Breadcrumbs / Pagination / Tabs | `navigation/` | shadcn ships these primitives |
 | Modal / Drawer / Sheet | `overlay/` | bootstrap ships `Modal`; add `Drawer`/`Sheet` beside it |
 | Empty state / Skeleton / Alert | `feedback/` | |
 | Section / Container / Stack / Grid | `layout/` | layout wrappers, pure presentational |
+| Icons | `icons.tsx` (file) | ONE registry file for the whole app — see building-components.md "Icons" |
 
 > Subfolder names are a taxonomy, not a hard schema — `layout/`, `data-display/`, `overlay/`,
 > `feedback/`, `navigation/`, `marketing/`, `brand/`, `form/`, `typography/`. Use the existing
 > ones from the project first; add a new group folder (with a barrel) only when nothing fits.
 > The bootstrap ships `form/`, `typography/`, `overlay/`; you'll be adding the rest.
+
+**Dashboards are almost entirely shared furniture.** A dashboard screen is a composition of
+sidebar + topbar + metric-card row + chart cards + data table + filter bar + tags/progress —
+every one of those is on the list above. Build each once with props and `.map()` the screen over
+typed data; the dashboard feature's own components should be thin compositions, not re-drawn
+boxes. Landing pages are the same story with the marketing set (hero, small-hero, banner, cards,
+footer): one `Hero` with `size`/`variant` props serves every page — a genuinely different layout
+(no media, no CTA) earns a new component; padding/heading-size differences do not.
 
 ## How to decide for anything NOT on the list
 

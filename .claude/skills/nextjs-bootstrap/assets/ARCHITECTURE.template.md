@@ -36,6 +36,7 @@ src/
       overlay/         Modal (Dialog wrapper, inner content only); future Drawer/Sheet/ConfirmModal.
       layout/          Wrapper, Box, Container, Section, Stack (future skills).
       data-display/    Card, Chip, Tag, Badge wrappers (future skills).
+      icons.tsx        the single icon registry (created on first icon need).
   features/<name>/     a self-contained module — fixed anatomy below.
     types/             domain types (or types.ts).
     constants/         domain constants/enums/options (or constants.ts).
@@ -48,26 +49,29 @@ src/
   hooks/               cross-feature hooks (e.g. use-auth).
   lib/                 axios, query-client, env, auth/, cn — cross-cutting singletons/utils.
   services/            cross-feature API/query-hook modules (feature-local ones live in features/<name>/api).
-  types/               shared TS types.
+  types/               TS types shared by 2+ features.
+  constants/           constants/enums/option lists shared by 2+ features (created on first need).
   proxy.ts             role-based route protection + redirects (Next 16+; `middleware.ts` on ≤15).
 ```
 
 A feature folder owns its files and **never cross-imports another feature**; anything used by 2+
-features goes to `components/shared`, `lib`, `hooks`, or `services` and **MUST be listed in
-`MODULE_REGISTRY.md`**.
+features goes global by kind — components → `components/shared`, utils/hooks → `lib`/`hooks`/`services`,
+types → `types/`, constants/enums → `constants/` — and **MUST be listed in `MODULE_REGISTRY.md`**.
+Single-feature types/constants stay in the feature's `types/`/`constants/` files, never as inline
+magic literals or ad-hoc inline types.
 
 ## Component placement (the strict rule that prevents duplication)
 
 One home per component, decided by **what it depends on**:
 
-- **`components/ui/`** — shadcn primitives. Added via the CLI, `cva`-based, never hand-edited beyond what the CLI generates, never duplicated. Need a primitive? `shadcn add` it.
+- **`components/ui/`** — shadcn primitives. Added via the CLI, `cva`-based, never duplicated or re-implemented. Need a primitive? `shadcn add` it. Restyling a primitive's `cva` variants **in place** to match the design system (re-valuing `button`'s `default`/`outline` with theme tokens, adding a design variant like `variant="gradient"`) is the sanctioned way to theme it — never a forked sibling file, never the same `className` overrides repeated at call sites.
 - **`components/shared/`** — **generic / domain-agnostic** reusables, built by composing `ui/` primitives: wrappers, boxes, layout containers, modal wrappers (Dialog wrapper taking only inner content), cards, chips, tags, badges, form fields, typography. Grouped into the `form/`/`typography/`/`overlay/`/`layout/`/`data-display/` subfolders. If it doesn't depend on a single feature's domain, it is shared.
 - **`features/<name>/components/`** — components that depend on a single feature's domain (its types/hooks/api). They stay here until a *second* feature needs them, then **move** to `components/shared` and get registered — never copied.
 
 The bootstrap ships `overlay/Modal` as the canonical shared example (a Dialog wrapper callers fill
 with inner content only). Full rules: see `references/module-structure.md` in the bootstrap skill.
 
-Before creating any component/util/hook/type: **check `MODULE_REGISTRY.md` first**, then grep `components/shared`, `lib`, `hooks`, `services`. If a suitable piece exists, import it — never recreate.
+Before creating any component/util/hook/type/constant: **check `MODULE_REGISTRY.md` first**, then grep `components/shared`, `lib`, `hooks`, `services`, `types`, `constants`. If a suitable piece exists, import it — never recreate.
 
 ## Forms — React Hook Form + Zod, always via shared fields
 
@@ -81,7 +85,19 @@ Before creating any component/util/hook/type: **check `MODULE_REGISTRY.md` first
 ## Typography — cva primitives, compose don't duplicate
 
 - `Text`, `Heading`, `Label` live in `components/shared/typography`, built with `cva` (≥3 variants each).
-- `Button` and shadcn's `ui/label` already carry their own variants — **extend/compose them, never re-skin or re-implement**. Our `Label` builds on `ui/label`.
+- `Button` and shadcn's `ui/label` already carry their own variants — **extend/compose them, never re-implement or fork**. Re-valuing/adding their `cva` variants in place to match the design system is the sanctioned way to theme them. Our `Label` builds on `ui/label`.
+
+## Icons & theme utilities
+
+- Icons come from **lucide-react** (`react-icons` only for glyphs lucide lacks — brand/social
+  marks); no third icon set, no icon fonts. All icons flow through the single registry file
+  **`components/shared/icons.tsx`** (re-exports + custom `currentColor` SVG components). App code
+  imports from `@/components/shared/icons`, never from the icon library directly, never a pasted
+  inline `<svg>`. Size/color via `className` (`size-4`, `text-muted-foreground`).
+- Colors always come from the theme tokens in `globals.css` (`bg-primary`,
+  `text-muted-foreground`, `border`) — never raw hex/oklch in components. Recurring
+  shadows/borders/gradients are tokens + utilities in `globals.css` (`--shadow-card` →
+  `shadow-card`, `--gradient-brand`), added once and reused — not repeated arbitrary values.
 
 ## Data fetching — TanStack Query through the BFF
 

@@ -23,11 +23,13 @@ The two failure modes this skill exists to prevent: (1) **duplicating** a compon
 This is the heart of the skill. Before writing any component, hook, util, type, constant, or schema that *could* be shared, follow `references/dedup-protocol.md`:
 1. Check the plan's **Reuse (do NOT recreate)** section — the planner already identified candidates; verify each path still exists and import it.
 2. Check `MODULE_REGISTRY.md` for the capability (a shared `*Field`, a typography/overlay/layout/data-display component, a lib singleton, a hook).
-3. Grep `src/components/shared`, `src/lib`, `src/hooks`, `src/services`, and sibling `src/features/*` for it.
+3. Grep `src/components/shared`, `src/lib`, `src/hooks`, `src/services`, `src/types`, `src/constants`, and sibling `src/features/*` for it.
 4. If a suitable piece exists → import it. "It's only this one feature" is **not** a reason to inline a duplicate card/modal/field. If it almost fits, prefer extending the shared piece over forking it, unless that would overload it with unrelated concerns.
-5. Only if nothing exists → create it, place it by the placement rule (generic → `components/shared/<group>`, domain-specific → `features/<name>/components`), and mark it for registration (Step 6).
+5. Only if nothing exists → create it, place it by the placement rule (generic component → `components/shared/<group>`, domain-specific component → `features/<name>/components`, reusable util/hook → `lib`/`hooks`, type used by 2+ features → `src/types/`, constant/enum used by 2+ features → `src/constants/`; single-feature types/constants stay in the feature's `types/`/`constants/` files), and mark shared pieces for registration (Step 6). `components/ui/` stays shadcn-only.
 
 Feature-local, single-use code (a private helper used by exactly one module — e.g. a `formatPrice` used only here) stays in the module and is not registered. Don't over-share either.
+
+When you do create a component, style it the way the shadcn pieces beside it are styled: merge/group Tailwind classes with `cn()` (from `lib/utils`) instead of template-string concatenation, and express visual variants with `cva` (class-variance-authority) rather than boolean-ternary chains or prop-keyed className maps — `cva` keeps variants declarative and lets `cn(variants({ ... }), className)` compose cleanly with caller overrides.
 
 ## Step 3 — Build the binding layer
 
@@ -45,6 +47,7 @@ Create the files the plan lists under `src/features/<name>/`, following the feat
 Make the built design functional by **editing** it to consume the new hooks, per the plan's **Data mapping**:
 - Replace hardcoded sample arrays/props with data from the query hook.
 - Apply the mapping transforms the plan specifies (e.g. integer cents + currency → formatted price string) in the binding/mapping layer, leaving presentational components receiving clean props.
+- **Tabular data defaults to `DataTable`.** When the feature renders rows of records with shadcn, there are two options: the plain `Table` primitives (static markup, no behavior) or the `DataTable` pattern (TanStack Table under shadcn — column defs, sorting, pagination, row selection). Flag the choice to the user before building; if they don't answer or the plan doesn't specify, use `DataTable` — bound API data almost always grows into needing sorting/paging, and retrofitting a plain `Table` later costs more than starting with column defs.
 - Render the **loading / empty / error** states the plan calls for. If the design has no skeleton/empty/error UI and the plan flags it as a **design gap**, add a lightweight inline version (skeleton, empty copy, inline error) to make the binding usable — but do **not** redesign or rebuild the actual feature components. Anything beyond a lightweight state stub belongs to `figma-to-component` / `html-to-component`; flag it and move on.
 
 Build only what the (possibly user-edited) plan specifies. If something the binding needs is missing from the plan, surface it rather than silently expanding scope.

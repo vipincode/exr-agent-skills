@@ -31,6 +31,7 @@ Walk the component tree and list, with paths, everything reusable — this is th
 - **Primitives / design-system layer** — `components/ui/` (shadcn), or the third-party lib's components in use. For shadcn, list the actual installed primitives (the files in `components/ui/`). For MUI/Chakra/etc., note the library is the primitive source (don't enumerate every import).
 - **Shared / generic components** — `components/shared/**`, `components/common/**`, or top-level reusable components: buttons/wrappers, cards, modals/dialogs, layout containers, tables, headers/navbars, typography. Group by purpose where the repo already does (form / typography / overlay / layout / data-display).
 - **Shared form fields** — a `*Field` / `FormInput` layer that wraps inputs + validation display, if one exists. Record each, what it wraps, and the form lib it binds.
+- **Icon setup** — which icon library/libraries the repo uses (lucide-react, react-icons, heroicons, an icon font) and whether a central icon registry file (`components/shared/icons.tsx` or similar) exists. Register it if so; if icons are imported ad hoc from several libraries, record that as a finding.
 Each becomes a `MODULE_REGISTRY.md` row: name, path, what it wraps/depends on, purpose.
 
 ## Hooks, schemas, lib, services

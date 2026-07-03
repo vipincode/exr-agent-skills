@@ -18,6 +18,9 @@ Concrete things to look for per dimension. Use the contract to know the project'
 - **Wrong home** per the placement rule: a domain-specific component (depends on one feature's types/hooks) sitting in `components/shared`; or a generic, reusable component (card/modal/badge/empty-state) copy-pasted *inside* a feature instead of living in `components/shared/<group>`.
 - **Cross-feature import**: `features/a/**` importing from `features/b/**`. The shared thing must be promoted to `components/shared`/`lib`/`hooks` and imported from there — never cross-imported, never copied.
 - Copy-pasted JSX/logic across components that should be one shared component or hook.
+- **Near-duplicate siblings instead of variants**: a `Header2`/`SmallHero`/`CardCompact` that differs from an existing component only in size/color/density — should be a `cva` variant or prop on the original. Same for a shadcn primitive restyled with the **same `className` overrides at multiple call sites** — those styles belong in the primitive's `cva` variants (edited in place in `components/ui/`).
+- **Icon hygiene** (when the project has an icon registry `components/shared/icons.tsx` or its ARCHITECTURE.md calls for one): components importing straight from `lucide-react`/`react-icons`, pasted inline `<svg>` icons, or a second icon library mixed in.
+- **Hardcoded design values**: raw hex/oklch colors instead of theme tokens (`bg-primary`, `text-muted-foreground`); the same shadow/border/gradient arbitrary value repeated where a `globals.css` token + utility exists (or should).
 - Duplicate type: a hand-written interface that re-declares a `z.infer` type (drift risk).
 
 ## API-binding conformance (the toolkit standard)

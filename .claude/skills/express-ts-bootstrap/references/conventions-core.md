@@ -30,13 +30,17 @@ src/
       <name>.controller.ts# thin HTTP layer
       <name>.routes.ts    # express.Router wiring
       <name>.types.ts     # module-local types (optional)
+      <name>.constants.ts # module-local constants/enums (optional)
+      <name>.utils.ts     # module-local helpers (optional)
   types/
     express.d.ts      # augment Express.Request (req.user, req.id, req.log)
+                      # + types shared by 2+ modules (one file per topic, created on first need)
+  constants/          # constants/enums shared by 2+ modules (created on first need)
   app.ts              # build & configure the Express app (no listen)
   server.ts           # bootstrap: connect db, listen, graceful shutdown
 ```
 
-Rule: a module folder contains everything that module owns and nothing another module owns. Cross-module needs go through the other module's `service`, never by reaching into its model directly. Anything used by two or more modules belongs in `lib/` or `middleware/` and **must** be registered in MODULE_REGISTRY.md.
+Rule: a module folder contains everything that module owns and nothing another module owns. Cross-module needs go through the other module's `service`, never by reaching into its model directly. Anything used by two or more modules belongs at the global level — utils/helpers in `lib/`, middleware in `middleware/`, types in `types/`, constants/enums in `constants/` — and **must** be registered in MODULE_REGISTRY.md. Single-use pieces stay module-local, but still in their named file (`<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts`), never as inline magic literals.
 
 ## Response envelope (single shape)
 
@@ -95,7 +99,7 @@ Detection is by shape/`name`, not a hard `instanceof mongoose.Error` import chai
 
 ## DRY rules (the point of the registry)
 
-Before creating any util, middleware, helper, type, or constant, the rule for every skill that builds code is: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists — reuse it. If a genuinely new reusable piece is created, add it to the registry in the same change so the next feature sees it. Module-local, single-use code stays in the module and is not registered.
+Before creating any util, middleware, helper, type, or constant, the rule for every skill that builds code is: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists — reuse it. If a genuinely new reusable piece is created, place it by kind (util → `lib/`, middleware → `middleware/`, type → `types/`, constant/enum → `constants/`) and add it to the registry in the same change so the next feature sees it. Module-local, single-use code stays in the module (in its `<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts` file) and is not registered.
 
 ## Build & scripts (clean dist, always)
 

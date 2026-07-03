@@ -23,6 +23,7 @@ src/
       overlay/         Modal (Dialog wrapper, inner content only); future Drawer/Sheet
       layout/          Wrapper, Box, Container, Section, Stack (future)
       data-display/    Card, Chip, Tag, Badge wrappers (future)
+      icons.tsx        the app's single icon registry (created on first icon need)
   features/<name>/     a self-contained module — fixed anatomy:
     types/ constants/ hooks/ api/ schema/   domain types, constants, hooks, requests, Zod
     components/        components depending ONLY on this module
@@ -31,24 +32,27 @@ src/
   hooks/               cross-feature hooks (use-auth, …)
   lib/                 axios, query-client, env, auth/*, utils (cn)
   services/            cross-feature API/query-hook modules
-  types/               shared TS types
+  types/               TS types shared by 2+ features
+  constants/           constants/enums/option lists shared by 2+ features (created on first need)
   proxy.ts             role-based routing (Next 16+; `middleware.ts` on ≤15)
 ```
 
 A feature is self-contained and **never cross-imports another feature**. It owns its files until a
-second feature needs something — then that thing moves to `components/shared`, `lib`, `hooks`, or
-`services` **and gets listed in `MODULE_REGISTRY.md`**. Full rules: `module-structure.md`.
+second feature needs something — then that thing moves by kind: components → `components/shared`,
+utils/hooks → `lib`/`hooks`/`services`, types → `types/`, constants/enums → `constants/` — **and gets
+listed in `MODULE_REGISTRY.md`**. Single-feature types/constants stay in the feature's `types/` and
+`constants/` files, never as inline magic literals. Full rules: `module-structure.md`.
 
 ## Component placement (strict — prevents duplication)
 
 One home per component, decided by **what it depends on**:
 
-- **`components/ui/`** — shadcn primitives only. Add via `shadcn add`. Never re-implement or fork one.
+- **`components/ui/`** — shadcn primitives only. Add via `shadcn add`. Never re-implement or fork one. Restyling a primitive's `cva` variants **in place** to match the design system (re-valuing `button`'s `default`/`outline` with theme tokens, adding a design variant like `variant="gradient"`) is expected — that's theming, not forking; the API/behavior/a11y wiring stays intact.
 - **`components/shared/`** — **generic / domain-agnostic** reusables (wrappers, boxes, modal wrappers, cards, chips, tags, badges, form fields, typography), built by composing `ui/`. Grouped into the subfolders above.
 - **`features/<name>/components/`** — components that depend on a single feature's domain. Not shared until a second feature needs them, then they **move** to `components/shared` (never copied) and get registered.
 
 Before creating anything: check `MODULE_REGISTRY.md`, then grep `components/shared`, `lib`, `hooks`,
-`services`. Import what exists.
+`services`, `types`, `constants`. Import what exists.
 
 ## Forms
 
@@ -67,6 +71,16 @@ Before creating anything: check `MODULE_REGISTRY.md`, then grep `components/shar
   feature: `["products", "list", params]`.
 - All requests use the `api` axios instance → same-origin `/api` (the BFF). Never call the backend's
   absolute URL from the browser.
+
+## Icons
+
+- One library: **lucide-react** (shadcn's default). `react-icons` only for glyphs lucide lacks
+  (brand/social marks). No third icon set, no icon fonts.
+- One registry file: **`components/shared/icons.tsx`** re-exports every icon the app uses
+  (`export { Menu, X, Search } from "lucide-react"`) and holds custom `currentColor` SVG
+  components. App code imports from `@/components/shared/icons` — never from the icon library
+  directly, never a pasted inline `<svg>`. The whole icon set stays auditable and swappable in
+  one file; register it in `MODULE_REGISTRY.md` when created.
 
 ## Backend connection — BFF only
 

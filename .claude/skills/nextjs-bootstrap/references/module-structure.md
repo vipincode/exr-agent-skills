@@ -30,9 +30,11 @@ Notes:
   routing and composition separate and lets a screen be reused across routes.
 - `types/`, `constants/`, `hooks/` may be a single file (`types.ts`) or a folder with a barrel —
   pick by size, stay consistent within a module.
-- A module imports freely from `components/shared`, `lib`, `hooks` (global), and `services`. It must
-  **not** import from another `features/<other>/` folder — if two features need the same thing, that
-  thing is shared (see below), not cross-imported.
+- A module imports freely from `components/shared`, `lib`, `hooks` (global), `services`, `types`
+  (global), and `constants` (global). It must **not** import from another `features/<other>/` folder —
+  if two features need the same thing, that thing is shared (see below), not cross-imported: components
+  move to `components/shared`, utils/hooks to `lib`/`hooks`/`services`, types to `src/types/`,
+  constants/enums to `src/constants/` — and get registered.
 
 ## The shared-vs-feature component rule (strict)
 
@@ -50,7 +52,8 @@ When a feature-local component turns out to be reused by a second feature, **mov
 `components/shared` and register it** in `MODULE_REGISTRY.md`. Never copy it.
 
 `components/ui/` (shadcn primitives) sits below both: shared and feature components **compose**
-primitives, never fork or re-skin them.
+primitives, never fork or re-skin them. (Restyling a primitive's `cva` variants in place to match
+the design system — e.g. re-valuing or adding `button` variants — is sanctioned theming, not a fork.)
 
 ## Shared component taxonomy (`components/shared/`)
 
