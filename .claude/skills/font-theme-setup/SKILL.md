@@ -17,7 +17,7 @@ Fonts live in `layout.tsx` because Next's `next/font` (Google **and** local) mus
 
 ## Prerequisites & project resolution
 
-1. **Resolve the project dir.** Read `.claude/workspace.json` at the repo root for the `frontend` entry → that's `<proj>`. If absent, look for a `frontend/` folder or a `src/app/globals.css`. If you can't find a Next.js + shadcn project, stop and say so — this skill edits an existing scaffold, it doesn't create one (point them at `nextjs-bootstrap`).
+1. **Resolve the project dir.** Read `.claude/workspace.json` at the repo root for the `frontend` entry → that's `<proj>`. If absent, look for a `frontend-*` folder (e.g. `frontend-shoply/`), a plain `frontend/`, or a `src/app/globals.css`. If you can't find a Next.js + shadcn project, stop and say so — this skill edits an existing scaffold, it doesn't create one (point them at `nextjs-bootstrap`).
 2. **Read the contract files** at `<proj>` (or repo root): `ARCHITECTURE.md` and `MODULE_REGISTRY.md`. You'll update their theming notes at the end.
 3. **Confirm the Figma MCP is connected and you have a URL.** You need a `figma.com/design/<fileKey>/...?node-id=<n>` link. If the user gave a file URL with no `node-id`, ask for a node-specific link (the frame/page that holds the design-system styles), or call `get_metadata` (no nodeId) to list pages and pick the tokens/foundations page.
 

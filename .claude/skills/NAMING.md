@@ -53,6 +53,7 @@ A user may run several frontend stacks, so scaffolders keep the stack in the nam
 | `font-theme-setup` | **shipped** (2026-06-26) | Figma (MCP) → theme. Extracts design tokens and rewrites `globals.css` (colors in oklch) + `layout.tsx` fonts (`next/font` google + local) + radius/shadow/gradient/bg tokens. Bundles a hex→oklch converter script. Reads/updates the contract files' theming notes. Theme-only — the bootstrap defers theming to it. |
 | `figma-to-component` | **shipped** (2026-06-26) | Figma frame (MCP) → Next.js components, **dedup-first**: scans `MODULE_REGISTRY.md` + shared/feature trees and reuses/extends before creating, places generic→`components/shared`, domain→`features/<name>/components`, Tailwind tokens + framer-motion, registers new shared components. The design-to-code builder. |
 | `html-to-component` | **shipped** (2026-06-26) | HTML file / pasted section / URL → Next.js, **combined** theme + components in one skill. Phase 1 lifts tokens to the theme (colors→oklch in `globals.css`, fonts in `layout.tsx`, light+dark, radius/shadow/gradient); Phase 2 is the same dedup-first builder as `figma-to-component`. Looks in `_docs/designs/` by default. Bundles `extract_tokens.py` (CSS/inline/Tailwind scanner) + `hex_to_oklch.py`. The HTML counterpart to the two Figma/MCP skills. |
+| `project-to-component` | **shipped** (2026-07-04) | An existing codebase/repo on disk (design mock, legacy app — CSS Modules, styled-components, SCSS, foreign Tailwind, Vue …) → Next.js pages, source **read-only**. Profiles the source once into `_docs/design-source/<name>.md` (styling system, tokens, component catalog, route map), lifts the source theme via `html-to-component`'s Phase-1 machinery when the target is unthemed, derives a persisted **translation map** (values→tokens, source components→shadcn/shared), then the same dedup-first build as its two siblings; restyles in place on URL collision. Generalized from the retired project-specific `shiny-to-page`. Cross-references `html-to-component`'s generic references instead of duplicating them. |
 | `frontend-onboard` | planned | establish contract files for an existing Next.js/React repo |
 | `frontend-feature-planner` | **shipped** (2026-06-26) | plans how a built design BINDS to a real API: reads the real backend (source → contract files → OpenAPI → pasted sample) for the observed contract, maps design ↔ data, writes `_docs/FEATURE_PLAN_<name>.md`. Does not write code. |
 | `frontend-module-builder` | **shipped** (2026-06-27) | executes an approved `FEATURE_PLAN`: writes the binding layer (types/schema/api/hooks), edits the built design to consume it (drops hardcoded samples), unwraps the envelope + Zod-validates, server state via TanStack Query, dedup-first (reuse shared components/hooks before creating), updates the registry. The frontend twin of `backend-module-builder`. Does not plan, redesign, or test. |
@@ -61,7 +62,7 @@ A user may run several frontend stacks, so scaffolders keep the stack in the nam
 
 Net-new frontend skills the user intends (stack-agnostic within frontend; name by role, no `frontend-`
 prefix needed if they read as standalone tools): ~~`font-theme-setup`~~ (shipped), ~~`html-to-code`/`ux-designer`~~
-(shipped as `figma-to-component`), `api-binder`, plus a copy-from-existing-project helper. When each ships,
+(shipped as `figma-to-component`), `api-binder`, ~~plus a copy-from-existing-project helper~~ (shipped as `project-to-component`, 2026-07-04). When each ships,
 give it a tightly frontend-scoped description and, if it consumes/produces project conventions, point it at
 the same `ARCHITECTURE.md` / `MODULE_REGISTRY.md` contract files.
 
@@ -108,7 +109,7 @@ rg -n "project-onboard|feature-planner|module-builder|test-writer|code-review" .
 Naming keeps skills from colliding; **[`LAYOUT.md`](./LAYOUT.md)** keeps them pointed at the
 right folder. It defines the `.claude/workspace.json` manifest (domain → folder) and the
 resolution protocol every skill runs to find its project dir — the same domain-prefix mechanism
-that lets a future `frontend/` project coexist with `backend/` under one repo-root `.claude/`.
+that lets a `frontend-<name>/` project coexist with `backend-<name>/` under one repo-root `.claude/`.
 
 ## Open follow-up
 

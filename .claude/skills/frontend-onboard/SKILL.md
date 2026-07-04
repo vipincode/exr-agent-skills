@@ -15,8 +15,9 @@ This is the frontend twin of `backend-onboard`. It mirrors that skill's philosop
 
 First resolve **where the frontend code lives** — the *project dir* — because everything below
 reads and writes relative to it, while `.claude/` stays at the repo root. See `../LAYOUT.md`.
-- The project dir is the repo root if the app sits at the root, or a subfolder (e.g. `frontend/`,
-  `web/`, `client/`, `apps/web/`) if the user already keeps it there. Detect by where `package.json`
+- The project dir is the repo root if the app sits at the root, or a subfolder (e.g.
+  `frontend-<name>/` like `frontend-shoply/`, or `frontend/`, `web/`, `client/`, `apps/web/`) if
+  the user already keeps it there. Detect by where `package.json`
   + a frontend framework (`next`, `react`, `vite`) and an `app/`/`pages/`/`src/` tree actually are;
   if ambiguous (e.g. a monorepo with several app folders), ask which folder to onboard.
 - **Onboard is non-destructive: it never moves code.** It records the frontend *where it already

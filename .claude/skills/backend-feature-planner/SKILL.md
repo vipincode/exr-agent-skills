@@ -13,7 +13,7 @@ The output is a markdown file the user reads and edits by hand before any code i
 
 **First resolve the project dir** for this (`backend`) domain via the resolution protocol in
 `../LAYOUT.md`: read `.claude/workspace.json` and use the `backend` entry's folder (it may be the
-repo root or a subfolder like `backend/`); if there's no manifest but `ARCHITECTURE.md` sits at
+repo root or a subfolder like `backend-shoply/`); if there's no manifest but `ARCHITECTURE.md` sits at
 the repo root, that's the legacy single-project layout. All paths below — the contract files,
 the grep targets, and the `_docs/` output — are **relative to that project dir**.
 

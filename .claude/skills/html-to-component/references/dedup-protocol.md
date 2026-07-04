@@ -97,6 +97,31 @@ second feature, **move it to `components/shared/<group>/` and register it** — 
 feature `<a>`. Never copy it into feature `<b>`. Two copies = the duplication this protocol
 exists to stop. (See shared-taxonomy.md for which group it moves into.)
 
+## Non-component reusables (utils, hooks, types, constants)
+
+Building a design produces more than components — a `formatPrice`/`formatDate` helper, a
+`useMediaQuery`/`useScrollPosition` hook, a `NavItem` type, a nav-links or option-list constant.
+These follow the **same protocol** (registry → grep → reuse/extend/create), with their own homes
+and search paths — the same rules `frontend-module-builder` enforces, so design-time and
+binding-time code land in the same places:
+
+- **Search**: the registry's lib/hooks sections, then grep `src/lib/**` and `src/hooks/**` for
+  utils/hooks (`rg -i "format|use-scroll|media-query" src/lib src/hooks`), and `src/types/**` /
+  `src/constants/**` for shared types and constants/enums/option lists.
+- **Placement, decided by dependency** (mirror of the component rule):
+  - Reusable util → `lib/`; reusable hook → `hooks/`. Registered.
+  - Type used by 2+ features → `src/types/`; constant/enum/option-list used by 2+ features →
+    `src/constants/`. Registered.
+  - Feature-local, single-use (a `formatPrice` only this feature uses, a one-screen prop type)
+    → stays in the feature (its `types/`/`constants/` files, or next to the component) and is
+    **not** registered. Don't over-share either.
+- **Same move rule**: when a second feature needs a util/type/constant that lives inside
+  `features/<a>/`, move it to `lib`/`hooks`/`src/types`/`src/constants` and register it — never
+  copy it, never cross-import `features/<a>/` from `features/<b>/`.
+- Never inline magic literals or ad-hoc duplicate types in components when a named
+  constant/type exists (or should exist); never re-declare an option list another feature
+  already exports.
+
 ## Registering (closing the loop)
 
 Every shared component you create or move gets a `MODULE_REGISTRY.md` row immediately:

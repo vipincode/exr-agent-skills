@@ -27,7 +27,7 @@ The whole point of this toolkit is to not interrogate the user. Ask exactly thre
 
 1. **Paradigm** — functional / OOP / hybrid. Default **hybrid**. This decides how modules are authored and is recorded in ARCHITECTURE.md so later skills follow it.
 2. **Package manager** — pnpm / npm / bun. Default **pnpm**.
-3. **Project location** — repo root, or a `backend/` subfolder. Recommend `backend/` if a frontend is likely later (so `.claude/` stays the shared anchor and a `frontend/` can be added the same way); otherwise the repo root is fine for a single service. This sets the **project dir** that everything below is scaffolded into and is recorded in `.claude/workspace.json`. See `../LAYOUT.md`.
+3. **Project name** — always ask; there is no default. Get a short kebab-case name (e.g. `shoply`, `crm-portal`) and scaffold into a `backend-<name>/` subfolder (e.g. `backend-shoply/`). The name-suffixed folder is deliberate: when the folder is later pushed as its own git repo, `backend-shoply` is self-describing where a bare `backend` is not. `.claude/` stays at the repo root as the shared anchor, and a `frontend-<name>/` can be added the same way later. Scaffold into the repo root only if the user explicitly asks for that. This sets the **project dir** that everything below is scaffolded into and is recorded in `.claude/workspace.json`. See `../LAYOUT.md`.
 
 Optional, only if the user volunteers interest — otherwise just include sensible defaults silently:
 - Docker for local Mongo (default: include `docker-compose.yml` with a Mongo service + `Dockerfile`).
@@ -37,17 +37,17 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 
 ## Workflow
 
-> **All paths below are relative to the resolved project dir** (`<proj>` = repo root, or the
-> `backend/` subfolder if chosen). `.claude/` and `.claude/workspace.json` always stay at the
-> repo root. See `../LAYOUT.md`.
+> **All paths below are relative to the resolved project dir** (`<proj>` = the `backend-<name>/`
+> subfolder, or the repo root if explicitly chosen). `.claude/` and `.claude/workspace.json`
+> always stay at the repo root. See `../LAYOUT.md`.
 
-1. **Resolve decisions.** Apply the decision gate. Confirm the resolved set in one line before scaffolding (e.g. "Hybrid paradigm, pnpm, Docker for Mongo, in `backend/` — scaffolding now."). Create `<proj>` if it doesn't exist.
+1. **Resolve decisions.** Apply the decision gate. Confirm the resolved set in one line before scaffolding (e.g. "Hybrid paradigm, pnpm, Docker for Mongo, in `backend-shoply/` — scaffolding now."). Create `<proj>` if it doesn't exist.
 2. **Copy the infrastructure** from `assets/files/` verbatim into `<proj>`. These files are paradigm-agnostic and runnable as-is. See `assets/files/` — it is a complete `src/` tree plus configs.
 3. **Generate the `health` module** in the chosen paradigm. The functional version ships in `assets/files/src/modules/health/`. For OOP or hybrid, rewrite that module following `references/paradigm-oop.md` or `references/paradigm-hybrid.md`. The health module is the canonical example later skills imitate, so it must match the paradigm exactly.
 4. **Fill in package manager specifics** — scripts and lockfile-relevant bits in `package.json` are PM-agnostic, but install/run commands in the generated README use the chosen PM.
 5. **Generate `ARCHITECTURE.md`** from `assets/ARCHITECTURE.template.md`, filling every `{{placeholder}}` with the resolved decisions and the actual conventions from `references/conventions-core.md`. This file is read by every other skill before it writes code — it must be concrete, not aspirational.
 6. **Generate `MODULE_REGISTRY.md`** from `assets/MODULE_REGISTRY.template.md`. Seed it with the shared pieces the scaffold itself ships (the error classes, response helpers, `normalizeDbError` from `lib/db-errors.ts`, `protect` middleware, env config, logger, request-context). This is the dedup ledger; if a shared util exists, it must be listed here so backend-feature-planner sees it and backend-module-builder reuses it instead of recreating it — in particular, modules must reuse `normalizeDbError`/the central error handler rather than catching Mongoose/Zod errors themselves.
-7. **Record the project in the workspace manifest.** Create or update `.claude/workspace.json` at the **repo root** (not `<proj>`) with this project's entry: `{ "domain": "backend", "path": "<proj relative to repo root, or '.'>", "stack": "express-ts" }`. If the file already exists, merge — don't clobber other domains' entries (e.g. a future `frontend`). This is what lets every other skill find the project; see `../LAYOUT.md`.
+7. **Record the project in the workspace manifest.** Create or update `.claude/workspace.json` at the **repo root** (not `<proj>`) with this project's entry: `{ "domain": "backend", "path": "<proj relative to repo root, e.g. 'backend-shoply', or '.'>", "stack": "express-ts" }`. If the file already exists, merge — don't clobber other domains' entries (e.g. a future `frontend`). This is what lets every other skill find the project; see `../LAYOUT.md`.
 8. **Install dependencies** with the chosen PM, then verify the project builds and boots: `cp .env.example .env` first (the dev script loads it via `--env-file=.env` — booting only works if that flag is in place and the file exists), then `<pm> run build` and a quick `<pm> run dev` smoke check that env validation passes and the health route responds. Confirm `dist/` is wiped on both `build` and `dev` (the `rimraf` step), and that the husky hook installed (`.husky/pre-commit` present and git `core.hooksPath` set after install). Report the result, and remind the user the smoke-check `.env` contains example values they must edit.
 
 ## What to read when

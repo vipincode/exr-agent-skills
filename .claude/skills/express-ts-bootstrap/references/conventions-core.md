@@ -135,7 +135,7 @@ The scaffold ships husky (v9+) and lint-staged as devDependencies so every proje
 - `package.json` carries the lint-staged config: `"lint-staged": { "*.{ts,js}": "eslint --fix" }` — staged files only, so commits stay fast even as the repo grows.
 - Hooks activate via the `prepare` script on first install; nothing else to run manually.
 
-If the project dir is not itself the git root (e.g. scaffolded into `backend/` inside a monorepo), husky refuses to install from the subfolder — that's why `prepare` ends in `|| true`, so installs still succeed. To activate the hooks in that layout, change the project's prepare script to hop to the git root: `"prepare": "cd .. && husky backend/.husky || true"` (adjust the path to match), and make the hook `cd backend && npx lint-staged` (`npx`, because the hook now runs from the git root where `node_modules/.bin` isn't on PATH). When scaffolding into a subfolder, apply this adjusted form instead of the plain `husky` call.
+If the project dir is not itself the git root (e.g. scaffolded into `backend-shoply/` inside a monorepo), husky refuses to install from the subfolder — that's why `prepare` ends in `|| true`, so installs still succeed. To activate the hooks in that layout, change the project's prepare script to hop to the git root: `"prepare": "cd .. && husky backend-shoply/.husky || true"` (adjust the path to match the actual folder name), and make the hook `cd backend-shoply && npx lint-staged` (`npx`, because the hook now runs from the git root where `node_modules/.bin` isn't on PATH). When scaffolding into a subfolder, apply this adjusted form instead of the plain `husky` call.
 
 ## Graceful shutdown
 

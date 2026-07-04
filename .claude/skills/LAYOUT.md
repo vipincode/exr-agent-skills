@@ -9,14 +9,21 @@
 The toolkit started single-project: one repo, code at the root, `ARCHITECTURE.md` /
 `MODULE_REGISTRY.md` at that same root. That breaks the moment a user wants a **monorepo** —
 `.claude/` stays at the repo root (it is the anchor for the whole toolkit), but the actual
-backend lives in a `backend/` subfolder, with a `frontend/` coming later the same way.
+backend lives in its own subfolder, with a frontend coming later the same way.
+
+**Subfolder naming convention:** the bootstrap skills always ask for a project name and scaffold
+into `backend-<name>/` / `frontend-<name>/` (e.g. `backend-shoply/`, `frontend-shoply/`). The
+name suffix is deliberate — each folder is typically pushed as its own git repo later, and
+`backend-shoply` is self-describing where a bare `backend` is not. Plain `backend/` / `frontend/`
+folders from older scaffolds keep working: the manifest `path` is the source of truth, never the
+folder name.
 
 So two locations must be distinguished:
 
 - **Repo root** — where `.claude/` lives. Always the working directory. The anchor.
 - **Project dir** — where a given project's code **and** its contract files
   (`ARCHITECTURE.md`, `MODULE_REGISTRY.md`, `src/`, `_docs/`, `package.json`) live. This is
-  either the repo root itself (`path: "."`) or a subfolder (`path: "backend"`).
+  either the repo root itself (`path: "."`) or a subfolder (`path: "backend-shoply"`).
 
 Every skill must resolve the **project dir** before it reads or writes anything. It must never
 assume "project dir == working directory" anymore.
@@ -29,7 +36,7 @@ where each project lives.
 ```json
 {
   "projects": [
-    { "domain": "backend", "path": "backend", "stack": "express-ts" }
+    { "domain": "backend", "path": "backend-shoply", "stack": "express-ts" }
   ]
 }
 ```
@@ -47,8 +54,8 @@ Adding a frontend later is just a second entry — no skill needs to change:
 ```json
 {
   "projects": [
-    { "domain": "backend",  "path": "backend",  "stack": "express-ts" },
-    { "domain": "frontend", "path": "frontend", "stack": "vite-react" }
+    { "domain": "backend",  "path": "backend-shoply",  "stack": "express-ts" },
+    { "domain": "frontend", "path": "frontend-shoply", "stack": "nextjs" }
   ]
 }
 ```

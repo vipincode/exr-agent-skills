@@ -7,7 +7,7 @@ The **entry point** for using the backend toolkit on an **existing** API. It est
 - Scans the repo (read-only) and writes a **descriptive** `ARCHITECTURE.md` — how your project actually works, not how it "should".
 - Seeds `MODULE_REGISTRY.md` with all existing reusable code (utils, middleware, types, helpers) so future features reuse instead of duplicating.
 - If the directory is empty, hands off to `express-ts-bootstrap` instead.
-- Handles monorepos — finds where the backend actually lives (root or e.g. `backend/`).
+- Handles monorepos — finds where the backend actually lives (root or e.g. `backend-shoply/`).
 
 ## Example prompts
 

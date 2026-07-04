@@ -138,6 +138,6 @@ root `logger` elsewhere. No `console.log` in committed code (the one exception i
 
 Planner docs are written to **`_docs/FEATURE_PLAN_<name>.md`**. Only this file
 (`ARCHITECTURE.md`) and `MODULE_REGISTRY.md` live at the **project root** — the project folder,
-which may be the repo root or a subfolder such as `backend/`. That folder is recorded in
+which may be the repo root or a subfolder such as `backend-<name>/` (e.g. `backend-shoply/`). That folder is recorded in
 `.claude/workspace.json` at the repo root, which is how the skills locate this project. Plan with
 backend-feature-planner, build with backend-module-builder, test with backend-test-writer.

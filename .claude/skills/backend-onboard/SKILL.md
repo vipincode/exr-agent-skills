@@ -13,8 +13,8 @@ It does **not** re-implement bootstrapping, planning, building, or testing — t
 
 First resolve **where the backend code lives** — the *project dir* — because everything below
 reads and writes relative to it, while `.claude/` stays at the repo root. See `../LAYOUT.md`.
-- The project dir is the repo root if code sits at the root, or a subfolder (e.g. `backend/`)
-  if the user already keeps it there. Detect by where `package.json` / `src` actually are; if
+- The project dir is the repo root if code sits at the root, or a subfolder (e.g. `backend-<name>/`
+  like `backend-shoply/`, or a plain `backend/`) if the user already keeps it there. Detect by where `package.json` / `src` actually are; if
   ambiguous (e.g. multiple candidate folders), ask which folder to onboard.
 - **Onboard is non-destructive: it never moves code.** It records the project *where it already
   is*. If the user wants existing root-level code relocated into `backend/`, that's a separate,

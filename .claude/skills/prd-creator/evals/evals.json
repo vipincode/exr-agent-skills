@@ -1,0 +1,26 @@
+{
+  "skill_name": "prd-creator",
+  "evals": [
+    {
+      "id": 0,
+      "name": "ecommerce-full-run",
+      "prompt": "I want to build an e-commerce app for selling handmade jewelry. Here are my thoughts: customers can browse products by category (necklaces, rings, earrings), add to cart, and buy online. I want product photos, prices in INR, and customers should be able to leave reviews. Payment through Razorpay. That's what I have in mind — take my points, suggest improvements and anything standard I'm missing, then create the PRD and divide it into modules. I can't answer follow-up questions right now, so make reasonable choices for anything I haven't specified and flag your assumptions.",
+      "expected_output": "_docs/prd/PRD.md following the template (with Decisions table flagging assumptions, standard production rules, module map with domains and MVP/Later phases) plus _docs/features/<module>/<module>-module.md briefs for modules like auth, product-catalog, cart, orders, payments, reviews, admin — each with domain tag, dependencies, acceptance criteria, and no technical content (no endpoints/schemas). Suggested additions beyond the user's points (admin panel, order tracking, refunds, stock rules) should appear, flagged as suggestions/assumptions.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "blog-vague-idea",
+      "prompt": "I'm planning a personal tech blog where I write posts about programming. Maybe readers can comment. Plan this app for me properly — I want it production-ready, not a toy. Create the PRD and split it into feature modules. I won't be around to answer questions, so use sensible defaults and mark what you assumed.",
+      "expected_output": "_docs/prd/PRD.md for a blog/CMS with SEO treated as a requirement (slugs, meta tags, sitemap, RSS), an explicit decision on comments (with the moderation implication), draft/publish workflow, admin/editorial module, and a module map. Shards under _docs/features/ (e.g. auth, content-authoring, public-site, comments, admin) each as product-altitude briefs with domain tags and acceptance criteria. Assumptions clearly flagged.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "modify-existing-prd",
+      "prompt": "My project already has a PRD at _docs/prd/PRD.md and module briefs under _docs/features/. Two changes: (1) add a wishlist feature — customers save products to a wishlist and move them to cart later; (2) actually, drop the coupon/discount idea entirely, we're not doing it. Update the PRD and the affected module files. Suggest anything the wishlist implies but don't re-plan the whole product. I can't answer questions right now — use sensible defaults and flag assumptions.",
+      "expected_output": "PRD.md edited in place: wishlist added as a module (in §5 and the §7 module map), coupons moved to Out of scope with a reason, a dated Changelog entry describing both changes. A new _docs/features/wishlist/wishlist-module.md brief created; only affected briefs touched (untouched modules' files unchanged). No full re-plan of the product; wishlist-implied suggestions (e.g. stock alerts, share) flagged as assumptions.",
+      "files": ["evals/files/modify-fixture"]
+    }
+  ]
+}
