@@ -5,7 +5,7 @@ description: Scaffold a new production-grade Next.js (App Router) + TypeScript +
 
 # nextjs-bootstrap
 
-Scaffold a runnable, production-grade **Next.js (App Router) + TypeScript + Tailwind + shadcn/ui** frontend that talks to a separate API backend through a **BFF proxy**, and — critically — emit `ARCHITECTURE.md` and `MODULE_REGISTRY.md`. Those two files are the shared memory that lets the future frontend skills (`frontend-feature-planner`, `frontend-module-builder`, `frontend-test-writer`, `frontend-code-review`, plus net-new ones like `font-theme-setup`, `api-binder`, `ux-designer`) avoid re-asking decisions and stop generating duplicate components. Getting them right matters more than the boilerplate.
+Scaffold a runnable, production-grade **Next.js (App Router) + TypeScript + Tailwind + shadcn/ui** frontend that talks to a separate API backend through a **BFF proxy**, and — critically — emit `ARCHITECTURE.md` and `MODULE_REGISTRY.md`. Those two files are the shared memory that lets the frontend skills (`frontend-feature-planner`, `frontend-module-builder`, `frontend-test-writer`, `frontend-code-review`, plus the theme/design builders `font-theme-setup`, `figma-to-component`, `html-to-component`, `project-to-component`) avoid re-asking decisions and stop generating duplicate components. Getting them right matters more than the boilerplate.
 
 This skill runs **once per project**. It does NOT build feature pages (auth screens, dashboards with real data, CRUD) — it lays the foundation: the BFF/auth wiring, the DRY shared form + typography components, the data-fetching and HTTP plumbing, and a role-based routing skeleton, so later skills have concrete patterns to copy.
 
