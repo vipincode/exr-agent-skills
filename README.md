@@ -6,6 +6,14 @@ Reusable agent skills for software planning, onboarding, module building, testin
 
 ## Skills
 
+**Getting started**
+
+- `toolkit-guide` - front desk: inspects your project and tells you which skill to run next.
+
+**Product planning**
+
+- `prd-creator` - turn an app idea into a PRD, then shard it into per-module briefs.
+
 **Backend (Express + TypeScript + Mongoose)**
 
 - `express-ts-bootstrap` - bootstrap a new Express TypeScript backend structure.
@@ -22,6 +30,7 @@ Reusable agent skills for software planning, onboarding, module building, testin
 - `font-theme-setup` - apply a Figma design system's tokens to the theme (globals.css + fonts).
 - `figma-to-component` - build components from a Figma frame without creating duplicates.
 - `html-to-component` - build theme + components from an HTML file, pasted markup, or URL.
+- `project-to-component` - port a page or design language from another codebase on disk.
 - `frontend-feature-planner` - plan how a built design binds to the real backend API.
 - `frontend-module-builder` - implement the planned API binding and make the design functional.
 - `frontend-test-writer` - add Vitest + RTL tests for components, hooks, and schemas.

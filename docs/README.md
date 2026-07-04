@@ -11,6 +11,14 @@ Every project gets two **contract files** that the whole toolkit reads and maint
 
 If a project doesn't have them yet, start with an **onboard** or **bootstrap** skill — everything else depends on those files.
 
+## Not sure where to begin? (start here)
+
+| Skill | One-liner | Doc |
+|---|---|---|
+| `toolkit-guide` | Looks at your project and tells you the next skill to run | [doc](toolkit-guide.md) |
+
+Ask it "where do I start?", "what should I do next?", or "which skill do I use?" and it inspects your actual project state (contract files, PRD, feature plans) and routes you to the right skill — guidance only, it never does the work itself.
+
 ## Product planning (start here for a new app)
 
 | Skill | One-liner | Doc |

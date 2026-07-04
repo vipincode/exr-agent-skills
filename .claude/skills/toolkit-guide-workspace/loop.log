@@ -1,0 +1,1845 @@
+Split: 12 train, 8 test (holdout=0.4)
+
+============================================================
+Iteration 1/5
+Description: The front desk of this skill toolkit — inspects the current project's real state and tells the user exactly which skill to run next and why. Use this whenever the user is unsure where to begin or what comes next: "where do I start", "what should I do next", "which skill do I use for this", "I'm new to this toolkit", "help me get started", "guide me", "what can these skills do", "I have an existing project, now what". Also use it when a request is real but ambiguous about stage — "I want to build X" without saying plan vs scaffold vs code — so the user gets routed instead of a random skill mis-firing. It reads .claude/workspace.json, the ARCHITECTURE.md / MODULE_REGISTRY.md contract files, any _docs/prd/PRD.md and _docs/**/FEATURE_PLAN_*.md, and follows LAYOUT.md's resolution protocol + NAMING.md's taxonomy so its routing always matches the installed skills. It is guidance ONLY — it diagnoses state and hands off with a clear next step; it never scaffolds, onboards, plans, builds, tests, reviews, or writes any project code itself (those are the dedicated skills it points at). Not for doing the work — only for deciding which worker skill does it.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (12.4s)
+  [FAIL] rate=0/3 expected=True: im new to this whole toolkit thing, help me get started plea
+  [FAIL] rate=0/3 expected=True: which skill do i use for wiring my already-built dashboard s
+  [FAIL] rate=0/3 expected=True: i have an existing nextjs frontend and i want to use these s
+  [FAIL] rate=0/3 expected=True: what can all these skills even do? give me the lay of the la
+  [FAIL] rate=0/3 expected=True: i've got all these skills installed but which one do i actua
+  [FAIL] rate=0/3 expected=True: ok so i just cloned this skills repo and honestly i have no 
+  [PASS] rate=0/3 expected=False: create a PRD for my handmade jewelry ecommerce store, custom
+  [PASS] rate=0/3 expected=False: write vitest + rtl tests for the useProductsQuery hook and t
+  [PASS] rate=0/3 expected=False: whats the actual difference between using mongodb vs postgre
+  [PASS] rate=0/3 expected=False: onboard my existing express api so it's ready for the toolki
+  [PASS] rate=0/3 expected=False: turn this figma frame into react components, here's the node
+  [PASS] rate=0/3 expected=False: set up the theme from this figma design system — pull the co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: guide me here — i want to build a saas app but idk if i'm su
+  [FAIL] rate=0/3 expected=True: i finished writing the feature plan for the orders module, w
+  [FAIL] rate=0/3 expected=True: walk me through how these skills fit together — what comes f
+  [FAIL] rate=0/3 expected=True: just finished setting up the project and i've got architectu
+  [PASS] rate=0/3 expected=False: plan the auth module for me before i write any code — email/
+  [PASS] rate=0/3 expected=False: review this order.service.ts for bugs, security holes and an
+  [PASS] rate=0/3 expected=False: scaffold a brand new nextjs frontend with shadcn, axios, zod
+  [PASS] rate=0/3 expected=False: build the products module from _docs/FEATURE_PLAN_products.m
+
+Improving description...
+Proposed (17.7s): Use this skill as the entry point and router for this multi-skill toolkit whenever a user is unsure which skill to run — not to do the work, but to decide what to do. Trigger it for: getting started or orientation ("I'm new here", "just cloned this repo, where do I begin", "what can all these skills do", "give me the lay of the land"); picking the right skill for a task when the stage or choice is unclear ("which skill do I use for X", "I want to build X" with no plan/scaffold/code specified); and applying the toolkit to an existing or half-built project ("I have a Next.js frontend / Express API already, what's the entry point / what now"). It inspects the project's real state on disk and points at the single right skill next, with a reason. Do NOT trigger it when the user already knows the concrete task they want (scaffolding, planning, building, testing, reviewing, onboarding, or generating components) — route those to the dedicated skill instead. Guidance only; it never writes code.
+
+============================================================
+Iteration 2/5
+Description: Use this skill as the entry point and router for this multi-skill toolkit whenever a user is unsure which skill to run — not to do the work, but to decide what to do. Trigger it for: getting started or orientation ("I'm new here", "just cloned this repo, where do I begin", "what can all these skills do", "give me the lay of the land"); picking the right skill for a task when the stage or choice is unclear ("which skill do I use for X", "I want to build X" with no plan/scaffold/code specified); and applying the toolkit to an existing or half-built project ("I have a Next.js frontend / Express API already, what's the entry point / what now"). It inspects the project's real state on disk and points at the single right skill next, with a reason. Do NOT trigger it when the user already knows the concrete task they want (scaffolding, planning, building, testing, reviewing, onboarding, or generating components) — route those to the dedicated skill instead. Guidance only; it never writes code.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (8.3s)
+  [FAIL] rate=0/3 expected=True: im new to this whole toolkit thing, help me get started plea
+  [FAIL] rate=0/3 expected=True: i have an existing nextjs frontend and i want to use these s
+  [FAIL] rate=0/3 expected=True: which skill do i use for wiring my already-built dashboard s
+  [FAIL] rate=0/3 expected=True: what can all these skills even do? give me the lay of the la
+  [FAIL] rate=0/3 expected=True: ok so i just cloned this skills repo and honestly i have no 
+  [PASS] rate=0/3 expected=False: create a PRD for my handmade jewelry ecommerce store, custom
+  [FAIL] rate=0/3 expected=True: i've got all these skills installed but which one do i actua
+  [PASS] rate=0/3 expected=False: write vitest + rtl tests for the useProductsQuery hook and t
+  [PASS] rate=0/3 expected=False: onboard my existing express api so it's ready for the toolki
+  [PASS] rate=0/3 expected=False: whats the actual difference between using mongodb vs postgre
+  [PASS] rate=0/3 expected=False: turn this figma frame into react components, here's the node
+  [PASS] rate=0/3 expected=False: set up the theme from this figma design system — pull the co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: guide me here — i want to build a saas app but idk if i'm su
+  [FAIL] rate=0/3 expected=True: i finished writing the feature plan for the orders module, w
+  [FAIL] rate=0/3 expected=True: walk me through how these skills fit together — what comes f
+  [FAIL] rate=0/3 expected=True: just finished setting up the project and i've got architectu
+  [PASS] rate=0/3 expected=False: plan the auth module for me before i write any code — email/
+  [PASS] rate=0/3 expected=False: review this order.service.ts for bugs, security holes and an
+  [PASS] rate=0/3 expected=False: scaffold a brand new nextjs frontend with shadcn, axios, zod
+  [PASS] rate=0/3 expected=False: build the products module from _docs/FEATURE_PLAN_products.m
+
+Improving description...
+Proposed (33.7s): Where do I start?" · "Which skill do I use for this?" · "I'm new — help me get started." · "What can all these skills even do — give me the lay of the land." · "I've already got a Next.js frontend / half-built Express API — what's the entry point now?" Use this skill for exactly these moments: someone has this multi-skill toolkit but is unsure, lost, or just finished a step and doesn't know what to run next. It reads the project's real state on disk and names the single right skill to run next, with a reason — orientation and routing, never doing the work. Also use it for vague requests where the stage is unclear ("I want to build X" with no plan/scaffold/code named). Do NOT use it once the user states a concrete task — scaffold, plan, build, test, review, onboard, or generate components — send those straight to the dedicated skill. Guidance only; it never writes code.
+
+============================================================
+Iteration 3/5
+Description: Where do I start?" · "Which skill do I use for this?" · "I'm new — help me get started." · "What can all these skills even do — give me the lay of the land." · "I've already got a Next.js frontend / half-built Express API — what's the entry point now?" Use this skill for exactly these moments: someone has this multi-skill toolkit but is unsure, lost, or just finished a step and doesn't know what to run next. It reads the project's real state on disk and names the single right skill to run next, with a reason — orientation and routing, never doing the work. Also use it for vague requests where the stage is unclear ("I want to build X" with no plan/scaffold/code named). Do NOT use it once the user states a concrete task — scaffold, plan, build, test, review, onboard, or generate components — send those straight to the dedicated skill. Guidance only; it never writes code.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (8.1s)
+  [FAIL] rate=0/3 expected=True: im new to this whole toolkit thing, help me get started plea
+  [FAIL] rate=0/3 expected=True: which skill do i use for wiring my already-built dashboard s
+  [FAIL] rate=0/3 expected=True: i have an existing nextjs frontend and i want to use these s
+  [FAIL] rate=0/3 expected=True: what can all these skills even do? give me the lay of the la
+  [FAIL] rate=0/3 expected=True: i've got all these skills installed but which one do i actua
+  [FAIL] rate=0/3 expected=True: ok so i just cloned this skills repo and honestly i have no 
+  [PASS] rate=0/3 expected=False: create a PRD for my handmade jewelry ecommerce store, custom
+  [PASS] rate=0/3 expected=False: write vitest + rtl tests for the useProductsQuery hook and t
+  [PASS] rate=0/3 expected=False: whats the actual difference between using mongodb vs postgre
+  [PASS] rate=0/3 expected=False: onboard my existing express api so it's ready for the toolki
+  [PASS] rate=0/3 expected=False: turn this figma frame into react components, here's the node
+  [PASS] rate=0/3 expected=False: set up the theme from this figma design system — pull the co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: i finished writing the feature plan for the orders module, w
+  [FAIL] rate=0/3 expected=True: guide me here — i want to build a saas app but idk if i'm su
+  [FAIL] rate=0/3 expected=True: walk me through how these skills fit together — what comes f
+  [FAIL] rate=0/3 expected=True: just finished setting up the project and i've got architectu
+  [PASS] rate=0/3 expected=False: plan the auth module for me before i write any code — email/
+  [PASS] rate=0/3 expected=False: review this order.service.ts for bugs, security holes and an
+  [PASS] rate=0/3 expected=False: scaffold a brand new nextjs frontend with shadcn, axios, zod
+  [PASS] rate=0/3 expected=False: build the products module from _docs/FEATURE_PLAN_products.m
+
+Improving description...
+Proposed (21.0s): Use this skill whenever the user needs orientation or routing across this multi-skill toolkit rather than a specific task done. Trigger it when someone is new, unsure, or overwhelmed and asks where to begin, what to run first, or which skill fits their situation — including "I just cloned this / installed these skills, where do I start", "help me get started", "what can all these skills do", "give me the lay of the land", and "which skill do I use for X". Also trigger it when the user wants to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but doesn't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Do not trigger when the user already knows the concrete task — send that straight to the relevant skill.
+
+============================================================
+Iteration 4/5
+Description: Use this skill whenever the user needs orientation or routing across this multi-skill toolkit rather than a specific task done. Trigger it when someone is new, unsure, or overwhelmed and asks where to begin, what to run first, or which skill fits their situation — including "I just cloned this / installed these skills, where do I start", "help me get started", "what can all these skills do", "give me the lay of the land", and "which skill do I use for X". Also trigger it when the user wants to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but doesn't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Do not trigger when the user already knows the concrete task — send that straight to the relevant skill.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (8.1s)
+  [FAIL] rate=0/3 expected=True: i have an existing nextjs frontend and i want to use these s
+  [FAIL] rate=0/3 expected=True: im new to this whole toolkit thing, help me get started plea
+  [FAIL] rate=0/3 expected=True: which skill do i use for wiring my already-built dashboard s
+  [FAIL] rate=0/3 expected=True: what can all these skills even do? give me the lay of the la
+  [FAIL] rate=0/3 expected=True: ok so i just cloned this skills repo and honestly i have no 
+  [FAIL] rate=0/3 expected=True: i've got all these skills installed but which one do i actua
+  [PASS] rate=0/3 expected=False: create a PRD for my handmade jewelry ecommerce store, custom
+  [PASS] rate=0/3 expected=False: whats the actual difference between using mongodb vs postgre
+  [PASS] rate=0/3 expected=False: write vitest + rtl tests for the useProductsQuery hook and t
+  [PASS] rate=0/3 expected=False: onboard my existing express api so it's ready for the toolki
+  [PASS] rate=0/3 expected=False: turn this figma frame into react components, here's the node
+  [PASS] rate=0/3 expected=False: set up the theme from this figma design system — pull the co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: guide me here — i want to build a saas app but idk if i'm su
+  [FAIL] rate=0/3 expected=True: i finished writing the feature plan for the orders module, w
+  [FAIL] rate=0/3 expected=True: walk me through how these skills fit together — what comes f
+  [FAIL] rate=0/3 expected=True: just finished setting up the project and i've got architectu
+  [PASS] rate=0/3 expected=False: plan the auth module for me before i write any code — email/
+  [PASS] rate=0/3 expected=False: review this order.service.ts for bugs, security holes and an
+  [PASS] rate=0/3 expected=False: scaffold a brand new nextjs frontend with shadcn, axios, zod
+  [PASS] rate=0/3 expected=False: build the products module from _docs/FEATURE_PLAN_products.m
+
+Improving description...
+Proposed (16.7s): Use this skill as the starting point when someone has this multi-skill toolkit but doesn't know which skill to run — they want orientation or a recommendation, not a specific task done. Trigger whenever the user is new, lost, or asking to be pointed somewhere: "help me get started", "where do I begin", "what should I run first", "which skill do I use for X", "what can all these skills do", "give me the lay of the land", "I just cloned/installed this, now what". Also trigger when they want to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but don't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Skip it once the user states a concrete task — send that to the relevant skill.
+
+============================================================
+Iteration 5/5
+Description: Use this skill as the starting point when someone has this multi-skill toolkit but doesn't know which skill to run — they want orientation or a recommendation, not a specific task done. Trigger whenever the user is new, lost, or asking to be pointed somewhere: "help me get started", "where do I begin", "what should I run first", "which skill do I use for X", "what can all these skills do", "give me the lay of the land", "I just cloned/installed this, now what". Also trigger when they want to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but don't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Skip it once the user states a concrete task — send that to the relevant skill.
+============================================================
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Warning: query failed: [WinError 10038] An operation was attempted on something that is not a socket
+Train: 18/36 correct, precision=100% recall=0% accuracy=50% (7.9s)
+  [FAIL] rate=0/3 expected=True: im new to this whole toolkit thing, help me get started plea
+  [FAIL] rate=0/3 expected=True: i have an existing nextjs frontend and i want to use these s
+  [FAIL] rate=0/3 expected=True: which skill do i use for wiring my already-built dashboard s
+  [FAIL] rate=0/3 expected=True: what can all these skills even do? give me the lay of the la
+  [FAIL] rate=0/3 expected=True: ok so i just cloned this skills repo and honestly i have no 
+  [FAIL] rate=0/3 expected=True: i've got all these skills installed but which one do i actua
+  [PASS] rate=0/3 expected=False: create a PRD for my handmade jewelry ecommerce store, custom
+  [PASS] rate=0/3 expected=False: write vitest + rtl tests for the useProductsQuery hook and t
+  [PASS] rate=0/3 expected=False: whats the actual difference between using mongodb vs postgre
+  [PASS] rate=0/3 expected=False: onboard my existing express api so it's ready for the toolki
+  [PASS] rate=0/3 expected=False: turn this figma frame into react components, here's the node
+  [PASS] rate=0/3 expected=False: set up the theme from this figma design system — pull the co
+Test : 12/24 correct, precision=100% recall=0% accuracy=50% (0.0s)
+  [FAIL] rate=0/3 expected=True: guide me here — i want to build a saas app but idk if i'm su
+  [FAIL] rate=0/3 expected=True: i finished writing the feature plan for the orders module, w
+  [FAIL] rate=0/3 expected=True: walk me through how these skills fit together — what comes f
+  [PASS] rate=0/3 expected=False: plan the auth module for me before i write any code — email/
+  [FAIL] rate=0/3 expected=True: just finished setting up the project and i've got architectu
+  [PASS] rate=0/3 expected=False: review this order.service.ts for bugs, security holes and an
+  [PASS] rate=0/3 expected=False: scaffold a brand new nextjs frontend with shadcn, axios, zod
+  [PASS] rate=0/3 expected=False: build the products module from _docs/FEATURE_PLAN_products.m
+
+Max iterations reached (5).
+
+Exit reason: max_iterations (5)
+Best score: 4/8 (iteration 1)
+
+Report: C:\Users\Singh\AppData\Local\Temp\skill_description_report_toolkit-guide_20260704_101131.html
+{
+  "exit_reason": "max_iterations (5)",
+  "original_description": "The front desk of this skill toolkit \u2014 inspects the current project's real state and tells the user exactly which skill to run next and why. Use this whenever the user is unsure where to begin or what comes next: \"where do I start\", \"what should I do next\", \"which skill do I use for this\", \"I'm new to this toolkit\", \"help me get started\", \"guide me\", \"what can these skills do\", \"I have an existing project, now what\". Also use it when a request is real but ambiguous about stage \u2014 \"I want to build X\" without saying plan vs scaffold vs code \u2014 so the user gets routed instead of a random skill mis-firing. It reads .claude/workspace.json, the ARCHITECTURE.md / MODULE_REGISTRY.md contract files, any _docs/prd/PRD.md and _docs/**/FEATURE_PLAN_*.md, and follows LAYOUT.md's resolution protocol + NAMING.md's taxonomy so its routing always matches the installed skills. It is guidance ONLY \u2014 it diagnoses state and hands off with a clear next step; it never scaffolds, onboards, plans, builds, tests, reviews, or writes any project code itself (those are the dedicated skills it points at). Not for doing the work \u2014 only for deciding which worker skill does it.",
+  "best_description": "The front desk of this skill toolkit \u2014 inspects the current project's real state and tells the user exactly which skill to run next and why. Use this whenever the user is unsure where to begin or what comes next: \"where do I start\", \"what should I do next\", \"which skill do I use for this\", \"I'm new to this toolkit\", \"help me get started\", \"guide me\", \"what can these skills do\", \"I have an existing project, now what\". Also use it when a request is real but ambiguous about stage \u2014 \"I want to build X\" without saying plan vs scaffold vs code \u2014 so the user gets routed instead of a random skill mis-firing. It reads .claude/workspace.json, the ARCHITECTURE.md / MODULE_REGISTRY.md contract files, any _docs/prd/PRD.md and _docs/**/FEATURE_PLAN_*.md, and follows LAYOUT.md's resolution protocol + NAMING.md's taxonomy so its routing always matches the installed skills. It is guidance ONLY \u2014 it diagnoses state and hands off with a clear next step; it never scaffolds, onboards, plans, builds, tests, reviews, or writes any project code itself (those are the dedicated skills it points at). Not for doing the work \u2014 only for deciding which worker skill does it.",
+  "best_score": "4/8",
+  "best_train_score": "6/12",
+  "best_test_score": "4/8",
+  "final_description": "Use this skill as the starting point when someone has this multi-skill toolkit but doesn't know which skill to run \u2014 they want orientation or a recommendation, not a specific task done. Trigger whenever the user is new, lost, or asking to be pointed somewhere: \"help me get started\", \"where do I begin\", \"what should I run first\", \"which skill do I use for X\", \"what can all these skills do\", \"give me the lay of the land\", \"I just cloned/installed this, now what\". Also trigger when they want to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but don't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Skip it once the user states a concrete task \u2014 send that to the relevant skill.",
+  "iterations_run": 5,
+  "holdout": 0.4,
+  "train_size": 12,
+  "test_size": 8,
+  "history": [
+    {
+      "iteration": 1,
+      "description": "The front desk of this skill toolkit \u2014 inspects the current project's real state and tells the user exactly which skill to run next and why. Use this whenever the user is unsure where to begin or what comes next: \"where do I start\", \"what should I do next\", \"which skill do I use for this\", \"I'm new to this toolkit\", \"help me get started\", \"guide me\", \"what can these skills do\", \"I have an existing project, now what\". Also use it when a request is real but ambiguous about stage \u2014 \"I want to build X\" without saying plan vs scaffold vs code \u2014 so the user gets routed instead of a random skill mis-firing. It reads .claude/workspace.json, the ARCHITECTURE.md / MODULE_REGISTRY.md contract files, any _docs/prd/PRD.md and _docs/**/FEATURE_PLAN_*.md, and follows LAYOUT.md's resolution protocol + NAMING.md's taxonomy so its routing always matches the installed skills. It is guidance ONLY \u2014 it diagnoses state and hands off with a clear next step; it never scaffolds, onboards, plans, builds, tests, reviews, or writes any project code itself (those are the dedicated skills it points at). Not for doing the work \u2014 only for deciding which worker skill does it.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "guide me here \u2014 i want to build a saas app but idk if i'm supposed to plan it or scaffold first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i finished writing the feature plan for the orders module, what's my next step from here",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "walk me through how these skills fit together \u2014 what comes first, what comes after what",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "just finished setting up the project and i've got architecture.md and module_registry.md now \u2014 what's next?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "plan the auth module for me before i write any code \u2014 email/password plus google oauth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this order.service.ts for bugs, security holes and any duplication",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 2,
+      "description": "Use this skill as the entry point and router for this multi-skill toolkit whenever a user is unsure which skill to run \u2014 not to do the work, but to decide what to do. Trigger it for: getting started or orientation (\"I'm new here\", \"just cloned this repo, where do I begin\", \"what can all these skills do\", \"give me the lay of the land\"); picking the right skill for a task when the stage or choice is unclear (\"which skill do I use for X\", \"I want to build X\" with no plan/scaffold/code specified); and applying the toolkit to an existing or half-built project (\"I have a Next.js frontend / Express API already, what's the entry point / what now\"). It inspects the project's real state on disk and points at the single right skill next, with a reason. Do NOT trigger it when the user already knows the concrete task they want (scaffolding, planning, building, testing, reviewing, onboarding, or generating components) \u2014 route those to the dedicated skill instead. Guidance only; it never writes code.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "guide me here \u2014 i want to build a saas app but idk if i'm supposed to plan it or scaffold first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i finished writing the feature plan for the orders module, what's my next step from here",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "walk me through how these skills fit together \u2014 what comes first, what comes after what",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "just finished setting up the project and i've got architecture.md and module_registry.md now \u2014 what's next?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "plan the auth module for me before i write any code \u2014 email/password plus google oauth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this order.service.ts for bugs, security holes and any duplication",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 3,
+      "description": "Where do I start?\" \u00b7 \"Which skill do I use for this?\" \u00b7 \"I'm new \u2014 help me get started.\" \u00b7 \"What can all these skills even do \u2014 give me the lay of the land.\" \u00b7 \"I've already got a Next.js frontend / half-built Express API \u2014 what's the entry point now?\" Use this skill for exactly these moments: someone has this multi-skill toolkit but is unsure, lost, or just finished a step and doesn't know what to run next. It reads the project's real state on disk and names the single right skill to run next, with a reason \u2014 orientation and routing, never doing the work. Also use it for vague requests where the stage is unclear (\"I want to build X\" with no plan/scaffold/code named). Do NOT use it once the user states a concrete task \u2014 scaffold, plan, build, test, review, onboard, or generate components \u2014 send those straight to the dedicated skill. Guidance only; it never writes code.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "i finished writing the feature plan for the orders module, what's my next step from here",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "guide me here \u2014 i want to build a saas app but idk if i'm supposed to plan it or scaffold first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "walk me through how these skills fit together \u2014 what comes first, what comes after what",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "just finished setting up the project and i've got architecture.md and module_registry.md now \u2014 what's next?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "plan the auth module for me before i write any code \u2014 email/password plus google oauth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this order.service.ts for bugs, security holes and any duplication",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 4,
+      "description": "Use this skill whenever the user needs orientation or routing across this multi-skill toolkit rather than a specific task done. Trigger it when someone is new, unsure, or overwhelmed and asks where to begin, what to run first, or which skill fits their situation \u2014 including \"I just cloned this / installed these skills, where do I start\", \"help me get started\", \"what can all these skills do\", \"give me the lay of the land\", and \"which skill do I use for X\". Also trigger it when the user wants to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but doesn't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Do not trigger when the user already knows the concrete task \u2014 send that straight to the relevant skill.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "guide me here \u2014 i want to build a saas app but idk if i'm supposed to plan it or scaffold first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i finished writing the feature plan for the orders module, what's my next step from here",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "walk me through how these skills fit together \u2014 what comes first, what comes after what",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "just finished setting up the project and i've got architecture.md and module_registry.md now \u2014 what's next?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "plan the auth module for me before i write any code \u2014 email/password plus google oauth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "review this order.service.ts for bugs, security holes and any duplication",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    },
+    {
+      "iteration": 5,
+      "description": "Use this skill as the starting point when someone has this multi-skill toolkit but doesn't know which skill to run \u2014 they want orientation or a recommendation, not a specific task done. Trigger whenever the user is new, lost, or asking to be pointed somewhere: \"help me get started\", \"where do I begin\", \"what should I run first\", \"which skill do I use for X\", \"what can all these skills do\", \"give me the lay of the land\", \"I just cloned/installed this, now what\". Also trigger when they want to apply the toolkit to an existing or half-built project (a Next.js frontend, an Express API, a dashboard to wire up) but don't know the entry point. It reads the project's real state and names the single right skill to run next, with a reason. Skip it once the user states a concrete task \u2014 send that to the relevant skill.",
+      "train_passed": 6,
+      "train_failed": 6,
+      "train_total": 12,
+      "train_results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "test_passed": 4,
+      "test_failed": 4,
+      "test_total": 8,
+      "test_results": [
+        {
+          "query": "guide me here \u2014 i want to build a saas app but idk if i'm supposed to plan it or scaffold first",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i finished writing the feature plan for the orders module, what's my next step from here",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "walk me through how these skills fit together \u2014 what comes first, what comes after what",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "plan the auth module for me before i write any code \u2014 email/password plus google oauth",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "just finished setting up the project and i've got architecture.md and module_registry.md now \u2014 what's next?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "review this order.service.ts for bugs, security holes and any duplication",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ],
+      "passed": 6,
+      "failed": 6,
+      "total": 12,
+      "results": [
+        {
+          "query": "im new to this whole toolkit thing, help me get started please",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "which skill do i use for wiring my already-built dashboard screen to the backend?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "what can all these skills even do? give me the lay of the land before i dive in",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder",
+          "should_trigger": true,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": false
+        },
+        {
+          "query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "write vitest + rtl tests for the useProductsQuery hook and the product card component",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "onboard my existing express api so it's ready for the toolkit \u2014 it's in the api/ folder",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "turn this figma frame into react components, here's the node link",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        },
+        {
+          "query": "set up the theme from this figma design system \u2014 pull the colors into oklch and wire the fonts",
+          "should_trigger": false,
+          "trigger_rate": 0.0,
+          "triggers": 0,
+          "runs": 3,
+          "pass": true
+        }
+      ]
+    }
+  ]
+}

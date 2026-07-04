@@ -1,0 +1,22 @@
+[
+  {"query": "ok so i just cloned this skills repo and honestly i have no idea where to even begin. whats the first thing i should run?", "should_trigger": true},
+  {"query": "i've got all these skills installed but which one do i actually use? i already have a half-built express api sitting in a folder", "should_trigger": true},
+  {"query": "walk me through how these skills fit together — what comes first, what comes after what", "should_trigger": true},
+  {"query": "i finished writing the feature plan for the orders module, what's my next step from here", "should_trigger": true},
+  {"query": "what can all these skills even do? give me the lay of the land before i dive in", "should_trigger": true},
+  {"query": "im new to this whole toolkit thing, help me get started please", "should_trigger": true},
+  {"query": "i have an existing nextjs frontend and i want to use these skills on it but i'm not sure what the entry point is", "should_trigger": true},
+  {"query": "guide me here — i want to build a saas app but idk if i'm supposed to plan it or scaffold first", "should_trigger": true},
+  {"query": "just finished setting up the project and i've got architecture.md and module_registry.md now — what's next?", "should_trigger": true},
+  {"query": "which skill do i use for wiring my already-built dashboard screen to the backend?", "should_trigger": true},
+  {"query": "onboard my existing express api so it's ready for the toolkit — it's in the api/ folder", "should_trigger": false},
+  {"query": "create a PRD for my handmade jewelry ecommerce store, customers browse categories and pay with razorpay", "should_trigger": false},
+  {"query": "scaffold a brand new nextjs frontend with shadcn, axios, zod and tanstack query", "should_trigger": false},
+  {"query": "plan the auth module for me before i write any code — email/password plus google oauth", "should_trigger": false},
+  {"query": "build the products module from _docs/FEATURE_PLAN_products.md now, the plan's approved", "should_trigger": false},
+  {"query": "review this order.service.ts for bugs, security holes and any duplication", "should_trigger": false},
+  {"query": "turn this figma frame into react components, here's the node link", "should_trigger": false},
+  {"query": "whats the actual difference between using mongodb vs postgres for a booking app like mine?", "should_trigger": false},
+  {"query": "write vitest + rtl tests for the useProductsQuery hook and the product card component", "should_trigger": false},
+  {"query": "set up the theme from this figma design system — pull the colors into oklch and wire the fonts", "should_trigger": false}
+]

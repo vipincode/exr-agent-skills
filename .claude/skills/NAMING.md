@@ -76,6 +76,17 @@ the same `ARCHITECTURE.md` / `MODULE_REGISTRY.md` contract files.
 > Every frontend skill's description must be scoped to "frontend / Next.js / React / component / UI"
 > as tightly as the backend ones are to "backend / Express / Mongoose / server-side".
 
+## Meta / cross-cutting skills
+
+Some skills sit **outside** the backend/frontend taxonomy because they operate on the toolkit itself rather than on a single domain's code. They take neither a stack name nor a `domain-role` name — they're named for their function.
+
+| Skill | Status | Notes |
+|---|---|---|
+| `prd-creator` | **shipped** (2026-07-04) | product-level front door; app idea → `PRD.md` + per-module briefs that feed both feature planners. Spans domains, upstream of everything. |
+| `toolkit-guide` | **shipped** (2026-07-04) | the "front desk" / router. Inspects project state (manifest, contract files, PRD, FEATURE_PLANs) via `LAYOUT.md`'s protocol and routes the user to the right next skill. Guidance only — never does the work, never auto-chains. Reads this file + `LAYOUT.md` to stay in sync, so it must be updated here whenever a skill is added or renamed. |
+
+> `toolkit-guide` is the routing consumer of this doc: its in-body catalog mirrors the inventory above. When you rename or add a skill, its guardrail says to trust `NAMING.md`/`LAYOUT.md` over its own catalog — but keeping both current avoids the drift entirely.
+
 ## Reference sites that must move together
 
 A rename is **not** just folder renames. Update all of these in one pass or the eval harness breaks:
