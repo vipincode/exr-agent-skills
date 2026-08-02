@@ -1,0 +1,17 @@
+{
+  "eval_id": 1,
+  "eval_name": "plan-observe-existing-api",
+  "prompt": "the products grid design is built but its still showing hardcoded sample products. we already have a products API in the backend folder. plan how to wire the grid up to it \u2014 list view for now, and admins should be able to delete a product. break it into pieces i can build one at a time",
+  "assertions": [
+    "Plan written under _docs/features/<module>/ at the REPO ROOT with a master plan plus numbered slice files",
+    "The observed contract cites concrete backend source paths (e.g. backend/src/modules/products/products.controller.ts or .routes.ts) as its source",
+    "The recorded success envelope matches the fixture exactly: { success: true, data, message }",
+    "The list endpoint's data shape is recorded as { items, total, page, limit } - the real service return, not a bare array",
+    "GET /api/products is correctly recorded as public (no auth guard)",
+    "NO DELETE endpoint is presented as observed/existing - the fixture backend has none",
+    "The admin-delete capability is handled honestly: its slice is marked blocked, or explicitly scoped as a NEW endpoint to be designed and built, with the gap called out",
+    "Binds the existing built design by path (features/products/template/products-grid.tsx and/or components/product-card.tsx) rather than proposing to rebuild it",
+    "Notes the price/currency transform (price is stored in cents) in the binding or mapping section",
+    "No implementation code was written - no .ts or .tsx source files created"
+  ]
+}

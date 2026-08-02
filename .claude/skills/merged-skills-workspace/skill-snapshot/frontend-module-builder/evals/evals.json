@@ -1,0 +1,27 @@
+{
+  "skill_name": "frontend-module-builder",
+  "notes": "Each eval runs inside a COPY of the fixture monorepo from frontend-feature-planner-workspace/fixture (backend/ has a real products module; frontend/ has a built-but-unbound products design + the contract files). The frontend project dir is frontend/. For eval 0 the approved _docs/FEATURE_PLAN_products.md (the real planner output) is present. Baseline = no skill.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "list-binding-from-approved-plan",
+      "prompt": "The products grid design is built but it's showing hardcoded samples, and _docs/FEATURE_PLAN_products.md is approved. Build the binding so the grid shows real data from the API.",
+      "expected_output": "Creates the feature binding layer under frontend/src/features/products/: a Zod schema (product + list-data + success-envelope + filters), types via z.infer (no parallel interfaces), an api/products.api.ts that calls the shared `api` axios instance, unwraps the {success,data,message} envelope and Zod-parses `data`, a hooks/use-products.ts useProductsQuery with key [\"products\", filters], and a format-price util (cents+currency -> string). EDITS template/products-grid.tsx to consume the hook and REMOVE the hardcoded SAMPLE array, rendering loading/empty/error states. Reuses lib/axios.ts + the catch-all BFF (NO new app/api/products route) + query-client + the unchanged ProductCard. Updates MODULE_REGISTRY.md with the products feature. Runs typecheck/build. Does NOT rebuild ProductCard, does NOT write tests.",
+      "files": []
+    },
+    {
+      "id": 1,
+      "name": "dedup-reuse-shared-fields-no-duplicates",
+      "prompt": "Now build the admin create-product form binding per _docs/FEATURE_PLAN_products-create.md.",
+      "expected_output": "Builds the create binding: a Zod create schema mirroring the observed POST body, a useCreateProductMutation that invalidates [\"products\"] on success, and a form that REUSES the shared *Field components (InputField/SelectField/SwitchField from components/shared/form) via useForm + zodResolver inside FormProvider — it must NOT recreate field components or hand-roll useController/<input> wiring or error text. Gates the form with useAuth (admin-only UI). Goes through the BFF/axios. Hand-off summary lists the REUSED paths (proves the dedup gate ran). If the create-form component doesn't exist yet, it adds a lightweight one in features/products/components OR flags the design gap (-> figma-to-component / html-to-component) rather than building a polished design.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "name": "honesty-blocked-plan",
+      "prompt": "Build the orders binding from _docs/FEATURE_PLAN_orders.md.",
+      "expected_output": "The orders plan is marked Status: BLOCKED (no orders API in the backend, no orders design). The skill must NOT fabricate an orders API/types or build around the gap. It surfaces the blocker and the unblock path the plan already names (build the backend capability via backend-feature-planner -> backend-module-builder, or paste a sample; build the design via figma-to-component / html-to-component) and stops without writing binding code.",
+      "files": []
+    }
+  ]
+}

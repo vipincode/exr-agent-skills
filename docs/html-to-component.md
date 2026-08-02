@@ -18,4 +18,4 @@ Turns an **HTML file, pasted markup, or live URL** into a production-grade Next.
 - Looks for design files in **`_docs/designs/`** by default — drop your HTML there.
 - Builds **into an existing** Next.js + shadcn project; it does not scaffold (that's `nextjs-bootstrap`).
 - You can run just one phase ("only extract the theme" / "theme is done, just build the components").
-- Builds the design with sample data — API wiring is `frontend-feature-planner` → `frontend-module-builder`.
+- Builds the design with sample data — API wiring is `module-planner` → `module-builder`.

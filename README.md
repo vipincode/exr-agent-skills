@@ -6,6 +6,9 @@ Reusable agent skills for software planning, onboarding, module building, testin
 
 ## Skills
 
+Thirteen skills. Setup and design fork by domain; planning, building, testing, and review each
+handle both domains in one skill.
+
 **Getting started**
 
 - `toolkit-guide` - front desk: inspects your project and tells you which skill to run next.
@@ -14,27 +17,62 @@ Reusable agent skills for software planning, onboarding, module building, testin
 
 - `prd-creator` - turn an app idea into a PRD, then shard it into per-module briefs.
 
-**Backend (Express + TypeScript + Mongoose)**
+**Setup (once per project)**
 
-- `express-ts-bootstrap` - bootstrap a new Express TypeScript backend structure.
-- `backend-onboard` - make an existing API ready for the toolkit (writes the contract files).
-- `backend-feature-planner` - turn a feature request into an editable implementation plan.
-- `backend-module-builder` - build the planned module using the project's conventions, no duplicates.
-- `backend-test-writer` - add focused tests that match the project's test style.
-- `backend-code-review` - review code for bugs, regressions, security risks, and duplication.
+- `express-ts-bootstrap` - scaffold a new Express + TypeScript + Mongoose backend (empty dir).
+- `nextjs-bootstrap` - scaffold a new Next.js frontend with BFF proxy, axios, Zod, TanStack Query.
+- `project-onboard` - make existing code toolkit-ready (writes the contract files) - backend,
+  frontend, or both in one pass. Records what your repo actually does; never refactors it.
 
-**Frontend (Next.js + TypeScript + Tailwind + shadcn/ui)**
+**Design to screens (frontend)**
 
-- `nextjs-bootstrap` - bootstrap a new Next.js frontend with BFF proxy, axios, Zod, TanStack Query.
-- `frontend-onboard` - make an existing frontend ready for the toolkit (writes the contract files).
 - `font-theme-setup` - apply a Figma design system's tokens to the theme (globals.css + fonts).
 - `figma-to-component` - build components from a Figma frame without creating duplicates.
 - `html-to-component` - build theme + components from an HTML file, pasted markup, or URL.
 - `project-to-component` - port a page or design language from another codebase on disk.
-- `frontend-feature-planner` - plan how a built design binds to the real backend API.
-- `frontend-module-builder` - implement the planned API binding and make the design functional.
-- `frontend-test-writer` - add Vitest + RTL tests for components, hooks, and schemas.
-- `frontend-code-review` - review frontend code for correctness, duplication, a11y, and performance.
+
+**Plan, build, verify (both domains)**
+
+- `module-planner` - plan a module end to end (backend + frontend in one plan) and shard it into
+  ordered, individually buildable slices.
+- `module-builder` - build one slice: the endpoints plus the frontend binding that consumes them.
+- `test-writer` - add tests on demand, from the slice's testing checklist when there is one.
+- `code-review` - review code against your project's own conventions for bugs, security,
+  duplication, a11y, and performance.
+
+## How the workflow fits together
+
+```
+prd-creator          app     -> PRD + per-module briefs        (optional)
+   |
+bootstrap / project-onboard  -> ARCHITECTURE.md + MODULE_REGISTRY.md
+   |
+(frontend) font-theme-setup + figma-/html-/project-to-component -> the screens
+   |
+module-planner       module  -> <module>-plan.md + 01-, 02-, 03- ordered slices
+   |                            (you review and edit the markdown)
+module-builder       slice   -> code, ONE slice per run, then marks it built
+   |
+test-writer / code-review    -> on demand, never automatic
+```
+
+Planning docs live at the repo root, one folder per module:
+
+```text
+_docs/
+  prd/PRD.md
+  features/
+    auth/
+      auth-module.md      # product brief      (prd-creator)
+      auth-plan.md        # module plan        (module-planner)
+      01-register.md      # build first        (module-builder)
+      02-login.md
+      03-logout.md
+```
+
+The number is the build order, and each slice tracks its own `Status:` (`ready` / `blocked` /
+`built`) so work stops and resumes cleanly. Each slice states its API contract **once**, which is
+what keeps the frontend's types matching what the backend actually returns.
 
 ## Installation
 
@@ -61,7 +99,7 @@ Copy-Item -Recurse -Force ".claude\skills\*" "$HOME\.claude\skills\"
 4. Ask Claude to use one of the skills by describing the task, for example:
 
 ```text
-Review this pull request using the backend-code-review skill.
+Review this pull request using the code-review skill.
 ```
 
 ### OpenAI Codex CLI
@@ -100,29 +138,26 @@ SkillsMP indexes public GitHub repositories that contain `SKILL.md` files. To ma
 
 ```text
 .claude/
-  workspace.json        # maps each project's domain -> folder (root or backend/); see LAYOUT.md
+  workspace.json          # maps each project's domain -> folder; see LAYOUT.md
   skills/
-    NAMING.md           # skill naming & domain taxonomy (collision-proofing)
-    LAYOUT.md           # project-location manifest & resolution protocol (monorepo-ready)
-    backend-code-review/
-      SKILL.md
-      references/
+    NAMING.md             # skill naming & domain taxonomy, plus the merge history
+    LAYOUT.md             # project-location manifest, resolution protocol, doc locations
+    toolkit-guide/
+    prd-creator/
     express-ts-bootstrap/
-      SKILL.md
-      references/
-    backend-feature-planner/
-      SKILL.md
-      references/
-    backend-module-builder/
-      SKILL.md
-      references/
-    backend-onboard/
-      SKILL.md
-      references/
-    backend-test-writer/
-      SKILL.md
-      references/
+    nextjs-bootstrap/
+    project-onboard/
+    font-theme-setup/
+    figma-to-component/
+    html-to-component/
+    project-to-component/
+    module-planner/
+    module-builder/
+    test-writer/
+    code-review/
 ```
+
+Each skill folder holds a `SKILL.md` plus optional `references/`, `assets/`, and `scripts/`.
 
 ## Notes
 

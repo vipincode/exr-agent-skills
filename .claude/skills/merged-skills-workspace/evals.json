@@ -1,0 +1,108 @@
+{
+  "suite": "merged-skills",
+  "note": "Baseline arm = the pre-merge split skills, snapshotted at merged-skills-workspace/skill-snapshot/.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "plan-auth-fullstack-sharded",
+      "skill": "module-planner",
+      "fixture": "fx-plan-auth",
+      "baseline_fixture": "fx-plan-auth",
+      "baseline_skills": [
+        "backend-feature-planner",
+        "frontend-feature-planner"
+      ],
+      "prompt": "I want to build the auth module for this app — theres a brief already at _docs/features/auth/auth-module.md. Plan it out properly, backend and the frontend binding both. But dont give me one giant plan I have to build in one go, I want to do register first, then login, then logout etc, one at a time.",
+      "expected_output": "_docs/features/auth/auth-plan.md plus ordered slice files (01-register.md, 02-login.md, ...) at the repo root. Master plan owns the User data model, module-wide decisions, and a build-order table. Each slice states the API contract once with both a backend half and a frontend half following it, plus a testing checklist and a Status line. No code written.",
+      "assertions": [
+        "Master plan written to _docs/features/auth/auth-plan.md at the REPO ROOT (not inside backend/ or frontend/)",
+        "Module is sharded into at least 3 separate slice files with zero-padded numeric prefixes (01-, 02-, 03-)",
+        "Slice order respects dependencies: register is 01, and login comes before logout",
+        "Every slice file contains an API contract section stating that slice's endpoints (method, path, auth, request, response)",
+        "Every slice file covers BOTH a backend half and a frontend half (or an explicit n/a for one)",
+        "The frontend half of each slice matches its own slice's stated contract - no conflicting response shape between the two halves",
+        "Every slice file carries a Status line with one of ready / blocked / built",
+        "Every slice file has a testing checklist with at least 3 concrete checkbox items",
+        "Master plan contains a build-order table listing every slice with its order and dependencies",
+        "The User data model is defined once in the master plan, not repeated in each slice",
+        "Reuse section names concrete existing file paths from the fixture (e.g. lib/app-response.ts, lib/axios.ts, hooks/use-auth.ts, components/shared/form)",
+        "No implementation code was written - no .ts or .tsx source files created"
+      ]
+    },
+    {
+      "id": 1,
+      "name": "plan-observe-existing-api",
+      "skill": "module-planner",
+      "fixture": "fx-observe-products",
+      "baseline_fixture": "fx-observe-products",
+      "baseline_skills": [
+        "frontend-feature-planner"
+      ],
+      "prompt": "the products grid design is built but its still showing hardcoded sample products. we already have a products API in the backend folder. plan how to wire the grid up to it — list view for now, and admins should be able to delete a product. break it into pieces i can build one at a time",
+      "expected_output": "A plan under _docs/features/products/ whose contract section is OBSERVED from the real backend source (not guessed), with source paths cited, matching the fixture's actual envelope. Sharded into ordered slices. Binds the existing products-grid.tsx / product-card.tsx by path rather than proposing to rebuild them.",
+      "assertions": [
+        "Plan written under _docs/features/<module>/ at the REPO ROOT with a master plan plus numbered slice files",
+        "The observed contract cites concrete backend source paths (e.g. backend/src/modules/products/products.controller.ts or .routes.ts) as its source",
+        "The recorded success envelope matches the fixture exactly: { success: true, data, message }",
+        "The list endpoint's data shape is recorded as { items, total, page, limit } - the real service return, not a bare array",
+        "GET /api/products is correctly recorded as public (no auth guard)",
+        "NO DELETE endpoint is presented as observed/existing - the fixture backend has none",
+        "The admin-delete capability is handled honestly: its slice is marked blocked, or explicitly scoped as a NEW endpoint to be designed and built, with the gap called out",
+        "Binds the existing built design by path (features/products/template/products-grid.tsx and/or components/product-card.tsx) rather than proposing to rebuild it",
+        "Notes the price/currency transform (price is stored in cents) in the binding or mapping section",
+        "No implementation code was written - no .ts or .tsx source files created"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "build-one-slice-only",
+      "skill": "module-builder",
+      "fixture": "fx-build-slice",
+      "baseline_fixture": "fx-build-legacy",
+      "baseline_skills": [
+        "backend-module-builder",
+        "frontend-module-builder"
+      ],
+      "prompt": "ok the auth plan looks good, go ahead and build it",
+      "expected_output": "Builds ONLY slice 01 (register) — backend module + frontend binding — not login or logout. Reuses the response helpers, axios instance, BFF proxy, shared form fields, and useAuth by path. Marks 01-register.md Status: built and ticks the master plan's build-order table. Ends by surfacing slice 01's testing checklist and offering test-writer, without running it.",
+      "assertions": [
+        "Built ONLY the register slice - no login or logout endpoint, service function, controller handler, or hook was created",
+        "Backend auth module files created under src/modules/auth/ (model, schema, service, controller, routes)",
+        "Frontend binding files created under src/features/auth/ (schema, api request fn, mutation hook)",
+        "01-register.md Status was changed from ready to built",
+        "The master plan's build-order table row for slice 01 was updated to built in the same change",
+        "Slices 02-login.md and 03-logout.md were left at Status: ready and their bodies unmodified",
+        "Reused existing shared pieces by path instead of recreating them - no second axios instance, no hand-rolled success envelope, no new auth hook",
+        "The closing hand-off surfaces slice 01's testing checklist and offers test-writer",
+        "test-writer was NOT actually invoked or run - only suggested",
+        "Honestly reported that typecheck/lint/build could not be run in this fixture, rather than claiming they passed"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "onboard-fullstack-legacy-one-pass",
+      "skill": "project-onboard",
+      "fixture": "fx-onboard-legacy",
+      "baseline_fixture": "fx-onboard-legacy",
+      "baseline_skills": [
+        "backend-onboard",
+        "frontend-onboard"
+      ],
+      "prompt": "this is our existing app — api/ is the express backend and web/ is the react frontend. neither has any of those ARCHITECTURE files yet. can you get the whole thing set up so i can start using these skills on it",
+      "expected_output": "BOTH projects onboarded in one pass: ARCHITECTURE.md + MODULE_REGISTRY.md in api/ and in web/, plus ONE .claude/workspace.json holding both entries. Contracts are DESCRIPTIVE — they record Express 4 + catchAsync as required, the { data, message } envelope, Joi validation, and on the frontend Vite + MUI + SWR + Formik/Yup. Registries seeded with the real existing shared code. Source files untouched. The duplicate date helper reported as a finding, not fixed.",
+      "assertions": [
+        "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into api/",
+        "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into web/",
+        "Exactly ONE .claude/workspace.json exists at the repo root and it contains BOTH a backend entry (path api) and a frontend entry (path web)",
+        "Backend contract records Express 4 and states that catchAsync/async wrappers ARE required - it does not prescribe dropping them",
+        "Backend contract records the real response envelope { data, message } with no success flag - it does not prescribe { success, data, message }",
+        "Backend contract records Joi as the validation library, not Zod",
+        "Frontend contract records the real stack - Vite + React Router + MUI/Emotion + SWR + Formik + Yup - and does NOT prescribe Next.js App Router, shadcn, TanStack Query, or React Hook Form",
+        "Backend registry is seeded with the real existing shared pieces (catchAsync, ApiError, requireAuth, requireAdmin, validateBody, errorHandler) with their paths",
+        "Frontend registry is seeded with the real existing shared pieces (the api client, Card, PageHeader, the forms layer, useUsers, the theme) with their paths",
+        "No source file under api/src or web/src was modified, created, or deleted",
+        "The duplicate date helper (utils/formatDate.ts vs the private one in services/report.service.ts) is reported as a FINDING, not silently fixed"
+      ]
+    }
+  ]
+}

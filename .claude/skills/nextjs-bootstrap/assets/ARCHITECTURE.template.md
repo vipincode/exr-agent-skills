@@ -1,8 +1,8 @@
 # Architecture — {{PROJECT_NAME}}
 
-> Source of truth for **how this frontend is built**. Every frontend skill
-> (`frontend-feature-planner`, `frontend-module-builder`, `frontend-test-writer`,
-> `frontend-code-review`, and net-new ones like `font-theme-setup`, `api-binder`, `ux-designer`)
+> Source of truth for **how this frontend is built**. Every skill that touches this project
+> (`module-planner`, `module-builder`, `test-writer`, `code-review`, plus the design and theme
+> builders `font-theme-setup`, `figma-to-component`, `html-to-component`, `project-to-component`)
 > reads this before writing or reviewing code. Keep it concrete and current — if a convention
 > changes, change it here first. Pair it with `MODULE_REGISTRY.md` (the dedup ledger).
 
@@ -136,6 +136,26 @@ Before creating any component/util/hook/type/constant: **check `MODULE_REGISTRY.
 - Git hooks: husky (v9) + lint-staged, installed via the `prepare` script on
   `{{PM}} install`. `.husky/pre-commit` runs `lint-staged` → `eslint --fix` on
   staged `*.ts`/`*.tsx`/`*.js`/`*.jsx` (config in `package.json` under `"lint-staged"`).
+
+## Feature workflow
+
+Work is planned **per module** and built **one slice at a time**:
+
+1. Build the screens first from a design source — `figma-to-component` (Figma),
+   `html-to-component` (HTML/URL), or `project-to-component` (another codebase). They render
+   sample data; nothing is bound yet.
+2. `module-planner` writes `_docs/features/<module>/<module>-plan.md` plus ordered slice files
+   (`01-<slice>.md`, `02-<slice>.md`, …) — the number is the build order. These live under
+   `_docs/features/` at the **repo root**, not in this project folder, because a plan spans
+   backend and frontend and each slice states the API contract once for both halves.
+3. You review and edit those files.
+4. `module-builder` executes **one slice**: it writes the binding layer and edits the already-built
+   screens to consume it, then marks the slice `built`.
+5. `test-writer` covers it from that slice's testing checklist; `code-review` checks it against
+   this contract. Both on demand.
+
+Only this file (`ARCHITECTURE.md`) and `MODULE_REGISTRY.md` live at this project's root — the
+folder recorded in `.claude/workspace.json` at the repo root, which is how the skills locate it.
 
 ## Decisions log
 

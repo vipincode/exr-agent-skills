@@ -12,8 +12,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
 
 SKILLS_DIR = Path(__file__).resolve().parent.parent  # .claude/skills
-SKILL_NAMES = ["backend-onboard", "express-ts-bootstrap", "backend-feature-planner",
-               "backend-module-builder", "backend-test-writer", "backend-code-review"]
+SKILL_NAMES = ["project-onboard", "express-ts-bootstrap", "module-planner",
+               "module-builder", "test-writer", "code-review"]
 
 
 def read_descriptions(overrides: dict | None = None) -> dict:

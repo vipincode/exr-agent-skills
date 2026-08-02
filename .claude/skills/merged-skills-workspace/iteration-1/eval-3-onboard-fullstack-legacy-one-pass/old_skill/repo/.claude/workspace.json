@@ -1,0 +1,6 @@
+{
+  "projects": [
+    { "domain": "backend", "path": "api", "stack": "express-ts" },
+    { "domain": "frontend", "path": "web", "stack": "vite-react" }
+  ]
+}

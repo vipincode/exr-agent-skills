@@ -1,0 +1,72 @@
+{
+  "eval": "eval-0-plan-auth-fullstack-sharded",
+  "configuration": "with_skill",
+  "expectations": [
+    {
+      "text": "Master plan written to _docs/features/auth/auth-plan.md at the REPO ROOT (not inside backend/ or frontend/)",
+      "passed": true,
+      "evidence": "master plan: _docs/features/auth/auth-plan.md; all files: ['_docs/features/auth/01-register.md', '_docs/features/auth/02-login.md', '_docs/features/auth/03-logout.md', '_docs/features/auth/04-session-and-role-gating.md', '_docs/features/auth/auth-plan.md']"
+    },
+    {
+      "text": "Module is sharded into at least 3 separate slice files with zero-padded numeric prefixes (01-, 02-, 03-)",
+      "passed": true,
+      "evidence": "4 slice files: ['01-register.md', '02-login.md', '03-logout.md', '04-session-and-role-gating.md']"
+    },
+    {
+      "text": "Slice order respects dependencies: register is 01, and login comes before logout",
+      "passed": true,
+      "evidence": "order=['01-register.md', '02-login.md', '03-logout.md', '04-session-and-role-gating.md'] (register idx=0, login idx=1, logout idx=2)"
+    },
+    {
+      "text": "Every slice file contains an API contract section stating that slice's endpoints (method, path, auth, request, response)",
+      "passed": true,
+      "evidence": "4/4 slices have a contract heading: ['01-register.md', '02-login.md', '03-logout.md', '04-session-and-role-gating.md']"
+    },
+    {
+      "text": "Every slice file covers BOTH a backend half and a frontend half (or an explicit n/a for one)",
+      "passed": true,
+      "evidence": "4/4 slices have both halves: ['01-register.md', '02-login.md', '03-logout.md', '04-session-and-role-gating.md']"
+    },
+    {
+      "text": "The frontend half of each slice matches its own slice's stated contract - no conflicting response shape between the two halves",
+      "passed": true,
+      "evidence": "01-register.md and 02-login.md each state one contract and both halves follow it. The frontend response schema deliberately differs from the backend's (data: { user }, no token) and says why: the BFF strips the token into an httpOnly cookie. That divergence is documented at the contract, not an accidental mismatch."
+    },
+    {
+      "text": "Every slice file carries a Status line with one of ready / blocked / built",
+      "passed": true,
+      "evidence": "4/4 slices have a status line: ['01-register.md', '02-login.md', '03-logout.md', '04-session-and-role-gating.md']"
+    },
+    {
+      "text": "Every slice file has a testing checklist with at least 3 concrete checkbox items",
+      "passed": true,
+      "evidence": "checkbox counts: {'01-register.md': 11, '02-login.md': 9, '03-logout.md': 7, '04-session-and-role-gating.md': 10}"
+    },
+    {
+      "text": "Master plan contains a build-order table listing every slice with its order and dependencies",
+      "passed": true,
+      "evidence": "5 numbered table rows vs 4 slices; 'depends' mentioned: True"
+    },
+    {
+      "text": "The User data model is defined once in the master plan, not repeated in each slice",
+      "passed": true,
+      "evidence": "data-model heading in master: True; slices that redefine it: none"
+    },
+    {
+      "text": "Reuse section names concrete existing file paths from the fixture (e.g. lib/app-response.ts, lib/axios.ts, hooks/use-auth.ts, components/shared/form)",
+      "passed": true,
+      "evidence": "found 4/4 reuse anchors: ['app-response', 'axios', 'use-auth', 'shared/form']"
+    },
+    {
+      "text": "No implementation code was written - no .ts or .tsx source files created",
+      "passed": true,
+      "evidence": "code files in outputs: none"
+    }
+  ],
+  "auto_passed": 11,
+  "auto_total": 11,
+  "needs_judgment": 1,
+  "passed": 12,
+  "total": 12,
+  "unresolved": 0
+}

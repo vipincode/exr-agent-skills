@@ -18,5 +18,5 @@ Turns a **Figma frame or node** into production-grade Next.js + TypeScript + Tai
 
 - **Requires:** the Figma MCP connected, a **node-specific** Figma URL (select the frame → copy link), and an existing Next.js + shadcn project with the contract files.
 - Run `font-theme-setup` first so components use the right theme tokens.
-- Builds the **design** (with sample data). Making it functional against a real API is `frontend-feature-planner` → `frontend-module-builder`.
+- Builds the **design** (with sample data). Making it functional against a real API is `module-planner` → `module-builder`.
 - HTML source instead of Figma? Use `html-to-component`.

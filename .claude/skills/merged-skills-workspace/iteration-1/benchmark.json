@@ -1,0 +1,90 @@
+{
+  "skill_name": "merged-skills (module-planner / module-builder / project-onboard)",
+  "iteration": 1,
+  "configurations": [
+    "with_skill",
+    "old_skill"
+  ],
+  "note": "old_skill = the pre-merge split skills, snapshotted before the merge. Timing is recorded only for the 3 runs that completed cleanly; 5 runs were terminated by a session limit after producing their files, so token/duration totals for those are unknown and omitted rather than estimated.",
+  "summary": {
+    "with_skill": {
+      "pass_rate_mean": 1.0,
+      "pass_rate_stddev": 0.0,
+      "n_evals": 4
+    },
+    "old_skill": {
+      "pass_rate_mean": 0.6417,
+      "pass_rate_stddev": 0.332,
+      "n_evals": 4
+    },
+    "delta_pass_rate": 0.3583
+  },
+  "evals": [
+    {
+      "eval": "eval-0-plan-auth-fullstack-sharded",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 12,
+          "total": 12
+        },
+        "old_skill": {
+          "pass_rate": 0.1667,
+          "passed": 2,
+          "total": 12,
+          "total_tokens": 80372,
+          "duration_ms": 376494
+        }
+      }
+    },
+    {
+      "eval": "eval-1-plan-observe-existing-api",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 10,
+          "total": 10,
+          "total_tokens": 77564,
+          "duration_ms": 292918
+        },
+        "old_skill": {
+          "pass_rate": 0.9,
+          "passed": 9,
+          "total": 10,
+          "total_tokens": 66199,
+          "duration_ms": 265725
+        }
+      }
+    },
+    {
+      "eval": "eval-2-build-one-slice-only",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 10,
+          "total": 10
+        },
+        "old_skill": {
+          "pass_rate": 0.5,
+          "passed": 5,
+          "total": 10
+        }
+      }
+    },
+    {
+      "eval": "eval-3-onboard-fullstack-legacy-one-pass",
+      "configurations": {
+        "with_skill": {
+          "pass_rate": 1.0,
+          "passed": 11,
+          "total": 11
+        },
+        "old_skill": {
+          "pass_rate": 1.0,
+          "passed": 11,
+          "total": 11
+        }
+      }
+    }
+  ]
+}

@@ -1,18 +1,18 @@
 ---
 name: prd-creator
-description: Turn an app idea into a production-grade PRD, then shard it into per-module briefs that feed the feature-planner skills. Use this whenever the user wants to plan a whole app or product — "I want to build a blog / e-commerce app / SaaS", "create a PRD", "help me plan this app", "scope my product idea", "divide the PRD into modules", "shard the PRD" — or describes a product vision spanning multiple features, even if they never say "PRD". It takes the user's points, suggests improvements and standard production features they missed (auth, payments, admin, SEO — the user keeps or rejects each), writes _docs/prd/PRD.md, and on approval shards it into _docs/features/<module>/<module>-module.md briefs tagged backend/frontend/fullstack. Also use it to MODIFY an existing PRD (change scope, add features, re-shard). It does NOT do technical feature planning (that is backend-feature-planner / frontend-feature-planner), does NOT write code, and does NOT scaffold projects — product scope only, upstream of the whole toolkit.
+description: Turn an app idea into a production-grade PRD, then shard it into per-module briefs that feed module-planner. Use this whenever the user wants to plan a whole app or product — "I want to build a blog / e-commerce app / SaaS", "create a PRD", "help me plan this app", "scope my product idea", "divide the PRD into modules", "shard the PRD" — or describes a product vision spanning multiple features, even if they never say "PRD". It takes the user's points, suggests improvements and standard production features they missed (auth, payments, admin, SEO — the user keeps or rejects each), writes _docs/prd/PRD.md, and on approval shards it into _docs/features/<module>/<module>-module.md briefs tagged backend/frontend/fullstack. Also use it to MODIFY an existing PRD (change scope, add features, re-shard). It does NOT do technical feature planning (that is module-planner), does NOT write code, and does NOT scaffold projects — product scope only, upstream of the whole toolkit.
 ---
 
 # prd-creator
 
-Turn a raw app idea into two artifacts: a **PRD** the user owns and edits, and a set of **module briefs** that plug directly into `backend-feature-planner` / `frontend-feature-planner`. This is the product-level front door of the toolkit — everything downstream (feature plans, module builds, tests, reviews) starts from what gets decided here.
+Turn a raw app idea into two artifacts: a **PRD** the user owns and edits, and a set of **module briefs** that plug directly into `module-planner`. This is the product-level front door of the toolkit — everything downstream (feature plans, module builds, tests, reviews) starts from what gets decided here.
 
 The core stance: **the user is the product owner; you are the experienced PM across the table.** They bring the idea and their thoughts; you bring pattern knowledge of what production apps of that type actually need. Every suggestion you make is theirs to keep or reject — never silently add scope, and never silently drop something they asked for.
 
 Pipeline position (this skill never auto-invokes the next stage):
 
 ```
-prd-creator  →  backend-/frontend-feature-planner  →  module-builder  →  test-writer / code-review
+prd-creator  →  module-planner  →  module-builder  →  test-writer / code-review
    (product scope)        (technical plan)              (code)
 ```
 
@@ -24,7 +24,7 @@ Check for `_docs/prd/PRD.md` (repo root — the PRD is product-level and spans d
 - **PRD exists and the user wants changes** → modify mode (see "Modifying an existing PRD").
 - **PRD exists and the user asks to split/shard it** → go straight to Step 5.
 
-Also glance at context that changes your suggestions: `.claude/workspace.json`, `ARCHITECTURE.md`, or existing `_docs/FEATURE_PLAN_*.md` files mean parts of the product already exist — the PRD must describe reality plus the delta, not a fantasy greenfield.
+Also glance at context that changes your suggestions: `.claude/workspace.json`, `ARCHITECTURE.md`, or existing `_docs/features/<module>/<module>-plan.md` files mean parts of the product already exist — the PRD must describe reality plus the delta, not a fantasy greenfield. Slices already marked `built` are shipped code; treat them as constraints, not proposals.
 
 ## Step 1 — Capture the idea
 
@@ -47,7 +47,7 @@ If the user's message already contains detailed decisions (or they can't respond
 
 ## Step 3 — Ask only the genuine unknowns
 
-After Step 2, most of the product is decided. Ask only what's still open **and** changes the PRD's shape — aim for ≤4 questions, taken from the playbook's decision-questions list. Typical survivors: monetization model, single-vendor vs multi-vendor, open vs invite-only registration, guest checkout, content workflow (draft/review/publish vs direct). Skip anything the user already answered, anything with an obvious default (state the default instead), and anything that's a *technical* choice — database, framework, hosting belong to the feature planners and bootstrap skills, not the PRD.
+After Step 2, most of the product is decided. Ask only what's still open **and** changes the PRD's shape — aim for ≤4 questions, taken from the playbook's decision-questions list. Typical survivors: monetization model, single-vendor vs multi-vendor, open vs invite-only registration, guest checkout, content workflow (draft/review/publish vs direct). Skip anything the user already answered, anything with an obvious default (state the default instead), and anything that's a *technical* choice — database, framework, hosting belong to module-planner and the bootstrap skills, not the PRD.
 
 ## Step 4 — Write `_docs/prd/PRD.md`
 
@@ -73,19 +73,37 @@ One folder per module, kebab-case (`auth/auth-module.md`, `product-catalog/produ
 Getting the boundaries right matters more than the file writing:
 
 - **A module = one team-sized unit of ownership** — auth, product catalog, cart, orders, payments, admin. Not one file's worth ("password reset" is part of auth), not half the app ("backend" is not a module).
-- **Domain tag** every module `backend` / `frontend` / `fullstack` — this routes it to the right feature planner. Most product modules are `fullstack`; things like a webhook processor are `backend`, a marketing landing page `frontend`.
+- **Domain tag** every module `backend` / `frontend` / `fullstack` — it tells `module-planner` which halves to plan. Most product modules are `fullstack`; things like a webhook processor are `backend`, a marketing landing page `frontend`.
 - **Dependencies are explicit** — orders depends on auth + catalog + cart. From these, derive and state a **suggested build order** (topological: auth almost always first).
-- **Briefs stay at product altitude.** Scope, user stories, functional requirements, acceptance criteria, edge cases — but *no* endpoint tables, no schemas, no component trees. That's the feature planners' territory; duplicating it here creates two sources of truth that drift.
+- **Briefs stay at product altitude.** Scope, user stories, functional requirements, acceptance criteria, edge cases — but *no* endpoint tables, no schemas, no component trees. That's `module-planner`'s territory; duplicating it here creates two sources of truth that drift.
+- **Don't slice the module here either.** Breaking a module into buildable pieces (register, login, logout) is `module-planner`'s job, because it needs the technical contract to cut them well. Your unit is the module.
 
-The PRD stays the source of truth for *what the product is*; each brief is the extraction of *one module's slice*, self-contained enough that a feature planner can run from it alone.
+The PRD stays the source of truth for *what the product is*; each brief is the extraction of *one module's scope*, self-contained enough that `module-planner` can run from it alone.
+
+Each brief's folder is also where `module-planner` will write that module's plan and slices, so the module ends up with one folder holding everything about it:
+
+```
+_docs/features/auth/
+  auth-module.md   ← this brief (product scope)
+  auth-plan.md     ← module-planner's technical plan
+  01-register.md   ← ordered, buildable slices
+  02-login.md
+```
 
 ## Step 6 — Hand off
 
 Close by showing the created file tree and the build order, and tell the user the next move for each module:
 
-- `backend` or `fullstack` (server side first) → `backend-feature-planner`, pointing it at the module brief
-- `frontend` → `frontend-feature-planner` (or the design skills first if no UI exists yet)
-- No project scaffold yet → `express-ts-bootstrap` / `nextjs-bootstrap` before any feature work
+- Any module, whatever its domain tag → **`module-planner`**, pointing it at the module brief. It
+  plans backend and frontend together and shards the module into ordered, buildable slices next to
+  the brief in the same folder.
+- Frontend or fullstack with no UI built yet → the design skills first (`figma-to-component` /
+  `html-to-component` / `project-to-component`), so there's a screen for the binding to wire up.
+- No project scaffold yet → `express-ts-bootstrap` / `nextjs-bootstrap`, or `project-onboard` for
+  existing code, before any feature work.
+
+Recommend starting with the **first module in the build order** rather than planning all of them at
+once — the toolkit is built around finishing one module (and one slice within it) at a time.
 
 Do **not** invoke any of those skills yourself. The user drives each stage.
 
@@ -96,11 +114,11 @@ When `_docs/prd/PRD.md` exists and the user wants changes ("add wishlist", "drop
 1. Read the current PRD fully — respect decisions already recorded there, especially Out of scope (don't re-suggest rejected items).
 2. Run the Step 2 keep-or-reject pass **scoped to the change** — if they're adding wishlist, suggest what wishlist implies (share links? move-to-cart? stock alerts?), not a re-review of the whole product.
 3. Edit the PRD in place and append a dated entry to its **Changelog** section saying what changed and why.
-4. **Re-shard only affected modules.** Update the briefs the change touches; if a change invalidates a brief whose FEATURE_PLAN or code already exists downstream, add a `> ⚠ Updated after implementation planning — re-run the feature planner` warning at the top of that brief and tell the user. Never silently rewrite a brief that downstream work was built on.
+4. **Re-shard only affected modules.** Update the briefs the change touches. If a change invalidates a brief whose `<module>-plan.md` or built slices already exist downstream (look in the same `_docs/features/<module>/` folder), add a `> ⚠ Updated after implementation planning — re-run module-planner` warning at the top of that brief and tell the user which slices are affected — especially any already marked `built`. Never silently rewrite a brief that downstream work was built on.
 
 ## Guardrails
 
 - **Suggest, never impose.** Every addition beyond the user's words is a proposal they accept or reject; assumptions made on their behalf are flagged in the file.
-- **Product altitude only.** No code, no schemas, no endpoints, no stack decisions. The moment you're tempted to write an API route, you've crossed into feature-planner territory — stop.
-- **Never auto-chain.** Don't invoke feature planners, builders, or bootstrap skills; hand off with instructions instead.
+- **Product altitude only.** No code, no schemas, no endpoints, no stack decisions. The moment you're tempted to write an API route, you've crossed into module-planner territory — stop.
+- **Never auto-chain.** Don't invoke module-planner, module-builder, or the bootstrap skills; hand off with instructions instead.
 - **Files are the interface.** Everything decided must land in the PRD or a brief — a decision that lives only in the chat is lost to the next session and to the downstream skills.

@@ -1,0 +1,17 @@
+{
+  "eval_id": 2,
+  "eval_name": "build-one-slice-only",
+  "prompt": "ok the auth plan looks good, go ahead and build it",
+  "assertions": [
+    "Built ONLY the register slice - no login or logout endpoint, service function, controller handler, or hook was created",
+    "Backend auth module files created under src/modules/auth/ (model, schema, service, controller, routes)",
+    "Frontend binding files created under src/features/auth/ (schema, api request fn, mutation hook)",
+    "01-register.md Status was changed from ready to built",
+    "The master plan's build-order table row for slice 01 was updated to built in the same change",
+    "Slices 02-login.md and 03-logout.md were left at Status: ready and their bodies unmodified",
+    "Reused existing shared pieces by path instead of recreating them - no second axios instance, no hand-rolled success envelope, no new auth hook",
+    "The closing hand-off surfaces slice 01's testing checklist and offers test-writer",
+    "test-writer was NOT actually invoked or run - only suggested",
+    "Honestly reported that typecheck/lint/build could not be run in this fixture, rather than claiming they passed"
+  ]
+}

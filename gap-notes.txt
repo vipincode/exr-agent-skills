@@ -1,0 +1,24 @@
+Where "production-ready app" overstates it — the honest gaps
+
+  The scaffolds are production-grade infrastructure. A production-ready app needs a few things your toolkit currently scopes out
+  or omits entirely:
+
+  1. No deployment / CI path. There are no CI workflows anywhere, and the frontend has no Dockerfile (backend does).
+  "Production-ready" implies something you can ship — right now the last mile (build pipeline, deploy, prod env/secrets) is left
+  to the user. This is the biggest gap between the claim and reality.
+  2. No DB migration/seeding story. Mongoose is schema-flexible so it's less acute, but there's no
+  seed/index-management/data-migration skill. For a real app this bites eventually.
+  3. Testing depends on user discipline. *-test-writer is on-demand and deliberately never auto-chained. That's a defensible
+  choice, but it means coverage is opt-in — the most likely thing to get skipped under time pressure, and the thing
+  maintainability most depends on.
+  4. No observability beyond pino. No error tracking (Sentry-style), metrics, or health/readiness beyond the health route. Fine
+  for v1, thin for "production."
+  5. Stack lock-in is total — Express+Mongoose / Next+shadcn only. Correct as a focus decision (it's what makes the conventions
+  enforceable), but the README's "production-ready" framing should say "for this stack."
+  6. nextjs-bootstrap leans on context7 at build time to catch API drift. Smart, but it's a runtime dependency on an external
+  tool — worth a documented fallback for when it's unavailable
+
+
+Don't ship it as "builds a production-ready app end to end" until you close the last mile — realistically one deploy/CI skill (Dockerfile + frontend, a CI workflow, prod env checklist) and a migration/seed story. Those two additions are what would turn "production-grade skeleton" into "production-ready app," and they'd slot cleanly into your existing plan→build→ship shape.
+
+Want me to draft that gap analysis as a short punch-list, or sketch what a deploy/ci-setup skill in this toolkit's style would look like?

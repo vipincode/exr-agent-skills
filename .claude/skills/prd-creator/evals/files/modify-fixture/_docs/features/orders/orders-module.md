@@ -2,7 +2,7 @@
 
 > Source: `_docs/prd/PRD.md` §5.4 · Domain: `fullstack` · Phase: MVP
 > Status: Ready for planning
-> Next step: run `backend-feature-planner` / `frontend-feature-planner` against this file.
+> Next step: run `module-planner` against this file.
 
 ## Purpose
 Turn a cart into a delivered order, with status the customer can follow.

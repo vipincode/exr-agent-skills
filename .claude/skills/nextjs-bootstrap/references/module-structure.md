@@ -1,8 +1,8 @@
 # Feature modules & the shared-component rule
 
-These are **strict, project-wide conventions** — every frontend skill (this bootstrap and the future
-`frontend-feature-planner`, `frontend-module-builder`, `frontend-code-review`, `api-binder`,
-`ux-designer`, …) MUST follow them. They are the load-bearing rules that keep the app DRY and
+These are **strict, project-wide conventions** — every skill that writes into this project (this
+bootstrap, `module-planner`, `module-builder`, `code-review`, and the design builders
+`figma-to-component`, `html-to-component`, `project-to-component`) MUST follow them. They are the load-bearing rules that keep the app DRY and
 predictable, so they live here as the single source and are mirrored into the generated
 `ARCHITECTURE.md`. When in doubt, this file wins.
 

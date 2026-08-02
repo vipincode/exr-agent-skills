@@ -14,7 +14,7 @@ export interface CurrentUser {
 /**
  * Current-user accessor. Hits the BFF (`/api/auth/me`), which forwards to the
  * backend with the httpOnly cookie attached. This is a placeholder the
- * `frontend-*` skills extend (login/logout mutations, richer user shape).
+ * `module-builder` extends this (login/logout mutations, richer user shape).
  *
  * Point it at whatever "who am I" endpoint your backend exposes.
  */

@@ -1,62 +1,265 @@
 {
   "suite": "exr-backend-toolkit",
-  "skills": ["backend-onboard", "express-ts-bootstrap", "backend-feature-planner", "backend-module-builder", "backend-test-writer", "backend-code-review", "none"],
+  "skills": [
+    "project-onboard",
+    "express-ts-bootstrap",
+    "module-planner",
+    "module-builder",
+    "test-writer",
+    "code-review",
+    "none"
+  ],
   "queries": [
-    { "id": 1, "correct": "express-ts-bootstrap", "query": "starting a brand new side project — i need a fresh express + typescript api with mongoose, nothing exists yet, just an empty folder. get me a runnable backend skeleton" },
-    { "id": 2, "correct": "express-ts-bootstrap", "query": "spin up a node/express backend boilerplate for me, strict TS, ESM, the usual prod middleware" },
-    { "id": 3, "correct": "express-ts-bootstrap", "query": "new API from scratch please" },
-    { "id": 4, "correct": "express-ts-bootstrap", "query": "i want to bootstrap a server-side project. mongo, jwt auth utils, the works — clean slate" },
-
-    { "id": 5, "correct": "backend-onboard", "query": "i already have an express API at work (~30 route files, joi validation, jsonwebtoken). i want to start using these planning/build skills on it. set it up for that" },
-    { "id": 6, "correct": "backend-onboard", "query": "onboard this repo so the toolkit knows my conventions" },
-    { "id": 7, "correct": "backend-onboard", "query": "get my current backend ready to use with backend-feature-planner and backend-module-builder" },
-    { "id": 8, "correct": "backend-onboard", "query": "point these skills at my existing codebase — there's no ARCHITECTURE.md yet" },
-
-    { "id": 9, "correct": "backend-feature-planner", "query": "i want to add authentication to my api. plan it out first before we write anything" },
-    { "id": 10, "correct": "backend-feature-planner", "query": "how should i structure a payments module for stripe in this project?" },
-    { "id": 11, "correct": "backend-feature-planner", "query": "design the orders feature — what files, endpoints, schema" },
-    { "id": 12, "correct": "backend-feature-planner", "query": "plan a file-upload feature with s3, give me something i can edit before coding" },
-    { "id": 13, "correct": "backend-feature-planner", "query": "i'm thinking about building a notifications system, help me think through the design" },
-
-    { "id": 14, "correct": "backend-module-builder", "query": "implement FEATURE_PLAN_products.md" },
-    { "id": 15, "correct": "backend-module-builder", "query": "the auth plan is approved, build it" },
-    { "id": 16, "correct": "backend-module-builder", "query": "ok the plan looks good, now code up the orders module" },
-    { "id": 17, "correct": "backend-module-builder", "query": "build the module from the feature plan in _docs" },
-    { "id": 18, "correct": "backend-module-builder", "query": "generate the actual code for the search feature we planned" },
-
-    { "id": 19, "correct": "backend-test-writer", "query": "write unit tests for src/modules/auth/auth.service.ts" },
-    { "id": 20, "correct": "backend-test-writer", "query": "cover the order service with tests, happy path and the failure branches" },
-    { "id": 21, "correct": "backend-test-writer", "query": "add vitest tests for the products module" },
-    { "id": 22, "correct": "backend-test-writer", "query": "i need integration tests for the auth routes with supertest" },
-
-    { "id": 23, "correct": "backend-code-review", "query": "review my changes on this branch before i open a PR" },
-    { "id": 24, "correct": "backend-code-review", "query": "is this auth service production-ready? check it for issues" },
-    { "id": 25, "correct": "backend-code-review", "query": "audit src/modules/payments for security problems" },
-    { "id": 26, "correct": "backend-code-review", "query": "sanity-check the diff i just made to the orders controller" },
-    { "id": 27, "correct": "backend-code-review", "query": "critique this mongoose query code, feels slow" },
-
-    { "id": 28, "correct": "backend-feature-planner", "query": "i want to build user auth for my express api", "note": "ambiguous build vs plan — no plan exists yet, design-first intent" },
-    { "id": 29, "correct": "backend-module-builder", "query": "build the auth module", "note": "ambiguous — leans build because a plan is presumed" },
-    { "id": 30, "correct": "backend-onboard", "query": "set up my API for this", "note": "existing-project setup, not new scaffold" },
-    { "id": 31, "correct": "express-ts-bootstrap", "query": "set up a new api for me", "note": "new scaffold vs onboard" },
-
-    { "id": 32, "correct": "none", "query": "review my React component for accessibility issues, it's a dropdown menu" },
-    { "id": 33, "correct": "none", "query": "build me a landing page in next.js with tailwind" },
-    { "id": 34, "correct": "none", "query": "write a python script to parse this csv and dedupe rows" },
-    { "id": 35, "correct": "none", "query": "set up a CI/CD pipeline with github actions for my repo" },
-    { "id": 36, "correct": "none", "query": "bootstrap a django rest framework project" },
-    { "id": 37, "correct": "none", "query": "write tests for my react hook useDebounce" },
-    { "id": 38, "correct": "none", "query": "plan my team's sprint for next week" },
-    { "id": 39, "correct": "none", "query": "optimize this raw postgres SQL query, it does a 3-way join" },
-    { "id": 40, "correct": "none", "query": "review this terraform config for my AWS setup" },
-    { "id": 41, "correct": "none", "query": "explain how JWT refresh tokens work conceptually" },
-
-    { "id": 42, "correct": "backend-code-review", "query": "look over the changes in my last commit and tell me if anything's broken", "note": "review vs test" },
-    { "id": 43, "correct": "none", "query": "i changed the order service, can you verify it works?", "note": "run/verify intent — belongs to /verify or /run, not this suite" },
-    { "id": 44, "correct": "backend-feature-planner", "query": "what's the best way to add role-based access control to my api?", "note": "design question, not build" },
-    { "id": 45, "correct": "backend-module-builder", "query": "now build it", "note": "context-light follow-on after a plan" },
-    { "id": 46, "correct": "express-ts-bootstrap", "query": "I'm new to backend dev, can you create me a starter express api project I can learn from", "note": "new scaffold, casual" },
-    { "id": 47, "correct": "backend-onboard", "query": "i cloned a legacy express 4 codebase, help me make it work with your planning workflow", "note": "existing, express 4 specifics" },
-    { "id": 48, "correct": "backend-code-review", "query": "go through src/modules/auth and flag anything that duplicates code we already have", "note": "DRY review angle" }
+    {
+      "id": 1,
+      "correct": "express-ts-bootstrap",
+      "query": "starting a brand new side project — i need a fresh express + typescript api with mongoose, nothing exists yet, just an empty folder. get me a runnable backend skeleton"
+    },
+    {
+      "id": 2,
+      "correct": "express-ts-bootstrap",
+      "query": "spin up a node/express backend boilerplate for me, strict TS, ESM, the usual prod middleware"
+    },
+    {
+      "id": 3,
+      "correct": "express-ts-bootstrap",
+      "query": "new API from scratch please"
+    },
+    {
+      "id": 4,
+      "correct": "express-ts-bootstrap",
+      "query": "i want to bootstrap a server-side project. mongo, jwt auth utils, the works — clean slate"
+    },
+    {
+      "id": 5,
+      "correct": "project-onboard",
+      "query": "i already have an express API at work (~30 route files, joi validation, jsonwebtoken). i want to start using these planning/build skills on it. set it up for that"
+    },
+    {
+      "id": 6,
+      "correct": "project-onboard",
+      "query": "onboard this repo so the toolkit knows my conventions"
+    },
+    {
+      "id": 7,
+      "correct": "project-onboard",
+      "query": "get my current backend ready to use with backend-feature-planner and backend-module-builder"
+    },
+    {
+      "id": 8,
+      "correct": "project-onboard",
+      "query": "point these skills at my existing codebase — there's no ARCHITECTURE.md yet"
+    },
+    {
+      "id": 9,
+      "correct": "module-planner",
+      "query": "i want to add authentication to my api. plan it out first before we write anything"
+    },
+    {
+      "id": 10,
+      "correct": "module-planner",
+      "query": "how should i structure a payments module for stripe in this project?"
+    },
+    {
+      "id": 11,
+      "correct": "module-planner",
+      "query": "design the orders feature — what files, endpoints, schema"
+    },
+    {
+      "id": 12,
+      "correct": "module-planner",
+      "query": "plan a file-upload feature with s3, give me something i can edit before coding"
+    },
+    {
+      "id": 13,
+      "correct": "module-planner",
+      "query": "i'm thinking about building a notifications system, help me think through the design"
+    },
+    {
+      "id": 14,
+      "correct": "module-builder",
+      "query": "implement FEATURE_PLAN_products.md"
+    },
+    {
+      "id": 15,
+      "correct": "module-builder",
+      "query": "the auth plan is approved, build it"
+    },
+    {
+      "id": 16,
+      "correct": "module-builder",
+      "query": "ok the plan looks good, now code up the orders module"
+    },
+    {
+      "id": 17,
+      "correct": "module-builder",
+      "query": "build the module from the feature plan in _docs"
+    },
+    {
+      "id": 18,
+      "correct": "module-builder",
+      "query": "generate the actual code for the search feature we planned"
+    },
+    {
+      "id": 19,
+      "correct": "test-writer",
+      "query": "write unit tests for src/modules/auth/auth.service.ts"
+    },
+    {
+      "id": 20,
+      "correct": "test-writer",
+      "query": "cover the order service with tests, happy path and the failure branches"
+    },
+    {
+      "id": 21,
+      "correct": "test-writer",
+      "query": "add vitest tests for the products module"
+    },
+    {
+      "id": 22,
+      "correct": "test-writer",
+      "query": "i need integration tests for the auth routes with supertest"
+    },
+    {
+      "id": 23,
+      "correct": "code-review",
+      "query": "review my changes on this branch before i open a PR"
+    },
+    {
+      "id": 24,
+      "correct": "code-review",
+      "query": "is this auth service production-ready? check it for issues"
+    },
+    {
+      "id": 25,
+      "correct": "code-review",
+      "query": "audit src/modules/payments for security problems"
+    },
+    {
+      "id": 26,
+      "correct": "code-review",
+      "query": "sanity-check the diff i just made to the orders controller"
+    },
+    {
+      "id": 27,
+      "correct": "code-review",
+      "query": "critique this mongoose query code, feels slow"
+    },
+    {
+      "id": 28,
+      "correct": "module-planner",
+      "query": "i want to build user auth for my express api",
+      "note": "ambiguous build vs plan — no plan exists yet, design-first intent"
+    },
+    {
+      "id": 29,
+      "correct": "module-builder",
+      "query": "build the auth module",
+      "note": "ambiguous — leans build because a plan is presumed"
+    },
+    {
+      "id": 30,
+      "correct": "project-onboard",
+      "query": "set up my API for this",
+      "note": "existing-project setup, not new scaffold"
+    },
+    {
+      "id": 31,
+      "correct": "express-ts-bootstrap",
+      "query": "set up a new api for me",
+      "note": "new scaffold vs onboard"
+    },
+    {
+      "id": 32,
+      "correct": "none",
+      "query": "review my React component for accessibility issues, it's a dropdown menu"
+    },
+    {
+      "id": 33,
+      "correct": "none",
+      "query": "build me a landing page in next.js with tailwind"
+    },
+    {
+      "id": 34,
+      "correct": "none",
+      "query": "write a python script to parse this csv and dedupe rows"
+    },
+    {
+      "id": 35,
+      "correct": "none",
+      "query": "set up a CI/CD pipeline with github actions for my repo"
+    },
+    {
+      "id": 36,
+      "correct": "none",
+      "query": "bootstrap a django rest framework project"
+    },
+    {
+      "id": 37,
+      "correct": "none",
+      "query": "write tests for my react hook useDebounce"
+    },
+    {
+      "id": 38,
+      "correct": "none",
+      "query": "plan my team's sprint for next week"
+    },
+    {
+      "id": 39,
+      "correct": "none",
+      "query": "optimize this raw postgres SQL query, it does a 3-way join"
+    },
+    {
+      "id": 40,
+      "correct": "none",
+      "query": "review this terraform config for my AWS setup"
+    },
+    {
+      "id": 41,
+      "correct": "none",
+      "query": "explain how JWT refresh tokens work conceptually"
+    },
+    {
+      "id": 42,
+      "correct": "code-review",
+      "query": "look over the changes in my last commit and tell me if anything's broken",
+      "note": "review vs test"
+    },
+    {
+      "id": 43,
+      "correct": "none",
+      "query": "i changed the order service, can you verify it works?",
+      "note": "run/verify intent — belongs to /verify or /run, not this suite"
+    },
+    {
+      "id": 44,
+      "correct": "module-planner",
+      "query": "what's the best way to add role-based access control to my api?",
+      "note": "design question, not build"
+    },
+    {
+      "id": 45,
+      "correct": "module-builder",
+      "query": "now build it",
+      "note": "context-light follow-on after a plan"
+    },
+    {
+      "id": 46,
+      "correct": "express-ts-bootstrap",
+      "query": "I'm new to backend dev, can you create me a starter express api project I can learn from",
+      "note": "new scaffold, casual"
+    },
+    {
+      "id": 47,
+      "correct": "project-onboard",
+      "query": "i cloned a legacy express 4 codebase, help me make it work with your planning workflow",
+      "note": "existing, express 4 specifics"
+    },
+    {
+      "id": 48,
+      "correct": "code-review",
+      "query": "go through src/modules/auth and flag anything that duplicates code we already have",
+      "note": "DRY review angle"
+    }
   ]
 }

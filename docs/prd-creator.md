@@ -1,6 +1,6 @@
 # prd-creator
 
-Turns a raw app idea into a **PRD** plus **per-module briefs** that feed the feature planners. This is the product-level front door of the toolkit — the step *before* `backend-feature-planner` / `frontend-feature-planner`.
+Turns a raw app idea into a **PRD** plus **per-module briefs** that feed `module-planner`. This is the product-level front door of the toolkit — the step *before* `module-planner`.
 
 ## What it does
 
@@ -55,5 +55,5 @@ From there it's the normal pipeline: feature-planner → you approve the plan �
 
 - **Product scope only.** No code, no endpoints, no schemas, no stack choices — those belong to the feature planners and builders downstream.
 - **Never auto-chains.** It hands off with instructions; you drive each next stage.
-- The PRD and briefs live at the **repo-root** `_docs/` (they span backend and frontend), unlike `FEATURE_PLAN` files which live in each project dir's `_docs/`.
+- The PRD and briefs live at the **repo-root** `_docs/`, and `module-planner` writes each module plan and its slices into the same `_docs/features/<module>/` folder — so one folder holds everything about a module.
 - Works before any scaffold exists — you can write the PRD first, then run `express-ts-bootstrap` / `nextjs-bootstrap` when it's time to build.

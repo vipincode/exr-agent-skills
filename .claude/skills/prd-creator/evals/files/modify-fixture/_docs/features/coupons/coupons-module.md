@@ -2,7 +2,7 @@
 
 > Source: `_docs/prd/PRD.md` §5.6 · Domain: `fullstack` · Phase: Later
 > Status: Ready for planning
-> Next step: run `backend-feature-planner` / `frontend-feature-planner` against this file.
+> Next step: run `module-planner` against this file.
 
 ## Purpose
 Discount codes the Admin creates to run promotions.

@@ -2,7 +2,7 @@
 
 > Source: `_docs/prd/PRD.md` §5.3 · Domain: `fullstack` · Phase: MVP
 > Status: Ready for planning
-> Next step: run `backend-feature-planner` / `frontend-feature-planner` against this file.
+> Next step: run `module-planner` against this file.
 
 ## Purpose
 Collect items before checkout, for both guests and logged-in Shoppers.

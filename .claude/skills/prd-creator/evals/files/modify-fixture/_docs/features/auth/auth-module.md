@@ -2,7 +2,7 @@
 
 > Source: `_docs/prd/PRD.md` §5.1 · Domain: `fullstack` · Phase: MVP
 > Status: Ready for planning
-> Next step: run `backend-feature-planner` / `frontend-feature-planner` against this file.
+> Next step: run `module-planner` against this file.
 
 ## Purpose
 Accounts, sessions, and the Shopper/Admin role split for Verdant.

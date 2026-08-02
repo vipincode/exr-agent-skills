@@ -31,7 +31,7 @@ export function createApp() {
     }),
   );
 
-  // --- Module routes: backend-module-builder mounts new routers below this line ---
+  // --- Module routes: module-builder mounts new routers below this line ---
   app.use("/health", healthRoutes);
   // --- End module routes ---
 

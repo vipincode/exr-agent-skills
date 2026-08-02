@@ -1,0 +1,62 @@
+{
+  "eval": "eval-2-build-one-slice-only",
+  "configuration": "old_skill",
+  "expectations": [
+    {
+      "text": "Built ONLY the register slice - no login or logout endpoint, service function, controller handler, or hook was created",
+      "passed": false,
+      "evidence": "login/logout code files: ['frontend/src/features/auth/api/login.ts', 'frontend/src/features/auth/api/logout.ts', 'frontend/src/features/auth/hooks/use-login.ts', 'frontend/src/features/auth/hooks/use-logout.ts']; all code files: ['frontend/src/features/auth/index.ts', 'frontend/src/features/auth/api/login.ts', 'frontend/src/features/auth/api/logout.ts', 'frontend/src/features/auth/api/register.ts', 'frontend/src/features/auth/constants/auth.ts', 'frontend/src/features/auth/hooks/use-login.ts', 'frontend/src/features/auth/hooks/use-logout.ts', 'frontend/src/features/auth/hooks/use-register.ts', 'frontend/src/features/auth/schema/auth.schema.ts', 'frontend/src/features/auth/types/auth.ts', 'backend/src/app.ts', 'backend/src/lib/jwt.ts', 'backend/src/modules/auth/auth.constants.ts', 'backend/src/modules/auth/auth.controller.ts', 'backend/src/modules/auth/auth.model.ts', 'backend/src/modules/auth/auth.routes.ts', 'backend/src/modules/auth/auth.schema.ts', 'backend/src/modules/auth/auth.service.ts', 'backend/src/modules/auth/auth.utils.ts']"
+    },
+    {
+      "text": "Backend auth module files created under src/modules/auth/ (model, schema, service, controller, routes)",
+      "passed": true,
+      "evidence": "backend auth files: ['backend/src/modules/auth/auth.constants.ts', 'backend/src/modules/auth/auth.controller.ts', 'backend/src/modules/auth/auth.model.ts', 'backend/src/modules/auth/auth.routes.ts', 'backend/src/modules/auth/auth.schema.ts', 'backend/src/modules/auth/auth.service.ts', 'backend/src/modules/auth/auth.utils.ts']; kinds covered: ['controller', 'model', 'routes', 'schema', 'service']"
+    },
+    {
+      "text": "Frontend binding files created under src/features/auth/ (schema, api request fn, mutation hook)",
+      "passed": true,
+      "evidence": "frontend auth files: ['frontend/src/features/auth/index.ts', 'frontend/src/features/auth/api/login.ts', 'frontend/src/features/auth/api/logout.ts', 'frontend/src/features/auth/api/register.ts', 'frontend/src/features/auth/constants/auth.ts', 'frontend/src/features/auth/hooks/use-login.ts', 'frontend/src/features/auth/hooks/use-logout.ts', 'frontend/src/features/auth/hooks/use-register.ts', 'frontend/src/features/auth/schema/auth.schema.ts', 'frontend/src/features/auth/types/auth.ts']; kinds covered: ['api', 'hook', 'schema']"
+    },
+    {
+      "text": "01-register.md Status was changed from ready to built",
+      "passed": false,
+      "evidence": "01 slice in outputs: NOT SAVED; status built: False"
+    },
+    {
+      "text": "The master plan's build-order table row for slice 01 was updated to built in the same change",
+      "passed": false,
+      "evidence": "row 01: master plan not saved to outputs"
+    },
+    {
+      "text": "Slices 02-login.md and 03-logout.md were left at Status: ready and their bodies unmodified",
+      "passed": false,
+      "evidence": "Not applicable by construction, and that is the finding: the legacy plan format has no slices, so there is nothing to leave untouched and no resume point. This arm built register, login and logout in a single pass."
+    },
+    {
+      "text": "Reused existing shared pieces by path instead of recreating them - no second axios instance, no hand-rolled success envelope, no new auth hook",
+      "passed": true,
+      "evidence": "Also imported the shared response helpers and the axios instance rather than recreating them. The dedup gate is shared behaviour and survived the merge intact."
+    },
+    {
+      "text": "The closing hand-off surfaces slice 01's testing checklist and offers test-writer",
+      "passed": false,
+      "evidence": "'test-writer' in notes/outputs: True; 'checklist': False"
+    },
+    {
+      "text": "test-writer was NOT actually invoked or run - only suggested",
+      "passed": true,
+      "evidence": "test files created: none"
+    },
+    {
+      "text": "Honestly reported that typecheck/lint/build could not be run in this fixture, rather than claiming they passed",
+      "passed": true,
+      "evidence": "matched an explicit 'could not run' statement in the run notes"
+    }
+  ],
+  "auto_passed": 4,
+  "auto_total": 8,
+  "needs_judgment": 2,
+  "passed": 5,
+  "total": 10,
+  "unresolved": 0
+}

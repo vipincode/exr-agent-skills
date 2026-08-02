@@ -1,0 +1,67 @@
+{
+  "eval": "eval-3-onboard-fullstack-legacy-one-pass",
+  "configuration": "old_skill",
+  "expectations": [
+    {
+      "text": "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into api/",
+      "passed": true,
+      "evidence": "api/ARCHITECTURE.md: True; api/MODULE_REGISTRY.md: True"
+    },
+    {
+      "text": "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into web/",
+      "passed": true,
+      "evidence": "web/ARCHITECTURE.md: True; web/MODULE_REGISTRY.md: True"
+    },
+    {
+      "text": "Exactly ONE .claude/workspace.json exists at the repo root and it contains BOTH a backend entry (path api) and a frontend entry (path web)",
+      "passed": true,
+      "evidence": ".claude/workspace.json -> {'backend': 'api', 'frontend': 'web'}"
+    },
+    {
+      "text": "Backend contract records Express 4 and states that catchAsync/async wrappers ARE required - it does not prescribe dropping them",
+      "passed": true,
+      "evidence": "Express 4 recorded: True; catchAsync/wrapper-required recorded: True"
+    },
+    {
+      "text": "Backend contract records the real response envelope { data, message } with no success flag - it does not prescribe { success, data, message }",
+      "passed": true,
+      "evidence": "{data, message} recorded: True; bootstrap 'success: true' envelope wrongly present: False"
+    },
+    {
+      "text": "Backend contract records Joi as the validation library, not Zod",
+      "passed": true,
+      "evidence": "Joi recorded: True; Zod prescribed positively: False (Zod appears only in explicit negations, which is correct)"
+    },
+    {
+      "text": "Frontend contract records the real stack - Vite + React Router + MUI/Emotion + SWR + Formik + Yup - and does NOT prescribe Next.js App Router, shadcn, TanStack Query, or React Hook Form",
+      "passed": true,
+      "evidence": "Real stack recorded in full. The flagged line - 'those builders emit Next.js + Tailwind + shadcn; this project is Vite + MUI + Emotion' - is an explicit contrast, not a prescription."
+    },
+    {
+      "text": "Backend registry is seeded with the real existing shared pieces (catchAsync, ApiError, requireAuth, requireAdmin, validateBody, errorHandler) with their paths",
+      "passed": true,
+      "evidence": "6/6 seeded: {'catchAsync': True, 'ApiError': True, 'requireAuth': True, 'requireAdmin': True, 'validateBody': True, 'errorHandler': True}"
+    },
+    {
+      "text": "Frontend registry is seeded with the real existing shared pieces (the api client, Card, PageHeader, the forms layer, useUsers, the theme) with their paths",
+      "passed": true,
+      "evidence": "6/6 seeded: {'Card': True, 'PageHeader': True, 'useUsers': True, 'theme': True, 'client': True, 'LoginForm': True}"
+    },
+    {
+      "text": "No source file under api/src or web/src was modified, created, or deleted",
+      "passed": true,
+      "evidence": "no source files added or modified"
+    },
+    {
+      "text": "The duplicate date helper (utils/formatDate.ts vs the private one in services/report.service.ts) is reported as a FINDING, not silently fixed",
+      "passed": true,
+      "evidence": "duplicate-date-helper mentioned: True"
+    }
+  ],
+  "auto_passed": 10,
+  "auto_total": 10,
+  "needs_judgment": 1,
+  "passed": 11,
+  "total": 11,
+  "unresolved": 0
+}

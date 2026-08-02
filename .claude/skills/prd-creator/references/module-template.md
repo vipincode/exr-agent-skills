@@ -1,18 +1,21 @@
 # Module Brief Template
 
 Each shard is written to `_docs/features/<module-name>/<module-name>-module.md` (kebab-case,
-folder name == file prefix). A brief must be self-contained: a feature planner should be able
-to run from this file alone, without re-reading the whole PRD.
+folder name == file prefix). A brief must be self-contained: `module-planner` should be able
+to run from this file alone, without re-reading the whole PRD. That same folder is where
+`module-planner` then writes `<module>-plan.md` and the numbered slice files.
 
 Stay at product altitude. If you catch yourself writing an endpoint path, a Mongoose field,
-or a component name — delete it. That's the feature planner's output, not this file's.
+or a component name — delete it. That's `module-planner`'s output, not this file's. Likewise, don't
+break the module into build steps here — slicing needs the technical contract, so it belongs to
+`module-planner`.
 
 ```markdown
 # <Module Name> Module
 
 > Source: `_docs/prd/PRD.md` §5.<n> · Domain: `backend | frontend | fullstack` · Phase: MVP | Later
 > Status: Ready for planning
-> Next step: run `backend-feature-planner` / `frontend-feature-planner` against this file.
+> Next step: run `module-planner` against this file.
 
 ## Purpose
 One or two sentences: what this module does for the product and why it exists.
@@ -52,4 +55,4 @@ Rules:
 - The set of briefs must exactly match the PRD's §7 Module map — same names, domains, phases.
 - Cross-references between briefs use module names, not file paths in prose (paths change).
 - If a brief is updated after downstream planning/code exists, prepend:
-  `> ⚠ Updated after implementation planning — re-run the feature planner` and tell the user.
+  `> ⚠ Updated after implementation planning — re-run module-planner` and tell the user.

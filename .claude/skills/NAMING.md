@@ -1,130 +1,148 @@
 # Skill Naming & Domain Taxonomy
 
-> **Applied 2026-06-26.** The rename below has been carried out; this now documents the
-> convention (and the historical map) so the skill set stays clean as it grows from
-> backend-only into frontend.
+> **Updated 2026-08-02** — the backend/frontend skill pairs were merged. This documents the current
+> convention plus the historical map, so the skill set stays clean as it grows.
 
 ## Why this exists
 
-The skills today are implicitly backend-only (Express + TS + Mongoose), but several carry
-**generic role names** (`feature-planner`, `module-builder`, `test-writer`, `code-review`,
-`project-onboard`). The moment a frontend twin exists, those names **collide** — two skills
-both named `test-writer`, both describing "write tests."
+The toolkit grew backend-first, then sprouted a frontend twin for each workflow skill. That gave
+ten skills in five near-identical pairs — `backend-onboard` / `frontend-onboard`,
+`backend-feature-planner` / `frontend-feature-planner`, and so on. The pairs shared their entire
+shape and differed only in what they searched for and which patterns they emitted, which is the
+textbook case for one skill with per-domain reference files.
 
 ## Key principle
 
 Claude Code routes to a skill by its **`description`**, not its name.
 
-- **Name** = invocation handle (`/code-review`), must be unique → renaming prevents *collisions*.
+- **Name** = the invocation handle (`/code-review`), and it must be unique → names prevent
+  *collisions*.
 - **Description** = what the model reads to auto-select → tight scoping prevents *mis-firing*.
 
-Future-proofing is therefore **two** moves, not one:
-1. Domain-prefixed names (below).
-2. Every new frontend skill gets a description scoped to frontend ("frontend / React /
-   Next.js / component") as tightly as the current ones are to backend ("backend / Express /
-   Mongoose / server-side").
+The `backend-` / `frontend-` prefixes existed only to solve the collision half. Once a pair is
+merged there is no collision left, so the plain role name is correct again — and a domain prefix on
+a skill that handles both domains would actively mislead.
+
+What the merge *doesn't* change: descriptions still carry the whole routing burden. A merged skill's
+description has a wider surface, so it must be explicit about what it does **and** what it hands off
+to, or it starts stealing triggers from its neighbours.
 
 ## The convention
 
 | Category | Rule | Examples |
 |---|---|---|
-| **Stack scaffolders** | name by **stack** | `express-ts-bootstrap` *(keep)*, future `nextjs-bootstrap`, `vite-react-bootstrap` |
-| **Workflow skills** | name by **`domain-role`** | `backend-feature-planner`, future `frontend-feature-planner` |
+| **Stack scaffolders** | name by **stack** | `express-ts-bootstrap`, `nextjs-bootstrap` |
+| **Design importers** | name by **source → target** | `figma-to-component`, `html-to-component`, `project-to-component` |
+| **Workflow skills** | name by **role** (domain-agnostic) | `module-planner`, `module-builder`, `test-writer`, `code-review`, `project-onboard` |
+| **Meta / cross-cutting** | name by **function** | `prd-creator`, `toolkit-guide` |
 
-A user may run several frontend stacks, so scaffolders keep the stack in the name (not
-`frontend-`); workflow skills are stack-agnostic within a domain, so they take the domain prefix.
+A user may run several frontend stacks, so scaffolders keep the stack in the name. Design importers
+are distinguished by their *source*, which is the only thing that separates them. Workflow skills
+span both domains, so they take the bare role name.
 
-## Rename map (applied)
+## Merge map (applied 2026-08-02)
 
-| Current | New |
+| Before | After |
 |---|---|
-| `project-onboard` | `backend-onboard` |
-| `feature-planner` | `backend-feature-planner` |
-| `module-builder` | `backend-module-builder` |
-| `test-writer` | `backend-test-writer` |
-| `code-review` | `backend-code-review` |
-| `express-ts-bootstrap` | *(unchanged)* |
+| `backend-onboard` + `frontend-onboard` | `project-onboard` |
+| `backend-feature-planner` + `frontend-feature-planner` | `module-planner` |
+| `backend-module-builder` + `frontend-module-builder` | `module-builder` |
+| `backend-test-writer` + `frontend-test-writer` | `test-writer` |
+| `backend-code-review` + `frontend-code-review` | `code-review` |
 
-## Frontend (in progress)
+Earlier rename map (2026-06-26), kept for history: `project-onboard` → `backend-onboard`,
+`feature-planner` → `backend-feature-planner`, `module-builder` → `backend-module-builder`,
+`test-writer` → `backend-test-writer`, `code-review` → `backend-code-review`. The 2026-08-02 merge
+effectively reverses those, because the collision they solved no longer exists.
 
-| Skill | Status | Notes |
-|---|---|---|
-| `nextjs-bootstrap` | **shipped** (2026-06-26) | stack-named scaffolder; Next.js App Router + shadcn + axios + Zod + TanStack Query + RHF. Emits the frontend `ARCHITECTURE.md` / `MODULE_REGISTRY.md` + a `{ "domain": "frontend" }` manifest entry. The frontend twin of `express-ts-bootstrap`. |
-| `font-theme-setup` | **shipped** (2026-06-26) | Figma (MCP) → theme. Extracts design tokens and rewrites `globals.css` (colors in oklch) + `layout.tsx` fonts (`next/font` google + local) + radius/shadow/gradient/bg tokens. Bundles a hex→oklch converter script. Reads/updates the contract files' theming notes. Theme-only — the bootstrap defers theming to it. |
-| `figma-to-component` | **shipped** (2026-06-26) | Figma frame (MCP) → Next.js components, **dedup-first**: scans `MODULE_REGISTRY.md` + shared/feature trees and reuses/extends before creating, places generic→`components/shared`, domain→`features/<name>/components`, Tailwind tokens + framer-motion, registers new shared components. The design-to-code builder. |
-| `html-to-component` | **shipped** (2026-06-26) | HTML file / pasted section / URL → Next.js, **combined** theme + components in one skill. Phase 1 lifts tokens to the theme (colors→oklch in `globals.css`, fonts in `layout.tsx`, light+dark, radius/shadow/gradient); Phase 2 is the same dedup-first builder as `figma-to-component`. Looks in `_docs/designs/` by default. Bundles `extract_tokens.py` (CSS/inline/Tailwind scanner) + `hex_to_oklch.py`. The HTML counterpart to the two Figma/MCP skills. |
-| `project-to-component` | **shipped** (2026-07-04) | An existing codebase/repo on disk (design mock, legacy app — CSS Modules, styled-components, SCSS, foreign Tailwind, Vue …) → Next.js pages, source **read-only**. Profiles the source once into `_docs/design-source/<name>.md` (styling system, tokens, component catalog, route map), lifts the source theme via `html-to-component`'s Phase-1 machinery when the target is unthemed, derives a persisted **translation map** (values→tokens, source components→shadcn/shared), then the same dedup-first build as its two siblings; restyles in place on URL collision. Generalized from the retired project-specific `shiny-to-page`. Cross-references `html-to-component`'s generic references instead of duplicating them. |
-| `frontend-onboard` | planned | establish contract files for an existing Next.js/React repo |
-| `frontend-feature-planner` | **shipped** (2026-06-26) | plans how a built design BINDS to a real API: reads the real backend (source → contract files → OpenAPI → pasted sample) for the observed contract, maps design ↔ data, writes `_docs/FEATURE_PLAN_<name>.md`. Does not write code. |
-| `frontend-module-builder` | **shipped** (2026-06-27) | executes an approved `FEATURE_PLAN`: writes the binding layer (types/schema/api/hooks), edits the built design to consume it (drops hardcoded samples), unwraps the envelope + Zod-validates, server state via TanStack Query, dedup-first (reuse shared components/hooks before creating), updates the registry. The frontend twin of `backend-module-builder`. Does not plan, redesign, or test. |
-| `frontend-test-writer` | **shipped** (2026-06-27) | standalone, on-demand frontend tests (components, Query hooks, schemas, bound screens) with Vitest + RTL; detects framework + MSW; reads a FEATURE_PLAN's testing checklist if present. Never auto-chained, read-only on source, never touches the registry. The frontend twin of `backend-test-writer`. |
-| `frontend-code-review` | **shipped** (2026-06-27) | standalone, read-only review of React/Next.js code against the contract — headline checks: component duplication & placement (vs registry + shared rule, cross-feature imports), API-binding conformance (BFF-only, envelope unwrap + Zod, TanStack Query, query keys/invalidation), forms via shared `*Field`, App Router client/server boundary, a11y, perf. The frontend twin of `backend-code-review`. |
+**The merge was not just consolidation.** Two behavioral changes came with it, and they're the
+reason it was worth doing:
 
-Net-new frontend skills the user intends (stack-agnostic within frontend; name by role, no `frontend-`
-prefix needed if they read as standalone tools): ~~`font-theme-setup`~~ (shipped), ~~`html-to-code`/`ux-designer`~~
-(shipped as `figma-to-component`), `api-binder`, ~~plus a copy-from-existing-project helper~~ (shipped as `project-to-component`, 2026-07-04). When each ships,
-give it a tightly frontend-scoped description and, if it consumes/produces project conventions, point it at
-the same `ARCHITECTURE.md` / `MODULE_REGISTRY.md` contract files.
+1. **`module-planner` plans both halves in one document,** so a slice states its API contract
+   **once** and both halves implement it. Previously the frontend planner had to re-discover the
+   backend's contract from source, and any drift between the two produced bindings that compiled
+   but broke at runtime.
+2. **Plans are sharded into ordered slices,** so a module is built one demoable piece at a time
+   rather than in one large pass. `module-builder` executes one slice per run and marks it `built`,
+   which is what makes the work resumable.
 
-> The two Figma/MCP skills (`font-theme-setup`, `figma-to-component`) were split from a single
-> requested "ui-developer" skill: theming runs once per project and triggers on token/color/font
-> phrasing; component-building runs many times and triggers on "build this frame" phrasing — two
-> cadences, two trigger surfaces, so two tightly-scoped descriptions (the exact reason this doc
-> separates names from descriptions).
+## Current inventory
 
-> Reminder (from "Key principle"): names prevent *collisions*, descriptions prevent *mis-firing*.
-> Every frontend skill's description must be scoped to "frontend / Next.js / React / component / UI"
-> as tightly as the backend ones are to "backend / Express / Mongoose / server-side".
+**Product**
+- `prd-creator` — app idea → `_docs/prd/PRD.md` + per-module briefs. Upstream of everything.
 
-## Meta / cross-cutting skills
+**Setup**
+- `express-ts-bootstrap` — new Express + TS + Mongoose backend (empty dir). Emits contract files.
+- `nextjs-bootstrap` — new Next.js App Router + shadcn frontend (empty dir). Emits contract files.
+- `project-onboard` — existing code → contract files, backend and/or frontend in one pass.
+  Descriptive, non-destructive.
 
-Some skills sit **outside** the backend/frontend taxonomy because they operate on the toolkit itself rather than on a single domain's code. They take neither a stack name nor a `domain-role` name — they're named for their function.
+**Design (frontend, source-distinguished)**
+- `font-theme-setup` — Figma design system → theme tokens and fonts. Once per project.
+- `figma-to-component` — Figma frame/node → components.
+- `html-to-component` — HTML file / URL / pasted markup → theme + components.
+- `project-to-component` — another codebase on disk → pages, source read-only.
 
-| Skill | Status | Notes |
-|---|---|---|
-| `prd-creator` | **shipped** (2026-07-04) | product-level front door; app idea → `PRD.md` + per-module briefs that feed both feature planners. Spans domains, upstream of everything. |
-| `toolkit-guide` | **shipped** (2026-07-04) | the "front desk" / router. Inspects project state (manifest, contract files, PRD, FEATURE_PLANs) via `LAYOUT.md`'s protocol and routes the user to the right next skill. Guidance only — never does the work, never auto-chains. Reads this file + `LAYOUT.md` to stay in sync, so it must be updated here whenever a skill is added or renamed. |
+**Workflow (domain-merged)**
+- `module-planner` — module → `<module>-plan.md` + ordered slices. Both domains, one contract.
+- `module-builder` — one slice → code, backend and frontend binding. Dedup-first.
+- `test-writer` — tests on demand. Reads the slice's testing checklist. Never auto-chained.
+- `code-review` — static review against the contract. Read-only, never auto-chained.
 
-> `toolkit-guide` is the routing consumer of this doc: its in-body catalog mirrors the inventory above. When you rename or add a skill, its guardrail says to trust `NAMING.md`/`LAYOUT.md` over its own catalog — but keeping both current avoids the drift entirely.
+**Meta**
+- `toolkit-guide` — the front desk. Inspects project state and routes to the right next skill.
+  Guidance only. Its in-body catalog mirrors this file, so update both together.
+
+## Descriptions after the merge
+
+Each merged skill's description has to do more work than the two it replaced, because it can no
+longer lean on a domain word to disambiguate. Three things it must carry:
+
+1. **Both domains' trigger vocabulary** — `module-planner` has to fire on "plan the auth module"
+   *and* "wire this design to the API"; `test-writer` on "test auth.service.ts" *and* "test the
+   products grid".
+2. **The handoff boundaries** — what it does *not* do, naming the skill that does. This is what
+   keeps `module-planner` from absorbing `prd-creator`'s triggers and `module-builder` from
+   absorbing the design skills'.
+3. **The new structural behavior** — sharding, slices, build order, the contract-declared-once
+   property. Users who want that behavior describe it in their own words ("split the auth plan",
+   "build it module by module"), so those phrasings need to be reachable.
 
 ## Reference sites that must move together
 
-A rename is **not** just folder renames. Update all of these in one pass or the eval harness breaks:
+A rename or merge is **not** just folder renames. Update all of these in one pass or things drift:
 
 1. Folder names under `.claude/skills/<name>/`.
 2. `name:` frontmatter in each `SKILL.md`.
-3. In-body sibling references in SKILL.md files (e.g. "that is `module-builder`" / "that is `test-writer`").
-4. `_trigger-workspace/eval-set.json` — the `skills` array **and** every `correct` field.
-5. `_trigger-workspace/route_eval.py` — any hardcoded skill-name lists.
-6. Bootstrap templates — `express-ts-bootstrap/assets/ARCHITECTURE.template.md` and `MODULE_REGISTRY.template.md`.
-7. Any top-level `CLAUDE.md` / `README` describing the toolkit.
+3. In-body sibling references across every SKILL.md and reference file.
+4. `toolkit-guide/SKILL.md` — its pipeline diagram and full catalog.
+5. `LAYOUT.md` — the resolution protocol and doc-location table.
+6. This file.
+7. Bootstrap templates — `express-ts-bootstrap/assets/ARCHITECTURE.template.md` and
+   `MODULE_REGISTRY.template.md`, and the `nextjs-bootstrap` equivalents.
+8. `prd-creator` — its hand-off targets and `references/module-template.md`.
+9. `_trigger-workspace/eval-set.json` — the `skills` array **and** every `correct` field — plus
+   `route_eval.py` if it hardcodes names.
+10. `docs/*.md` (the human-facing mirrors), `docs/README.md`, and the top-level `README.md`.
 
 Find every site first:
 
 ```
-rg -n "project-onboard|feature-planner|module-builder|test-writer|code-review" .claude
+rg -n "backend-(onboard|feature-planner|module-builder|test-writer|code-review)|frontend-(onboard|feature-planner|module-builder|test-writer|code-review)" .
 ```
 
-## Execution order (followed)
-
-1. Run the grep above; inventory every hit.
-2. Rename the 5 folders.
-3. Update `name:` frontmatter + in-body sibling references.
-4. Update `eval-set.json` + `route_eval.py`.
-5. Update templates / CLAUDE.md / README hits.
-6. **Verify**: re-run `route_eval.py` against `eval-set.json`; routing accuracy should match
-   the prior baseline (`baseline-results.json`). No regression = clean rename.
+Then verify: re-run `route_eval.py` against `eval-set.json` and compare routing accuracy to the
+prior baseline. No regression = clean merge.
 
 ## Companion: project layout
 
-Naming keeps skills from colliding; **[`LAYOUT.md`](./LAYOUT.md)** keeps them pointed at the
-right folder. It defines the `.claude/workspace.json` manifest (domain → folder) and the
-resolution protocol every skill runs to find its project dir — the same domain-prefix mechanism
-that lets a `frontend-<name>/` project coexist with `backend-<name>/` under one repo-root `.claude/`.
+Naming keeps skills from colliding; **[`LAYOUT.md`](./LAYOUT.md)** keeps them pointed at the right
+folder. It defines the `.claude/workspace.json` manifest (domain → folder), the resolution protocol
+every skill runs, and — since the merge — where planning docs live (repo-root `_docs/features/`,
+because a plan now spans both domains).
 
 ## Open follow-up
 
-When the first frontend skill ships, revisit **plugins vs flat prefixes**. Flat
-`backend-`/`frontend-` prefixes are fine up to ~10–12 skills; beyond that, splitting into
-`backend` / `frontend` **plugins** (namespaced `backend:code-review`, toggleable per domain)
-becomes worth the restructure. Not needed now.
+The merge took the toolkit from 19 skills to 13, which puts flat naming comfortably back in its
+happy range. Revisit **plugins vs flat names** only if it grows past ~15 again; at that point
+splitting into toggleable plugins becomes worth the restructure. Not needed now.

@@ -4,7 +4,7 @@ The **front desk** of the toolkit. When you don't know which skill to reach for 
 
 ## What it does
 
-- **Reads your project's real state** (it doesn't just recite the docs): `.claude/workspace.json`, each project's `ARCHITECTURE.md` / `MODULE_REGISTRY.md`, any `_docs/prd/PRD.md`, and any `_docs/FEATURE_PLAN_*.md`.
+- **Reads your project's real state** (it doesn't just recite the docs): `.claude/workspace.json`, each project's `ARCHITECTURE.md` / `MODULE_REGISTRY.md`, any `_docs/prd/PRD.md`, and the module folders under `_docs/features/` — including each slice's `built` / `ready` / `blocked` status.
 - **Figures out where you are** in the pipeline — nothing set up yet? existing code not onboarded? a plan written but not built? a design built but not wired to the API?
 - **Recommends one next skill**, in backticks, with a one-line why — plus the couple of steps after it, so you see the short road ahead instead of the whole map.
 - **Hands off. It never does the work** — no scaffolding, onboarding, planning, building, testing, or reviewing. It's the map, not the vehicle.
@@ -21,7 +21,7 @@ Just ask when you're unsure:
 >
 > "what can all these skills even do?"
 
-It inspects the project and answers with a specific next step (e.g. *"You have a bootstrapped `backend-shoply` and an approved `FEATURE_PLAN_auth.md` with no code yet → run `backend-module-builder` next"*), not a generic pointer.
+It inspects the project and answers with a specific next step (e.g. *"You have a bootstrapped `backend-shoply` and `frontend-shoply`, an `auth` plan with 4 slices, and 01–02 already built → run `module-builder` on `_docs/features/auth/03-logout.md` next"*), not a generic pointer.
 
 ## Example prompts
 

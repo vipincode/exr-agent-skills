@@ -11,7 +11,7 @@ Ports a page or screen design from **any existing codebase on disk** (a design m
 
 ## Before you run it
 
-1. Your target project must be a scaffolded Next.js + shadcn project **with the contract files** (`ARCHITECTURE.md` + `MODULE_REGISTRY.md`). New project → `nextjs-bootstrap` first; existing project without contract files → `frontend-onboard` first.
+1. Your target project must be a scaffolded Next.js + shadcn project **with the contract files** (`ARCHITECTURE.md` + `MODULE_REGISTRY.md`). New project → `nextjs-bootstrap` first; existing project without contract files → `project-onboard` first.
 2. Know the **path to the source project** on disk. You'll name it in the first prompt; the skill confirms it before reading and never modifies it.
 
 ## How to use it
@@ -53,7 +53,7 @@ The skill will: profile the source → lift or map the theme → derive the tran
 ## Important
 
 - The source project is **never modified** — it's a read-only design reference. Its CSS files and components are translated, never copied or imported.
-- Ports **design only, with typed sample data**. If the target page already exists and works, it's **restyled in place** — its data fetching/logic stays untouched, only the presentation changes. API wiring is `frontend-feature-planner` → `frontend-module-builder`.
+- Ports **design only, with typed sample data**. If the target page already exists and works, it's **restyled in place** — its data fetching/logic stays untouched, only the presentation changes. API wiring is `module-planner` → `module-builder`.
 - Never duplicates a route: an existing URL gets restyled in place, not re-created under a second route group.
 - Mobile-first always — the source is usually desktop-only; headers/sidebars collapse into a hamburger + `Sheet` on small screens.
 - You can review/edit the translation map in `_docs/design-source/<name>.md` between pages — later pages follow the edited map.

@@ -1,0 +1,18 @@
+{
+  "eval_id": 3,
+  "eval_name": "onboard-fullstack-legacy-one-pass",
+  "prompt": "this is our existing app \u2014 api/ is the express backend and web/ is the react frontend. neither has any of those ARCHITECTURE files yet. can you get the whole thing set up so i can start using these skills on it",
+  "assertions": [
+    "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into api/",
+    "ARCHITECTURE.md AND MODULE_REGISTRY.md both written into web/",
+    "Exactly ONE .claude/workspace.json exists at the repo root and it contains BOTH a backend entry (path api) and a frontend entry (path web)",
+    "Backend contract records Express 4 and states that catchAsync/async wrappers ARE required - it does not prescribe dropping them",
+    "Backend contract records the real response envelope { data, message } with no success flag - it does not prescribe { success, data, message }",
+    "Backend contract records Joi as the validation library, not Zod",
+    "Frontend contract records the real stack - Vite + React Router + MUI/Emotion + SWR + Formik + Yup - and does NOT prescribe Next.js App Router, shadcn, TanStack Query, or React Hook Form",
+    "Backend registry is seeded with the real existing shared pieces (catchAsync, ApiError, requireAuth, requireAdmin, validateBody, errorHandler) with their paths",
+    "Frontend registry is seeded with the real existing shared pieces (the api client, Card, PageHeader, the forms layer, useUsers, the theme) with their paths",
+    "No source file under api/src or web/src was modified, created, or deleted",
+    "The duplicate date helper (utils/formatDate.ts vs the private one in services/report.service.ts) is reported as a FINDING, not silently fixed"
+  ]
+}

@@ -102,7 +102,7 @@ exists to stop. (See shared-taxonomy.md for which group it moves into.)
 Building a design produces more than components — a `formatPrice`/`formatDate` helper, a
 `useMediaQuery`/`useScrollPosition` hook, a `NavItem` type, a nav-links or option-list constant.
 These follow the **same protocol** (registry → grep → reuse/extend/create), with their own homes
-and search paths — the same rules `frontend-module-builder` enforces, so design-time and
+and search paths — the same rules `module-builder` enforces, so design-time and
 binding-time code land in the same places:
 
 - **Search**: the registry's lib/hooks sections, then grep `src/lib/**` and `src/hooks/**` for

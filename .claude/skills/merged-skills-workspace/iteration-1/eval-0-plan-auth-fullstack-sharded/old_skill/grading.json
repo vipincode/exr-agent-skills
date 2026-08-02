@@ -1,0 +1,72 @@
+{
+  "eval": "eval-0-plan-auth-fullstack-sharded",
+  "configuration": "old_skill",
+  "expectations": [
+    {
+      "text": "Master plan written to _docs/features/auth/auth-plan.md at the REPO ROOT (not inside backend/ or frontend/)",
+      "passed": false,
+      "evidence": "master plan: NONE FOUND; all files: ['frontend/_docs/FEATURE_PLAN_auth.md', 'backend/_docs/FEATURE_PLAN_auth.md']"
+    },
+    {
+      "text": "Module is sharded into at least 3 separate slice files with zero-padded numeric prefixes (01-, 02-, 03-)",
+      "passed": false,
+      "evidence": "0 slice files: []"
+    },
+    {
+      "text": "Slice order respects dependencies: register is 01, and login comes before logout",
+      "passed": false,
+      "evidence": "order=[] (register idx=None, login idx=None, logout idx=None)"
+    },
+    {
+      "text": "Every slice file contains an API contract section stating that slice's endpoints (method, path, auth, request, response)",
+      "passed": false,
+      "evidence": "0/0 slices have a contract heading: []"
+    },
+    {
+      "text": "Every slice file covers BOTH a backend half and a frontend half (or an explicit n/a for one)",
+      "passed": false,
+      "evidence": "0/0 slices have both halves: []"
+    },
+    {
+      "text": "The frontend half of each slice matches its own slice's stated contract - no conflicting response shape between the two halves",
+      "passed": false,
+      "evidence": "No slices exist. The contract is authored twice - once in backend/_docs/FEATURE_PLAN_auth.md and again in frontend/_docs/FEATURE_PLAN_auth.md, the latter marked 'PROPOSED, NOT OBSERVED'. Two documents holding one contract is the drift risk the merge removes."
+    },
+    {
+      "text": "Every slice file carries a Status line with one of ready / blocked / built",
+      "passed": false,
+      "evidence": "0/0 slices have a status line: []"
+    },
+    {
+      "text": "Every slice file has a testing checklist with at least 3 concrete checkbox items",
+      "passed": false,
+      "evidence": "checkbox counts: {}"
+    },
+    {
+      "text": "Master plan contains a build-order table listing every slice with its order and dependencies",
+      "passed": false,
+      "evidence": "0 numbered table rows vs 0 slices; 'depends' mentioned: False"
+    },
+    {
+      "text": "The User data model is defined once in the master plan, not repeated in each slice",
+      "passed": false,
+      "evidence": "data-model heading in master: False; slices that redefine it: none"
+    },
+    {
+      "text": "Reuse section names concrete existing file paths from the fixture (e.g. lib/app-response.ts, lib/axios.ts, hooks/use-auth.ts, components/shared/form)",
+      "passed": true,
+      "evidence": "found 4/4 reuse anchors: ['app-response', 'axios', 'use-auth', 'shared/form']"
+    },
+    {
+      "text": "No implementation code was written - no .ts or .tsx source files created",
+      "passed": true,
+      "evidence": "code files in outputs: none"
+    }
+  ],
+  "auto_passed": 2,
+  "auto_total": 11,
+  "needs_judgment": 1,
+  "passed": 2,
+  "total": 12,
+  "unresolved": 0
+}

@@ -1,6 +1,6 @@
 # Auth primitives (JOSE) — utilities only, NOT endpoints
 
-The bootstrap ships JOSE token helpers and auth middleware so that when backend-feature-planner designs the auth feature, backend-module-builder reuses these instead of reinventing them. **This skill does not create login/register/refresh routes.** It installs the primitives and registers them.
+The bootstrap ships JOSE token helpers and auth middleware so that when module-planner designs the auth feature, module-builder reuses these instead of reinventing them. **This skill does not create login/register/refresh routes.** It installs the primitives and registers them.
 
 ## `lib/jwt.ts` — sign & verify
 
@@ -95,6 +95,6 @@ export {};
 
 ## Registry entries the bootstrap must write
 
-Seed MODULE_REGISTRY.md with: `signAccessToken`/`signRefreshToken`/`verifyToken` (lib/jwt.ts), `protect` (middleware/protect.ts), `requireRole` (middleware/require-role.ts). State plainly that **auth endpoints do not exist yet** so backend-feature-planner knows to build them and backend-module-builder knows to wire them onto these existing primitives — not to write new token logic.
+Seed MODULE_REGISTRY.md with: `signAccessToken`/`signRefreshToken`/`verifyToken` (lib/jwt.ts), `protect` (middleware/protect.ts), `requireRole` (middleware/require-role.ts). State plainly that **auth endpoints do not exist yet** so module-planner knows to build them and module-builder knows to wire them onto these existing primitives — not to write new token logic.
 
 Env vars to add to the schema and `.env.example`: `JWT_SECRET`, `ACCESS_TOKEN_TTL` (default `15m`), `REFRESH_TOKEN_TTL` (default `7d`).

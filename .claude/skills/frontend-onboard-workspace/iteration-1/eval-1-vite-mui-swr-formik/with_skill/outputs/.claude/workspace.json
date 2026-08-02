@@ -1,5 +1,0 @@
-{
-  "projects": [
-    { "domain": "frontend", "path": ".", "stack": "vite-react-mui-swr-formik" }
-  ]
-}

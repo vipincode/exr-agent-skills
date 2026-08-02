@@ -95,10 +95,10 @@ feature; shared needs move to `components/shared`/`lib`/`hooks`/`services` and g
 
 | Feature | Path | Owns | Notes |
 | --- | --- | --- | --- |
-| _(none yet)_ | — | — | Feature modules are built by frontend-feature-planner + frontend-module-builder |
+| _(none yet)_ | — | — | Feature modules are built by module-planner + module-builder |
 
-> **No real feature modules exist yet.** Auth screens, dashboards, and CRUD are features for the
-> `frontend-*` builder skills. The bootstrap ships only infrastructure + shared components + a
+> **No real feature modules exist yet.** Auth screens, dashboards, and CRUD are features for
+> `module-planner` + `module-builder` (and the design builders). The bootstrap ships only infrastructure + shared components + a
 > routing skeleton.
 
 ## Decisions log

@@ -1,0 +1,19 @@
+{
+  "eval_id": 0,
+  "eval_name": "plan-auth-fullstack-sharded",
+  "prompt": "I want to build the auth module for this app \u2014 theres a brief already at _docs/features/auth/auth-module.md. Plan it out properly, backend and the frontend binding both. But dont give me one giant plan I have to build in one go, I want to do register first, then login, then logout etc, one at a time.",
+  "assertions": [
+    "Master plan written to _docs/features/auth/auth-plan.md at the REPO ROOT (not inside backend/ or frontend/)",
+    "Module is sharded into at least 3 separate slice files with zero-padded numeric prefixes (01-, 02-, 03-)",
+    "Slice order respects dependencies: register is 01, and login comes before logout",
+    "Every slice file contains an API contract section stating that slice's endpoints (method, path, auth, request, response)",
+    "Every slice file covers BOTH a backend half and a frontend half (or an explicit n/a for one)",
+    "The frontend half of each slice matches its own slice's stated contract - no conflicting response shape between the two halves",
+    "Every slice file carries a Status line with one of ready / blocked / built",
+    "Every slice file has a testing checklist with at least 3 concrete checkbox items",
+    "Master plan contains a build-order table listing every slice with its order and dependencies",
+    "The User data model is defined once in the master plan, not repeated in each slice",
+    "Reuse section names concrete existing file paths from the fixture (e.g. lib/app-response.ts, lib/axios.ts, hooks/use-auth.ts, components/shared/form)",
+    "No implementation code was written - no .ts or .tsx source files created"
+  ]
+}
