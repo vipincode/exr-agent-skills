@@ -6,6 +6,30 @@
 > reads this before writing or reviewing code. Keep it concrete and current — if a convention
 > changes, change it here first. Pair it with `MODULE_REGISTRY.md` (the dedup ledger).
 
+## Invariants
+
+> **This section is the source for `CLAUDE.md`.** The bootstrap copies it verbatim into
+> `CLAUDE.md` at this project root so it is always in context, even when no skill is running
+> and nobody has read this file. Change a rule **here**, then regenerate `CLAUDE.md` — never
+> edit the two out of sync. Everything below this section is the full detail behind these rules.
+
+Non-negotiable in **every** change, however small:
+
+1. **Colors come from theme tokens only** — `bg-primary`, `text-muted-foreground`, `border`. Never a raw hex/oklch/rgb value in a component. A recurring shadow/gradient/border becomes a token in `globals.css` once, then a utility — not a repeated arbitrary value.
+2. **Icons only from `@/components/shared/icons`** — never imported from `lucide-react`/`react-icons` at a call site, never a pasted inline `<svg>`.
+3. **Form fields only via the shared `*Field` components** from `components/shared/form` — never bare `useController` + raw input, never hand-rolled error text.
+4. **Never fork or hand-duplicate a `components/ui/` primitive.** Need one? `shadcn add` it. Theming one = re-valuing its `cva` variants **in place**.
+5. **Component placement by dependency** — depends on one feature's domain → `features/<name>/components`; domain-agnostic → `components/shared`. A second feature needing it means **move + register**, never copy.
+6. **A feature never imports from another feature.** Shared needs go global by kind (`components/shared`, `lib`, `hooks`, `services`, `types`, `constants`) and get registered.
+7. **Check `MODULE_REGISTRY.md` before creating** any component, hook, util, type, constant, or schema — then grep. If it exists, import it. Extend rather than fork.
+8. **Types come from Zod schemas via `z.infer`** — no parallel hand-written interfaces that can drift.
+9. **Server state through TanStack Query**, hooks in the feature's `api/`, array query keys namespaced by feature. Never `useEffect` + `useState` fetching.
+10. **The browser calls same-origin `/api/...` only** — through the shared axios instance, to a BFF route handler. Never the backend's absolute URL, never the backend URL in client code.
+11. **Env only through `lib/env.ts`** (T3 Env). No raw `process.env` in app code.
+12. **No inline magic literals or ad-hoc inline types** — single-feature ones live in that feature's `types/`/`constants/`; shared ones go global and get registered.
+
+New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
+
 ## Stack
 
 - **Next.js (App Router)** — `src/` dir, TypeScript strict, import alias `@/*`. `cookies()`/`headers()` are async.

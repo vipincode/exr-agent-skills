@@ -53,7 +53,7 @@ Three invariants shape every recommendation:
 Resolve state the same way every other skill does, per `.claude/skills/LAYOUT.md` (read it if unsure). Gather these signals with the file tools — don't ask the user what you can just look at:
 
 1. **`.claude/workspace.json`** — the manifest. Which domains exist (`backend`, `frontend`), each entry's `path` and `stack`. This is the source of truth for *where each project lives*; the folder name is not.
-2. **Per project dir** (`repo root + path`, or repo root itself in the legacy single-project layout) — do `ARCHITECTURE.md` **and** `MODULE_REGISTRY.md` exist? Their presence means that domain is bootstrapped/onboarded and ready; their absence means it isn't.
+2. **Per project dir** (`repo root + path`, or repo root itself in the legacy single-project layout) — do `ARCHITECTURE.md` **and** `MODULE_REGISTRY.md` exist? Their presence means that domain is bootstrapped/onboarded and ready; their absence means it isn't. Also note whether `CLAUDE.md` exists there and whether `ARCHITECTURE.md` has an `## Invariants` section — if either is missing, the project predates the always-loaded summary, and `project-onboard` can add it. Mention that once, as a cheap upgrade, never as a blocker.
 3. **`_docs/prd/PRD.md`** (repo root) — has the product been scoped? Which modules did it produce?
 4. **`_docs/features/<module>/`** (repo root) — the richest signal, and where "what's next?" is usually already answered. Per module folder:
    - a `<module>-module.md` brief but no `<module>-plan.md` → planned at product level, not technically. Next step is `module-planner`.

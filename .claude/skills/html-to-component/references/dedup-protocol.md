@@ -39,7 +39,9 @@ For each candidate component (e.g. "ProfileAvatar", "Header", "PricingCard"):
 
 1. **`MODULE_REGISTRY.md`** — the curated ledger. Scan the shared sections (form, typography,
    overlay, layout, data-display, and any the builders added) and the features table. This is
-   fastest and authoritative.
+   fastest and authoritative. If it has been **sharded** — the sections link to
+   `<proj>/_registry/*.md` instead of listing rows — read the index, then only the shard(s)
+   covering what you are about to build. Step 2's grep is what makes that partial read safe.
 2. **Grep the tree** — the registry can lag. Search by likely name and by role:
    ```
    # by name (PascalCase component + kebab file)

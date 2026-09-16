@@ -4,6 +4,31 @@
 > test-writer, code-review) reads this before writing or reviewing code. Keep it
 > concrete and current — if a convention changes, change it here first.
 
+## Invariants
+
+> **This section is the source for `CLAUDE.md`.** The bootstrap copies it verbatim into
+> `CLAUDE.md` at this project root so it is always in context, even when no skill is running
+> and nobody has read this file. Change a rule **here**, then regenerate `CLAUDE.md` — never
+> edit the two out of sync. Everything below this section is the full detail behind these rules.
+
+Non-negotiable in **every** change, however small:
+
+1. **Responses only via `ok()` / `created()` / `noContent()`** from `lib/http.ts`. Never hand-roll the success envelope. The error envelope is rendered in exactly one place — `middleware/error-handler.ts`.
+2. **Errors only by throwing the shared `AppError` subclasses.** Controllers never try/catch — Express 5 forwards rejections.
+3. **No `asyncHandler` anywhere** — plain `async (req, res) => {}`. (Express 4 projects need the wrapper; this one does not.)
+4. **Mongoose/Zod errors are normalized once** in `lib/db-errors.ts`. Never re-catch them in a module.
+5. **Validation via the shared `validate({...})` middleware** with the module's Zod schema. Controllers consume typed, validated input.
+6. **Types derive from schemas with `z.infer`** — no parallel hand-written interfaces that can drift.
+7. **Relative imports carry explicit `.js` extensions** (NodeNext ESM), even from `.ts` source. Never drop the extension.
+8. **A module never touches another module's model** — cross-module needs go through that module's **service**.
+9. **Placement by reach** — used by 2+ modules → `lib/` / `middleware/` / `types/` / `constants/` and **registered**; single-use → the module's own `<name>.types.ts` / `.constants.ts` / `.utils.ts`. No inline magic literals, no ad-hoc inline types.
+10. **Check `MODULE_REGISTRY.md` before creating** any util, middleware, type, constant, or schema — then grep. If it exists, import it. Extend rather than fork.
+11. **Auth reuses `lib/jwt.ts` + `protect` + `require-role`.** Never write new token logic.
+12. **Env only through the typed `config/env.ts`** — no raw `process.env` elsewhere. New vars land in the schema and `.env.example` in the same change.
+13. **No `console.log` in committed code** — `req.log` in requests, the root `logger` elsewhere.
+
+New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
+
 ## Stack
 
 - **Express 5** — async route handlers forward rejections to the error middleware

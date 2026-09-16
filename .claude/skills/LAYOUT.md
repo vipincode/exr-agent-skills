@@ -22,7 +22,7 @@ So two locations must be distinguished:
 
 - **Repo root** — where `.claude/` lives. Always the working directory. The anchor.
 - **Project dir** — where a given project's code **and** its contract files
-  (`ARCHITECTURE.md`, `MODULE_REGISTRY.md`, `src/`, `package.json`) live. This is
+  (`CLAUDE.md`, `ARCHITECTURE.md`, `MODULE_REGISTRY.md`, `src/`, `package.json`) live. This is
   either the repo root itself (`path: "."`) or a subfolder (`path: "backend-shoply"`).
 
 Planning docs are the exception: they live at the **repo root** under `_docs/`, never inside a
@@ -88,6 +88,7 @@ Once the project dir is resolved (call it `<proj>`), the familiar paths all hang
 
 | Reference in a skill | Resolves to |
 |---|---|
+| `CLAUDE.md` | `<proj>/CLAUDE.md` |
 | `ARCHITECTURE.md` | `<proj>/ARCHITECTURE.md` |
 | `MODULE_REGISTRY.md` | `<proj>/MODULE_REGISTRY.md` |
 | `src/lib`, `src/middleware`, `src/modules/<name>/` | `<proj>/src/...` |
@@ -122,8 +123,8 @@ works for a fullstack module and stays consistent for single-domain ones.
         03-logout.md
       orders/
         ...
-  backend-shoply/                   ← project dir: code + ARCHITECTURE.md + MODULE_REGISTRY.md
-  frontend-shoply/                  ← project dir: code + ARCHITECTURE.md + MODULE_REGISTRY.md
+  backend-shoply/                   ← project dir: code + CLAUDE.md + ARCHITECTURE.md + MODULE_REGISTRY.md
+  frontend-shoply/                  ← project dir: code + CLAUDE.md + ARCHITECTURE.md + MODULE_REGISTRY.md
 ```
 
 | Doc | Written by | Location |
@@ -132,7 +133,8 @@ works for a fullstack module and stays consistent for single-domain ones.
 | `_docs/features/<module>/<module>-module.md` | `prd-creator` | repo root |
 | `_docs/features/<module>/<module>-plan.md` | `module-planner` | repo root |
 | `_docs/features/<module>/NN-<slice>.md` | `module-planner` | repo root |
-| `ARCHITECTURE.md`, `MODULE_REGISTRY.md` | bootstraps / `project-onboard` | **project dir** |
+| `CLAUDE.md`, `ARCHITECTURE.md`, `MODULE_REGISTRY.md` | bootstraps / `project-onboard` | **project dir** |
+| `_registry/<section>.md` (only once sharded) | `module-builder` | **project dir** |
 
 One folder per module holds everything about it — the product brief, the technical plan, and the
 slices — so there's never a question of where a module's docs are.
@@ -151,6 +153,38 @@ Older projects have per-project plans at `<proj>/_docs/FEATURE_PLAN_<name>.md`. 
 fine — if a skill is pointed at one, work from it. There's no automatic migration: the next time
 that module is planned, `module-planner` writes the new layout, and the old file can be deleted by
 the user once its work has shipped.
+
+## The three context tiers
+
+The contract files are deliberately tiered by **how often they are loaded**, so a one-line change
+doesn't pay for a full module build's worth of context.
+
+| Tier | File | Size | Loaded |
+|---|---|---|---|
+| 0 | `<proj>/CLAUDE.md` | ~600 tok | **Automatically, every change in that project** |
+| 1 | `<proj>/ARCHITECTURE.md` | ~2–3k tok | By skills, in full, before writing or reviewing code |
+| 2 | `<proj>/MODULE_REGISTRY.md` (+ `_registry/` shards) | index ~300 tok | By skills, before creating anything shareable |
+
+**Tier 0 — `CLAUDE.md`.** Claude Code auto-loads a `CLAUDE.md` from the working directory and its
+parents, and nested ones when files in that subtree are touched. In a monorepo that maps exactly onto
+this layout: a small root `CLAUDE.md`, plus one per project dir that loads only when work touches
+that project. Its `## Invariants` block is **copied verbatim** from that project's
+`ARCHITECTURE.md → ## Invariants`. It is a pointer file — a rule that lives only in `CLAUDE.md` is a
+bug, because the skills read `ARCHITECTURE.md` and would never see it.
+
+Its job is the ad-hoc edit: changes made with no skill running, where nothing else would tell Claude
+about the theme tokens, the shared `*Field` components, or the response envelope. When a skill *is*
+running, it reads Tier 1 and 2 in full as it always has — that cost is the point of those skills, not
+waste to optimize away.
+
+**Tier 2 — registry sharding.** `MODULE_REGISTRY.md` is the only contract file that grows with the
+project (~10–25 lines per module). Past **~250 lines**, `module-builder` converts it to an index:
+section headings and row counts stay in `MODULE_REGISTRY.md`, each linking to `<proj>/_registry/<section>.md`
+that holds the rows. Skills then read the index plus only the shard covering the kind of thing they
+are about to create. The dedup gate stays correct under partial reads because it greps the codebase
+as its third step — the registry is the fast path, never the only one.
+
+Whoever edits a rule edits `ARCHITECTURE.md` first, then regenerates `CLAUDE.md`. Never the reverse.
 
 ## Multi-domain resolution
 

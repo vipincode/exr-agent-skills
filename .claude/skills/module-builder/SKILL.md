@@ -100,6 +100,12 @@ For each domain you touched, edit `MODULE_REGISTRY.md`:
 - Add any **new shared pieces** from Step 2 — one line each: name, path, purpose — so the next slice's planner and dedup gate see them.
 - Update the **decisions log** with anything worth remembering ("tokens via httpOnly cookie; single role", "price stored in cents, formatted at the edge").
 
+Keep rows terse — name, path, purpose in ≤8 words. The registry is a **ledger, not a rulebook**: never restate a convention that already lives in `ARCHITECTURE.md`. This file is read on every build, so prose here is a tax on every future slice.
+
+**Shard it when it outgrows a single read.** If `MODULE_REGISTRY.md` passes **~250 lines** after your update, convert it in this same change: leave the section headings and row counts in `MODULE_REGISTRY.md`, each linking to `<proj>/_registry/<section>.md` (`shared-components.md`, `features.md`, `lib.md`, `middleware.md` — whatever the sections actually are), and move the rows there. Already sharded? Add your rows to the right shard and bump the index's count. Later runs then read the index plus only the shard they need. See `../LAYOUT.md`.
+
+**If `ARCHITECTURE.md` changed** — you added or altered a convention, not just a file — check whether its `## Invariants` section needs the change too, and if it does, regenerate `<proj>/CLAUDE.md` from it so the always-loaded summary doesn't drift. Most slices don't touch it; when one does, silently skipping this leaves ad-hoc edits following a stale rule.
+
 Then update the plan docs:
 
 - Set the slice file's `Status:` to `built`.
@@ -128,5 +134,5 @@ Close with:
 - **The slice's contract section is authoritative** for both halves. Don't let the frontend describe a different shape than the backend implements.
 - **ARCHITECTURE.md beats habit.** If it differs from the defaults here, follow it.
 - **Build only what the slice specifies.** Surface gaps rather than silently expanding scope.
-- **Update the registry and the status.** Both, in the same change.
+- **Update the registry and the status.** Both, in the same change. Terse rows only — shard past ~250 lines.
 - **Don't plan, don't design, don't test, don't theme.** Those are `module-planner`, the to-component skills, `test-writer`, and `font-theme-setup`.

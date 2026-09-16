@@ -26,7 +26,7 @@ For each project dir you found, classify it:
 
 - **Empty, or no matching source** → new project. Hand off to **`express-ts-bootstrap`** (backend) or **`nextjs-bootstrap`** (frontend); they ask about folder placement, scaffold, and write the contract + manifest themselves. Don't onboard an empty folder.
 - **Has existing code** → run the onboarding pass below on it.
-- **Already has both contract files** → already onboarded. Don't regenerate. Make sure `.claude/workspace.json` has a matching entry (add it if missing), then offer to refresh the registry if it looks stale relative to the code; otherwise route straight on to `module-planner`.
+- **Already has both contract files** → already onboarded. Don't regenerate. If `ARCHITECTURE.md` has no `## Invariants` section or the project has no `CLAUDE.md`, offer to add them (that's the cheap upgrade path for projects onboarded before those existed). Make sure `.claude/workspace.json` has a matching entry (add it if missing), then offer to refresh the registry if it looks stale relative to the code; otherwise route straight on to `module-planner`.
 
 **Onboarding never moves code.** It records each project *where it already is*. If the user wants root-level code relocated into `backend-<name>/`, that's a separate explicit restructure, out of scope here.
 
@@ -72,7 +72,13 @@ Reuse the **section structure the toolkit expects** — the same headings the ma
 
 This seeding is what makes DRY work from the very first feature: `module-planner` and `module-builder` read the registry to find what exists before creating anything. **A registry that omits existing code is the single main way duplication sneaks back in**, so be thorough — an hour of careful inventory here saves every future feature from rebuilding a component that was already sitting in `components/shared`.
 
-Both contract files go in the **project dir**, not necessarily the repo root.
+**`CLAUDE.md`** is generated last, from the matching bootstrap's `assets/CLAUDE.template.md`, and is the same descriptive discipline in miniature. Write the `## Invariants` section into `ARCHITECTURE.md` first — the 8–13 rules **this repo actually follows** that a small edit could break — then copy that list verbatim into `CLAUDE.md`. It is auto-loaded for every change in this project, so it is the only guardrail on edits made without a skill.
+
+Derive each invariant from the inventory, never from the bootstrap's list: a Formik + Yup repo gets "forms go through Formik + Yup, via the shared `<FormField>`", not "use RHF + Zod"; an Express 4 repo gets "wrap async handlers in `asyncHandler`", the exact opposite of the bootstrap's rule. A `CLAUDE.md` invariant that the code doesn't already obey is a *finding* for Step 5, not a rule to smuggle in — it would make Claude "fix" conforming code on every unrelated edit.
+
+Keep it to what a one-line change can violate: styling/token source, component placement, the data-fetching and forms approach, the response/error shape, import conventions, and "check `MODULE_REGISTRY.md` before creating anything". If a rule needs a paragraph to state, it belongs only in `ARCHITECTURE.md`.
+
+All three files go in the **project dir**, not necessarily the repo root.
 
 ## Step 4 — Write the manifest
 
@@ -112,7 +118,8 @@ You can drive that loop for them if they ask, but each phase is owned by its ski
 ## Guardrails
 
 - **Descriptive, not prescriptive.** The #1 failure is a contract that prescribes bootstrap defaults the repo doesn't follow. Record reality.
-- **Non-destructive.** Only `ARCHITECTURE.md`, `MODULE_REGISTRY.md`, `.claude/workspace.json`, and an optional onboarding report get written. Never edit or move source, never auto-dedupe existing code, never "upgrade" the stack.
+- **`CLAUDE.md` is a strict subset of `ARCHITECTURE.md`, never a fork.** Its invariants are copied verbatim from that file's `## Invariants` section. If they ever disagree, `ARCHITECTURE.md` wins and `CLAUDE.md` is regenerated — a rule living only in `CLAUDE.md` is a bug. If the repo already has a `CLAUDE.md`, **never overwrite it**: show the user the invariants block and offer to merge it in.
+- **Non-destructive.** Only `ARCHITECTURE.md`, `MODULE_REGISTRY.md`, `CLAUDE.md`, `.claude/workspace.json`, and an optional onboarding report get written. Never edit or move source, never auto-dedupe existing code, never "upgrade" the stack.
 - **Seed the registry exhaustively.** Missing existing utilities and components = duplication returns. This is the most important output.
 - **Minimal questions.** Ask only to resolve genuine conflicts, and only about which of two real patterns is canonical. Clean repo → no questions.
 - **Match the toolkit's contract shape.** Same headings and registry layout the bootstraps emit, so downstream skills parse predictably.

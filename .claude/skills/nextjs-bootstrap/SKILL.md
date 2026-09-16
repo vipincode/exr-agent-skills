@@ -60,8 +60,9 @@ Unlike the backend scaffolder (pure file copy), this skill is **hybrid: run the 
 7. **Generate the chosen auth/token variant.** The overlay ships variant (a) by default; for (b)/(c) or no-refresh, rewrite `lib/auth/session.ts`, `lib/auth/tokens.ts`, `app/api/auth/login/route.ts`, and the axios interceptor per `references/auth-bff.md`. The BFF proxy + `proxy.ts` role logic are the same across variants.
 8. **Generate `ARCHITECTURE.md`** from `assets/ARCHITECTURE.template.md`, filling every `{{placeholder}}` with the resolved decisions and the actual conventions from `references/conventions-core.md`. Every other frontend skill reads this before writing code — it must be concrete, not aspirational.
 9. **Generate `MODULE_REGISTRY.md`** from `assets/MODULE_REGISTRY.template.md`. Seed it with what the scaffold ships: every shared `*Field`, the typography primitives, the shared `Modal` overlay wrapper, the `lib/` utilities (axios, query-client, env, auth/session, auth/roles, auth/tokens), the BFF proxy route, `proxy.ts` (role routing), and the **actual list of `ui` primitives you added**. This is the dedup ledger; if a shared piece exists, it must be listed so later skills reuse it.
-10. **Record the project in the workspace manifest.** Create or update `.claude/workspace.json` at the **repo root** with `{ "domain": "frontend", "path": "<proj relative to repo root, e.g. 'frontend-shoply', or '.'>", "stack": "nextjs" }`. If the file exists, **merge** — never clobber a `backend` entry. See `../LAYOUT.md`.
-11. **Install, build, and smoke-check.** Run `<pm> install`, then `<pm> run build` (must pass typecheck + lint), then a quick `<pm> run dev` check that `/` renders and a protected route redirects per `proxy.ts`. Confirm the husky hook installed (`.husky/pre-commit` present and git `core.hooksPath` set). Report the result.
+10. **Generate `CLAUDE.md`** at `<proj>` from `assets/CLAUDE.template.md`. Fill the header placeholders, then replace `{{INVARIANTS}}` with the numbered list from the `## Invariants` section of the `ARCHITECTURE.md` you just wrote — **verbatim, every item, no paraphrasing and no additions**. This file is auto-loaded into context for every change in this project, so it is the only guardrail on small edits made without a skill (a padding tweak that reaches for a raw hex, an icon imported straight from `lucide-react`). It must stay a strict subset of ARCHITECTURE.md: never add a rule here that isn't there.
+11. **Record the project in the workspace manifest.** Create or update `.claude/workspace.json` at the **repo root** with `{ "domain": "frontend", "path": "<proj relative to repo root, e.g. 'frontend-shoply', or '.'>", "stack": "nextjs" }`. If the file exists, **merge** — never clobber a `backend` entry. See `../LAYOUT.md`.
+12. **Install, build, and smoke-check.** Run `<pm> install`, then `<pm> run build` (must pass typecheck + lint), then a quick `<pm> run dev` check that `/` renders and a protected route redirects per `proxy.ts`. Confirm the husky hook installed (`.husky/pre-commit` present and git `core.hooksPath` set). Report the result.
 
 ## What to read when
 
@@ -73,6 +74,7 @@ Unlike the backend scaffolder (pure file copy), this skill is **hybrid: run the 
 - `references/stack-context7.md` — which context7 libraries/topics to query for current APIs (step 2).
 - `assets/files/` — the literal boilerplate overlaid into `<proj>/src` (lib, middleware, BFF, shared components).
 - `assets/ARCHITECTURE.template.md` / `assets/MODULE_REGISTRY.template.md` — templates for the two source-of-truth docs.
+- `assets/CLAUDE.template.md` — the always-in-context summary. Its `{{INVARIANTS}}` block is copied verbatim from the generated ARCHITECTURE.md's `## Invariants` section; it is a pointer file, never a second source of truth.
 
 ## Non-negotiables (the reasons this toolkit exists)
 
@@ -85,6 +87,7 @@ Unlike the backend scaffolder (pure file copy), this skill is **hybrid: run the 
 - **One HTTP instance, one QueryClient.** `lib/axios.ts` and `lib/query-client.ts` are the only places these are constructed. Per-feature hooks import them.
 - **Seed the registry honestly.** Every reusable thing the scaffold creates goes into `MODULE_REGISTRY.md` immediately — including the exact `ui` primitives installed. An empty or inaccurate registry defeats the dedup workflow and duplicates come right back.
 - **Git hooks work out of the box.** `.husky/pre-commit` + lint-staged ship with the scaffold and install on first `install` via the `prepare` script. If the project dir isn't the git root, use the subfolder form from conventions-core — don't ship a hook that silently never runs.
+- **`CLAUDE.md` is a strict subset, never a fork.** Its invariants are copied verbatim from ARCHITECTURE.md. If the two ever disagree, ARCHITECTURE.md wins and `CLAUDE.md` gets regenerated — a rule that exists only in `CLAUDE.md` is a bug.
 - **Record the project location.** The `.claude/workspace.json` `frontend` entry is mandatory and must merge with any `backend` entry — without it, later skills can't find a project scaffolded into `frontend-<name>/`.
 - **Don't scaffold features.** Real dashboards, auth screens, CRUD pages are out of scope here. Stop at infrastructure + shared components + a routing skeleton.
 - **Latest, verified.** Don't pin fragile versions from memory; install latest and confirm fast-moving APIs via context7 (step 2).

@@ -16,7 +16,7 @@ Designs repeat. A Figma file has the same header on five frames, the same avatar
 ## Prerequisites & project resolution
 
 1. **Resolve the project dir.** Read `.claude/workspace.json` (repo root) → `frontend` entry = `<proj>`. Else find a `frontend-*` folder (e.g. `frontend-shoply/`), a plain `frontend/`, or a `src/app/` with shadcn. If there's no scaffolded Next.js + shadcn project, stop and point at `nextjs-bootstrap` — this skill builds *into* an existing structure.
-2. **Read the contract files** (required, not optional): `ARCHITECTURE.md` (conventions) and `MODULE_REGISTRY.md` (the dedup ledger — every existing shared component, hook, util). You cannot dedup against a ledger you haven't read.
+2. **Read the contract files** (required, not optional): `ARCHITECTURE.md` (conventions) and `MODULE_REGISTRY.md` (the dedup ledger — every existing shared component, hook, util). You cannot dedup against a ledger you haven't read. If the registry has been **sharded** (its sections link to `<proj>/_registry/*.md` instead of listing rows), read the index plus only the shard(s) relevant to this work — see `../LAYOUT.md`.
 3. **Confirm Figma MCP + a node-specific URL.** Need `figma.com/design/<fileKey>/...?node-id=<n>`. No `node-id` → call `get_metadata` (fileKey only) to list pages, then drill in, or ask which frame.
 4. **Theme check (soft).** If the project still has stock shadcn theme/fonts and the user cares about fidelity, suggest running `font-theme-setup` first so colors/fonts map to tokens. Not a hard block — you can still build with semantic tokens.
 

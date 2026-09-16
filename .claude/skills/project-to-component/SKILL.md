@@ -18,7 +18,7 @@ This is the third member of the design-to-code family. `figma-to-component` read
 ## Prerequisites & resolution
 
 1. **Resolve the target project dir** for the `frontend` domain via `../LAYOUT.md` (read `.claude/workspace.json`; fall back per the protocol). Everything below — contract files, `_docs/`, `src/`, the registry — is relative to that dir (`<proj>`). No scaffolded Next.js + shadcn project → stop and point at `nextjs-bootstrap`.
-2. **Read the contract files** (required): `ARCHITECTURE.md` (conventions) and `MODULE_REGISTRY.md` (the dedup ledger). You cannot dedup against a ledger you haven't read.
+2. **Read the contract files** (required): `ARCHITECTURE.md` (conventions) and `MODULE_REGISTRY.md` (the dedup ledger). You cannot dedup against a ledger you haven't read. If the registry has been **sharded** (its sections link to `<proj>/_registry/*.md` instead of listing rows), read the index plus only the shard(s) relevant to this work — see `../LAYOUT.md`.
 3. **Resolve the source project.** Check `<proj>/_docs/design-source/` for a saved source profile from an earlier run — if one matches, reuse it and skip the profiling step. Otherwise the user must name a path (or a folder you can locate); confirm it before reading. The source is **read-only** — never edit, build, or install anything in it.
 4. **Determine the target's package manager** (lockfile) for shadcn/build commands.
 
@@ -32,7 +32,7 @@ Read `references/reading-source.md`. Detect the source's framework and styling s
 
 ### 2. Theme gate
 
-- **Target still has the stock shadcn theme** (default oklch values, default fonts) → **lift the source's theme first** so the port has real tokens to land on. Run the same process as `html-to-component` Phase 1, reusing its machinery directly — `../html-to-component/references/theme-tokens.md`, `../html-to-component/references/fonts.md`, and its scripts (`extract_tokens.py` works on the source's CSS files; `hex_to_oklch.py` converts every color). Produce light AND dark, wire fonts via `next/font`, and note the theming in the contract files.
+- **Target still has the stock shadcn theme** (default oklch values, default fonts) → **lift the source's theme first** so the port has real tokens to land on. Run the same process as `html-to-component` Phase 1, reusing its machinery directly — `../html-to-component/references/theme-tokens.md`, `../html-to-component/references/fonts.md`, and its scripts (`extract_tokens.py` works on the source's CSS files; `hex_to_oklch.py` converts every color). Produce light AND dark, wire fonts via `next/font`, and note the theming in the contract files, then **regenerate `CLAUDE.md`** from `ARCHITECTURE.md`'s `## Invariants` if the token rule changed — the two must never drift.
 - **Target is already themed** → do not touch the theme. Map source values onto the *existing* tokens (step 3). If the source uses a color/font the target theme genuinely lacks, add it as a token (never hardcode) and tell the user.
 
 ### 3. Build the translation map (once per source)

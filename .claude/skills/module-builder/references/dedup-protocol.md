@@ -34,6 +34,10 @@ That stays local and is not registered. Over-sharing is its own failure mode.
 3. **Search `MODULE_REGISTRY.md`** for that capability, among shared pieces and existing
    modules' public surfaces.
 
+   If it has been **sharded** — the sections link to `<proj>/_registry/*.md` instead of listing
+   rows — read the index, then only the shard(s) covering what you are about to create. Step 4's
+   grep is what makes that partial read safe.
+
 4. **Grep the codebase.** The registry can lag behind the code, so never trust it alone. Search by
    likely identifiers *and* by intent (`paginate`, `pageSize`, `cursor` for pagination;
    `jwtVerify`, `verifyToken` for token checks; `card`, `modal`, `dialog`, `empty`, `skeleton`,

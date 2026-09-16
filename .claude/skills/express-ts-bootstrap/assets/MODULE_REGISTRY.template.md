@@ -1,54 +1,61 @@
 # Module Registry — {{PROJECT_NAME}}
 
-> The dedup ledger. Before creating any util, middleware, helper, type, or model,
-> check here first, then grep `src/lib`/`src/middleware`/sibling modules. If a
-> suitable piece exists, **import it** — don't recreate it. When a genuinely new
-> reusable piece is created, add it here in the same change.
+The dedup ledger. **Check here FIRST** before creating any util, middleware, helper, type, constant,
+or model — then grep `src/lib` / `src/middleware` / sibling modules. If a suitable piece exists,
+**import it**; extend rather than fork. New reusable pieces are added here in the same change.
+
+> **This file is a ledger, not a rulebook.** One row per entry: name, path, ≤8-word purpose. The
+> *rules* about how these pieces are used live in `ARCHITECTURE.md` — never restate them here, or
+> both files grow and drift. Rows stay terse because this file is read on every build.
+>
+> **Sharding:** past ~250 lines, keep the section headings + row counts here and move the rows into
+> `_registry/<section>.md`, linking each heading to its shard. Skills then read this index plus only
+> the shard they need. See `.claude/skills/LAYOUT.md`.
 
 ## Shared library (`src/lib/`)
 
 | Name | Path | Purpose |
 | --- | --- | --- |
-| `AppError` + subclasses | `lib/app-error.ts` | One error model: `BadRequestError`, `UnauthorizedError`, `ForbiddenError`, `NotFoundError`, `ConflictError`, `UnprocessableError`. Throw these; never `throw new Error()`. |
-| `ok` / `created` / `noContent` | `lib/http.ts` | The only success-envelope helpers. Controllers respond through these. |
-| `normalizeDbError` | `lib/db-errors.ts` | Maps Mongoose `CastError`/`ValidationError`/duplicate-key (11000) and raw `ZodError` to `AppError`. Used by the error handler. **Reuse — do not re-catch DB/Zod errors in modules.** |
-| `logger` | `lib/logger.ts` | Root pino logger (pretty in dev, JSON in prod). |
-| `signAccessToken` / `signRefreshToken` / `verifyToken` | `lib/jwt.ts` | JOSE HS256 token helpers. Auth feature reuses these — no new token logic. |
+| `AppError` + subclasses | `lib/app-error.ts` | the one error model — BadRequest…Unprocessable |
+| `ok` / `created` / `noContent` | `lib/http.ts` | the only success-envelope helpers |
+| `normalizeDbError` | `lib/db-errors.ts` | Mongoose/Zod errors → `AppError`, in one place |
+| `logger` | `lib/logger.ts` | root pino logger (pretty dev, JSON prod) |
+| `signAccessToken` / `signRefreshToken` / `verifyToken` | `lib/jwt.ts` | JOSE HS256 token helpers |
 
 ## Shared middleware (`src/middleware/`)
 
 | Name | Path | Purpose |
 | --- | --- | --- |
-| `errorHandler` | `middleware/error-handler.ts` | The single error-envelope renderer (AppError-, Mongoose-, Zod-aware). |
-| `notFound` | `middleware/not-found.ts` | Terminal 404. |
-| `requestContext` | `middleware/request-context.ts` | Per-request id + child logger (`req.id`, `req.log`). |
-| `validate` | `middleware/validate.ts` | `validate({ body?, params?, query? })` Zod request validation factory. |
-| `protect` | `middleware/protect.ts` | JOSE auth guard; populates `req.user`. |
-| `requireRole` | `middleware/require-role.ts` | Role gate; use after `protect`. |
+| `errorHandler` | `middleware/error-handler.ts` | the single error-envelope renderer |
+| `notFound` | `middleware/not-found.ts` | terminal 404 |
+| `requestContext` | `middleware/request-context.ts` | per-request id + child logger |
+| `validate` | `middleware/validate.ts` | `validate({ body?, params?, query? })` Zod factory |
+| `protect` | `middleware/protect.ts` | JOSE auth guard; populates `req.user` |
+| `requireRole` | `middleware/require-role.ts` | role gate; use after `protect` |
 
 ## Config (`src/config/`)
 
 | Name | Path | Purpose |
 | --- | --- | --- |
-| `env` | `config/env.ts` | Zod-validated, typed environment. The only place that reads `process.env`. |
-| `connectDb` / `disconnectDb` | `config/db.ts` | Mongoose connection lifecycle. |
+| `env` | `config/env.ts` | Zod-validated typed env — the only `process.env` reader |
+| `connectDb` / `disconnectDb` | `config/db.ts` | Mongoose connection lifecycle |
 
-## Modules
+## Shared types / constants (`src/types/`, `src/constants/`)
+
+| Name | Path | Purpose |
+| --- | --- | --- |
+| `express.d.ts` | `types/express.d.ts` | `req.user` / `req.id` / `req.log` augmentation |
+
+## Modules (`src/modules/`)
 
 | Module | Path | Owns | Public service surface | Notes |
 | --- | --- | --- | --- | --- |
-| health | `modules/health/` | Liveness/readiness check | `getHealth()` | Canonical {{PARADIGM}} example. No data model. |
+| health | `modules/health/` | liveness/readiness check | `getHealth()` | canonical {{PARADIGM}} example; no model |
 
-> **Auth endpoints do not exist yet.** The JWT helpers and `protect`/`requireRole`
-> middleware are installed, but login/register/refresh routes are a feature for
-> module-planner + module-builder to design and wire onto these primitives.
+> **Auth endpoints do not exist yet** — the JWT helpers and `protect`/`requireRole` are installed,
+> but login/register/refresh are a feature for module-planner + module-builder to wire onto them.
 
 ## Decisions log
 
-- Paradigm: **{{PARADIGM}}**. Package manager: **{{PACKAGE_MANAGER}}**.
-- Structure: domain-module (`src/modules/<name>/`).
-- ESM with NodeNext `.js` import extensions.
-- Single response envelope; single error model; Mongoose/Zod errors normalized in `lib/db-errors.ts`.
-- Tokens: JOSE HS256, secret from env. Cookie-vs-bearer transport deferred to the auth feature.
-- `dist/` wiped before every `build`/`dev` via `rimraf`.
-- Planner docs live in `_docs/`; `ARCHITECTURE.md` and `MODULE_REGISTRY.md` at root.
+- Paradigm **{{PARADIGM}}** · PM **{{PACKAGE_MANAGER}}** · domain-module layout · ESM NodeNext `.js` extensions.
+- Tokens: JOSE HS256 from env. Cookie-vs-bearer transport deferred to the auth feature.
