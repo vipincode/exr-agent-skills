@@ -1,30 +1,31 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import * as z from "zod";
 
+import { parseData } from "@/lib/api/envelope";
 import { api } from "@/lib/axios";
 
-export interface CurrentUser {
-  id: string;
-  email: string;
-  role: string;
-  [key: string]: unknown;
-}
+/** The signed-in user, as returned by the backend's "who am I" endpoint. */
+export const currentUserSchema = z.object({
+  id: z.string(),
+  email: z.string(),
+  role: z.string(),
+});
+
+export type CurrentUser = z.infer<typeof currentUserSchema>;
 
 /**
  * Current-user accessor. Hits the BFF (`/api/auth/me`), which forwards to the
- * backend with the httpOnly cookie attached. This is a placeholder the
- * `module-builder` extends this (login/logout mutations, richer user shape).
- *
- * Point it at whatever "who am I" endpoint your backend exposes.
+ * backend with the httpOnly cookie attached, then unwraps + validates the
+ * envelope. A placeholder — `module-builder` extends it (login/logout mutations,
+ * richer user shape) once the auth module's contract exists. Point it at
+ * whatever "who am I" endpoint the backend exposes.
  */
 export function useAuth() {
   const query = useQuery({
     queryKey: ["auth", "me"],
-    queryFn: async () => {
-      const { data } = await api.get<{ user: CurrentUser }>("/auth/me");
-      return data.user;
-    },
+    queryFn: async () => parseData(currentUserSchema, (await api.get("/auth/me")).data),
     retry: false,
     staleTime: 5 * 60 * 1000,
   });

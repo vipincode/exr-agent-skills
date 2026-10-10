@@ -14,7 +14,7 @@ Writes tests for whatever you point at — backend or frontend. On demand, alway
 
 **Backend** — services (repository mocked, DTOs and error paths asserted), routes/integration (the real app through the project's `test/helpers.ts`, in-memory Mongo, 400/401/403/404/409 and pagination asserted), controllers only when they hold logic. In a bootstrapped project, tests go in the module's own `__tests__/` folder (`*.test.ts` unit, `*.int.test.ts` integration).
 
-**Frontend** — presentational components, query hooks (real provider, mocked network, unwrapped and validated data), bound screens (loading → data, empty, error, and envelope drift caught), forms (validation messages, the mutation called with the validated body, role-gated controls), and schemas.
+**Frontend** — in a bootstrapped frontend it uses the shipped setup (`test/msw.ts` envelope builders, `test/render.tsx` providers, tests in `__tests__/`). Covers presentational components, query hooks (real provider, mocked network, unwrapped and validated data), bound screens (loading → data, empty, error, and envelope drift caught), forms (validation messages, the mutation called with the validated body, role-gated controls), and schemas.
 
 ## Example prompts
 

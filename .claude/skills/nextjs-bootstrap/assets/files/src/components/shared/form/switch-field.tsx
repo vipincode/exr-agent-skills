@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 import { type BaseFieldProps } from "./field-base";
 
-export interface SwitchFieldProps<T extends FieldValues> extends BaseFieldProps<T> {}
+export type SwitchFieldProps<T extends FieldValues> = BaseFieldProps<T>;
 
 /** Boolean on/off toggle (settings), bound to React Hook Form. */
 export function SwitchField<T extends FieldValues>({

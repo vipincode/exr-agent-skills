@@ -181,6 +181,8 @@ Vitest, two projects (`vitest.config.ts`):
 
 `config/env.ts` parses `process.env` through a Zod schema at startup and exits the process on failure (fail fast, never boot half-configured). Everything downstream imports the typed `env` object — **no raw `process.env` access anywhere else** in the codebase. New env vars are added to the schema and to `.env.example` in the same change.
 
+`TRUST_PROXY` (number of proxies in front of the API) feeds `app.set("trust proxy", …)`. Behind the Next.js BFF (or one load balancer) it must be `1`, otherwise every user reaches the rate limiter as the BFF's single IP and shares one bucket; too high lets clients spoof their IP via `X-Forwarded-For`. `.env.example` ships `1` for the toolkit's BFF setup.
+
 **`env.ts` validates — it does not load.** Nothing in the codebase reads `.env` off disk; that is the job of Node's native `--env-file=.env` flag, which the `dev` and `start` scripts pass (no `dotenv` dependency). A scaffold whose scripts omit this flag boots with `MONGODB_URI`/`JWT_SECRET` undefined and dies at the Zod check even though the user's `.env` is correct — this exact failure has happened, so treat the flag as part of the contract. In Docker/production the platform injects real env vars and the `Dockerfile` CMD runs `node dist/server.js` directly, no `.env` involved.
 
 ## Logging

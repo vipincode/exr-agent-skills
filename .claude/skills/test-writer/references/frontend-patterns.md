@@ -1,5 +1,11 @@
 # Test patterns (frontend)
 
+**In a nextjs-bootstrap project** the setup already exists — use it, don't rebuild it:
+- tests go in `src/**/__tests__/*.test.ts(x)`; `test/setup.ts` wires jest-dom, cleanup, and MSW (unmocked requests **fail** — MSW 3's `onUnhandledFrame: "error"`);
+- respond with `ok(data)`, `okPage(items, meta)`, `fail(status, code, message)`, `validationFailed({ field: "msg" })` from `test/msw.ts` — never a hand-written envelope;
+- render with `renderWithProviders(ui)` / `renderHookWithProviders(hook)` from `test/render.tsx` — never a local QueryClient wrapper.
+The shipped examples (`src/lib/api/__tests__`, `src/hooks/__tests__/use-auth.test.tsx`, `src/components/shared/form/__tests__/input-field.test.tsx`) are the canonical patterns. The generic examples below show the same ideas for projects without that setup.
+
 Patterns per layer. Examples use **Vitest + React Testing Library**; translate to Jest if that's what's installed (`vi` → `jest`, same structure). Match the project's import-alias and file-naming convention. Query the DOM the way a user perceives it (`getByRole`, `getByText`, `findBy*` for async) — not by test ids or internal class names — so tests survive refactors.
 
 ## Presentational component — render + assert props/state
@@ -46,17 +52,24 @@ function wrapper() {
 vi.mock("@/lib/axios", () => ({ api: { get: vi.fn() } }));
 import { api } from "@/lib/axios";
 
+// Mock bodies use the backend's REAL envelope (express-ts-bootstrap): lists are
+// { success, data: [...], meta: { page, limit, total, totalPages } } — no `message` field.
 it("returns unwrapped, validated products", async () => {
   vi.mocked(api.get).mockResolvedValue({
-    data: { success: true, data: { items: [{ id: "1", name: "Aero Mug", slug: "aero", price: 2400, currency: "USD", category: "drinkware", inStock: true }], total: 1, page: 1, limit: 20 }, message: "ok" },
+    data: {
+      success: true,
+      data: [{ id: "1", name: "Aero Mug", priceCents: 2400, sku: "MUG-1", inStock: true }],
+      meta: { page: 1, limit: 20, total: 1, totalPages: 1 },
+    },
   });
-  const { result } = renderHook(() => useProductsQuery(), { wrapper: wrapper() });
+  const { result } = renderHook(() => useProductsQuery({ page: 1, limit: 20 }), { wrapper: wrapper() });
   await waitFor(() => expect(result.current.isSuccess).toBe(true));
-  expect(result.current.data?.items[0].name).toBe("Aero Mug");
+  expect(result.current.data?.items[0].name).toBe("Aero Mug"); // parsePaginated → { items, meta }
+  expect(result.current.data?.meta.total).toBe(1);
 });
 
 it("surfaces an error when the envelope drifts", async () => {
-  vi.mocked(api.get).mockResolvedValue({ data: { success: true, data: { items: [{ id: 1 }] } } }); // bad shape → Zod throws
+  vi.mocked(api.get).mockResolvedValue({ data: { success: true, data: [{ id: 1 }] } }); // bad item + no meta → Zod throws
   const { result } = renderHook(() => useProductsQuery(), { wrapper: wrapper() });
   await waitFor(() => expect(result.current.isError).toBe(true));
 });
@@ -114,6 +127,20 @@ For auth gating, mock `@/hooks/use-auth` to return a non-admin and assert the ad
 import { productSchema } from "./products.schema";
 it("accepts a valid product", () => expect(() => productSchema.parse(valid)).not.toThrow());
 it("rejects a non-integer price", () => expect(() => productSchema.parse({ ...valid, price: 24.5 })).toThrow());
+```
+
+## Server validation errors on a form
+
+The backend answers a bad submit with `400 { success: false, error: { code: "BAD_REQUEST", message, details } }`, where `details` is a `z.treeifyError` tree. Mock that exact body and assert the message lands on the field (the form uses `applyServerErrors` from `@/lib/api/errors`):
+
+```tsx
+server.use(http.post("/api/products", () => HttpResponse.json(
+  { success: false, error: { code: "BAD_REQUEST", message: "Validation failed",
+    details: { errors: [], properties: { sku: { errors: ["SKU already taken"] } } } } },
+  { status: 400 },
+)));
+await userEvent.click(screen.getByRole("button", { name: /save/i }));
+expect(await screen.findByText("SKU already taken")).toBeInTheDocument();
 ```
 
 ## What to assert (envelope- & state-aware)

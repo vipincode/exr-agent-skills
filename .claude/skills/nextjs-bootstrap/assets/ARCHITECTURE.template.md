@@ -13,20 +13,24 @@
 > and nobody has read this file. Change a rule **here**, then regenerate `CLAUDE.md` — never
 > edit the two out of sync. Everything below this section is the full detail behind these rules.
 
-Non-negotiable in **every** change, however small:
+Non-negotiable in **every** change, however small. Rules marked *(lint)* are enforced by `eslint.boundaries.mjs` — a lint error there means the code is wrong, not the rule.
 
-1. **Colors come from theme tokens only** — `bg-primary`, `text-muted-foreground`, `border`. Never a raw hex/oklch/rgb value in a component. A recurring shadow/gradient/border becomes a token in `globals.css` once, then a utility — not a repeated arbitrary value.
-2. **Icons only from `@/components/shared/icons`** — never imported from `lucide-react`/`react-icons` at a call site, never a pasted inline `<svg>`.
-3. **Form fields only via the shared `*Field` components** from `components/shared/form` — never bare `useController` + raw input, never hand-rolled error text.
-4. **Never fork or hand-duplicate a `components/ui/` primitive.** Need one? `shadcn add` it. Theming one = re-valuing its `cva` variants **in place**.
-5. **Component placement by dependency** — depends on one feature's domain → `features/<name>/components`; domain-agnostic → `components/shared`. A second feature needing it means **move + register**, never copy.
-6. **A feature never imports from another feature.** Shared needs go global by kind (`components/shared`, `lib`, `hooks`, `services`, `types`, `constants`) and get registered.
-7. **Check `MODULE_REGISTRY.md` before creating** any component, hook, util, type, constant, or schema — then grep. If it exists, import it. Extend rather than fork.
-8. **Types come from Zod schemas via `z.infer`** — no parallel hand-written interfaces that can drift.
-9. **Server state through TanStack Query**, hooks in the feature's `api/`, array query keys namespaced by feature. Never `useEffect` + `useState` fetching.
-10. **The browser calls same-origin `/api/...` only** — through the shared axios instance, to a BFF route handler. Never the backend's absolute URL, never the backend URL in client code.
-11. **Env only through `lib/env.ts`** (T3 Env). No raw `process.env` in app code.
-12. **No inline magic literals or ad-hoc inline types** — single-feature ones live in that feature's `types/`/`constants/`; shared ones go global and get registered.
+1. **Feature work stays in the feature.** Building or changing feature `<x>` edits `src/features/<x>/**` and the thin `app/` route that renders its template, plus the `MODULE_REGISTRY.md` rows. Touch `components/shared`, `lib`, `hooks`, `services`, `types`, or `constants` only when the dedup check says a shared piece must be created or extended — and say so in the hand-off. Never edit another feature's files.
+2. **Colors come from theme tokens only** — `bg-primary`, `text-muted-foreground`, `border`. Never a raw hex/oklch/rgb value in a component. A recurring shadow/gradient/border becomes a token in `globals.css` once, then a utility — not a repeated arbitrary value.
+3. **Icons only from `@/components/shared/icons`** *(lint)* — never imported from `lucide-react`/`react-icons` at a call site, never a pasted inline `<svg>`. Need a new icon? Add it to the registry's export list.
+4. **Form fields only via the shared `*Field` components** from `components/shared/form` — never bare `useController` + raw input, never hand-rolled error text.
+5. **Never fork or hand-duplicate a `components/ui/` primitive.** Need one? `shadcn add` it. Theming one = re-valuing its `cva` variants **in place**.
+6. **Component placement by dependency** — depends on one feature's domain → `features/<name>/components`; domain-agnostic → `components/shared`. A second feature needing it means **move + register**, never copy.
+7. **A feature never imports from another feature** *(lint)*, and code outside a feature imports it only through its barrel `@/features/<name>`. Shared layers (`components`, `lib`, `hooks`, `services`, `types`, `constants`) never import a feature or `app/`. Shared needs go global by kind and get registered.
+8. **Find before you create — map first.** Read `codemap/INDEX.md` → the relevant shard (generated list of every export) and `MODULE_REGISTRY.md` before creating any component, hook, util, type, constant, or schema; grep only to confirm; open only files you will change. If it exists, import it. Extend rather than fork.
+9. **Types come from Zod schemas via `z.infer`** — no parallel hand-written interfaces that can drift.
+10. **Server state through TanStack Query**, hooks in the feature's `api/`, array query keys namespaced by feature. Never `useEffect` + `useState` fetching.
+11. **The browser calls same-origin `/api/...` only** — through the shared `api` instance *(lint: no other axios import)*, to a BFF route handler. Never the backend's absolute URL, never the backend URL in client code.
+12. **Env only through `lib/env.ts`** (T3 Env) *(lint)*. No raw `process.env` in app code (`process.env.NODE_ENV` is the one exception — Next.js inlines it).
+13. **No inline magic literals or ad-hoc inline types** — single-feature ones live in that feature's `types/`/`constants/`; shared ones go global and get registered.
+14. **Responses parse through `lib/api/envelope.ts`** — `parseData(schema, res.data)` / `parsePaginated(itemSchema, res.data)` in the feature's request fns; lists are `{ items, meta }`. Errors surface through `toApiError`; form submissions put server validation errors on fields with `applyServerErrors`. Never read `res.data.data` raw or hand-parse error bodies.
+15. **Comments feed the code map** — a file-purpose comment is followed by a blank line; every reusable export gets a one-line `/** … */` directly above it. Never hand-edit `codemap/`.
+16. **Tests live in `__tests__/` next to the code** — Vitest + RTL, network mocked with MSW using the builders in `test/msw.ts` (the backend's exact envelope); render through `test/render.tsx`. Never hand-write an envelope in a test or let a request reach the network.
 
 New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
 
@@ -41,8 +45,10 @@ New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
 - **T3 Env** (`@t3-oss/env-nextjs`) — the single env definition in `src/lib/env.ts` (`createEnv`); enforces the server/client split. No raw `process.env` in app code.
 - **TanStack Query v5** — server-state; one `QueryClient`, hooks per feature/service.
 - **React Hook Form 7** + Zod resolver — all forms, always through the shared `*Field` components.
+- **ESLint** (Next config) + `eslint.boundaries.mjs` — architecture-boundary rules, core ESLint only.
+- **Node** {{NODE_MAJOR}} (`.nvmrc`). Next.js ships version-matched docs in `node_modules/next/dist/docs/` (pointed to by the Next-managed `AGENTS.md`) — read them for Next APIs before relying on memory.
 
-Install **latest**; confirm fast-moving APIs via context7 before generating new code.
+Install **latest** — always with an explicit `@latest` (`{{PM}} add <pkg>@latest`): a bare package name can silently reuse an older version that's already in the tree as someone else's dependency (this put Zod 3 into a scaffold once). Confirm fast-moving APIs via context7 before generating new code.
 
 ## Project layout
 
@@ -60,7 +66,7 @@ src/
       overlay/         Modal (Dialog wrapper, inner content only); future Drawer/Sheet/ConfirmModal.
       layout/          Wrapper, Box, Container, Section, Stack (future skills).
       data-display/    Card, Chip, Tag, Badge wrappers (future skills).
-      icons.tsx        the single icon registry (created on first icon need).
+      icons.tsx        the single icon registry (shipped; add icons to its export list).
   features/<name>/     a self-contained module — fixed anatomy below.
     types/             domain types (or types.ts).
     constants/         domain constants/enums/options (or constants.ts).
@@ -72,10 +78,16 @@ src/
     index.ts           barrel for the module's public surface.
   hooks/               cross-feature hooks (e.g. use-auth).
   lib/                 axios, query-client, env, auth/, cn — cross-cutting singletons/utils.
+    api/envelope.ts    parseData / parsePaginated / pageMetaSchema — the backend envelope, once.
+    api/errors.ts      toApiError / fieldErrors / applyServerErrors — one error path for UI + forms.
+    bff.ts             server-only: backendUrl / upstreamHeaders / bffError for the BFF handlers.
   services/            cross-feature API/query-hook modules (feature-local ones live in features/<name>/api).
   types/               TS types shared by 2+ features.
   constants/           constants/enums/option lists shared by 2+ features (created on first need).
   proxy.ts             role-based route protection + redirects (Next 16+; `middleware.ts` on ≤15).
+scripts/codemap.ts     generates codemap/
+codemap/               GENERATED: INDEX.md (routes, feature surfaces) + one shard per area/feature
+eslint.boundaries.mjs  the architecture-boundary lint rules (spread into eslint.config.mjs)
 ```
 
 A feature folder owns its files and **never cross-imports another feature**; anything used by 2+
@@ -83,6 +95,31 @@ features goes global by kind — components → `components/shared`, utils/hooks
 types → `types/`, constants/enums → `constants/` — and **MUST be listed in `MODULE_REGISTRY.md`**.
 Single-feature types/constants stay in the feature's `types/`/`constants/` files, never as inline
 magic literals or ad-hoc inline types.
+
+## Code navigation (read before searching)
+
+`codemap/` is generated from the code by `scripts/codemap.ts` and committed by the pre-commit hook
+(`{{PM}} run codemap` regenerates, `{{PM}} run codemap:check` fails if stale). `INDEX.md` lists every
+route (`/login → src/app/(auth)/login/page.tsx`), every feature's public surface, and the shards:
+`components-shared.md`, `components-ui.md` (primitives, one line each), `lib.md`, `hooks.md`,
+`features/<name>.md`, … Every task starts at `INDEX.md` → one shard → only the files being changed;
+grep confirms, it doesn't discover. Full protocol (incl. optional GitNexus): `.claude/skills/CODE-NAV.md`.
+
+## Boundaries (lint-enforced)
+
+`eslint.boundaries.mjs` (core `no-restricted-imports` / `no-restricted-syntax`, spread into
+`eslint.config.mjs`; the pre-commit hook runs it) makes these errors:
+
+- a feature importing another feature (alias or a relative path out of its folder);
+- importing a feature's internals instead of its barrel `@/features/<name>`;
+- `components`/`lib`/`hooks`/`services`/`types`/`constants` importing a feature or `app/`;
+- `components/ui` importing `components/shared`;
+- `lucide-react`/`react-icons` anywhere but `components/shared/icons.tsx` (and shadcn's own `ui/`);
+- `axios` anywhere but `lib/axios.ts` and `lib/api/`;
+- `process.env.X` anywhere but `lib/env.ts` (`NODE_ENV` excepted).
+
+Feature folders are read when lint runs, so a new feature is covered automatically. Fix violations
+by moving code — never by weakening the rules.
 
 ## Component placement (the strict rule that prevents duplication)
 
@@ -95,7 +132,7 @@ One home per component, decided by **what it depends on**:
 The bootstrap ships `overlay/Modal` as the canonical shared example (a Dialog wrapper callers fill
 with inner content only). Full rules: see `references/module-structure.md` in the bootstrap skill.
 
-Before creating any component/util/hook/type/constant: **check `MODULE_REGISTRY.md` first**, then grep `components/shared`, `lib`, `hooks`, `services`, `types`, `constants`. If a suitable piece exists, import it — never recreate.
+Before creating any component/util/hook/type/constant: **read `codemap/INDEX.md` → the relevant shard and `MODULE_REGISTRY.md` first**, then grep to confirm. If a suitable piece exists, import it — never recreate.
 
 ## Forms — React Hook Form + Zod, always via shared fields
 
@@ -126,13 +163,31 @@ Before creating any component/util/hook/type/constant: **check `MODULE_REGISTRY.
 ## Data fetching — TanStack Query through the BFF
 
 - Server-state via TanStack Query v5. Construct the client once in `lib/query-client.ts`; provide it in `app/providers.tsx`.
-- Hooks (`useXQuery`, `useXMutation`) live in `features/<name>/api` or `services/`. Query keys are arrays, namespaced by feature.
-- All requests use the `axios` instance (`lib/axios.ts`) → same-origin `/api` → BFF Route Handler → backend.
+- Hooks (`useXQuery`, `useXMutation`) live in `features/<name>/hooks` (request fns in `features/<name>/api`) or `services/`. Query keys are arrays, namespaced by feature.
+- All requests use the `api` instance (`lib/axios.ts`) → same-origin `/api` → BFF Route Handler → backend.
+- Request fns unwrap + validate with `lib/api/envelope.ts`: `parseData(productSchema, res.data)`, `parsePaginated(productSchema, res.data)` → `{ items, meta }`. Drift throws → the query's error state, never garbage on screen.
+- Errors: `toApiError(error)` gives `{ status, code, message, details }` for UI messages; in a form's `onError`, `applyServerErrors(error, form.setError)` puts the backend's field errors on the matching `*Field`s (falls back to a form-level message when it returns `false`).
 
 ## Backend connection — BFF proxy (never direct)
 
-- The browser only ever calls **same-origin `/api/...`**. Route Handlers under `app/api/` forward to the backend (`BACKEND_URL`, server-only env).
+- The browser only ever calls **same-origin `/api/...`**. Route Handlers under `app/api/` forward to the backend (`BACKEND_URL`, server-only env), using `lib/bff.ts` (`backendUrl`, `upstreamHeaders`, `bffError`).
 - This hides the backend URL, keeps tokens out of JS, and gives one place to attach auth.
+
+## Testing
+
+- **Stack:** Vitest (jsdom) + React Testing Library + `user-event` + MSW, configured in `vitest.config.mts` (no Vite plugins — `resolve.tsconfigPaths` resolves `@/`, Oxc compiles JSX).
+- **Layout:** `src/**/__tests__/*.test.ts(x)`; shared helpers in `test/` — `setup.ts` (jest-dom, cleanup, MSW lifecycle; unmocked requests fail), `msw.ts` (`server`, `ok`, `okPage`, `fail`, `validationFailed`), `render.tsx` (`renderWithProviders`, `renderHookWithProviders`).
+- **Approach:** mock the network, not the code — `server.use(http.get("/api/products", () => okPage(items, meta)))` exercises the real `api` → envelope helpers → Zod chain. Assert loading/empty/error states, contract drift erroring, and `validationFailed(...)` messages landing on the right `*Field`.
+- **Run:** `{{PM}} test` · `{{PM}} run test:watch` · `{{PM}} run test:coverage`. Async Server Components → E2E.
+
+## Backend contract (what the BFF and every feature assume)
+
+Matches an `express-ts-bootstrap` backend (an onboarded backend may differ — the plan's observed contract wins):
+
+- **Base URL:** `BACKEND_URL` includes the API prefix — `http://localhost:4000/api/v1`. The browser's `/api/products` becomes `BACKEND_URL/products`.
+- **Success:** `{ "success": true, "data": … }`; paginated lists add `"meta": { "page", "limit", "total", "totalPages" }` with `data` as the array.
+- **Error:** `{ "success": false, "error": { "code", "message", "details"? } }`. A 400's `details` is `z.treeifyError` output (`properties.<field>.errors`); a 422's is `{ path: message }` — `fieldErrors()` reads both. BFF-originated failures (`BAD_GATEWAY`, `CONTRACT`, `UNAUTHORIZED`) use the same shape.
+- **Tracing & rate limits:** the BFF forwards `x-forwarded-for` and an `x-request-id` (generated if absent). Run the backend with `TRUST_PROXY=1` behind this BFF, or every user shares one rate-limit bucket.
 
 ## Auth & routing
 
@@ -155,11 +210,12 @@ Before creating any component/util/hook/type/constant: **check `MODULE_REGISTRY.
 
 ## Build & scripts
 
-- Package manager: **{{PACKAGE_MANAGER}}**. Common scripts: `{{PM}} run dev`, `{{PM}} run build`, `{{PM}} run start`, `{{PM}} run lint`.
-- `build` must pass typecheck + lint. CI runs `build`.
+- Package manager: **{{PACKAGE_MANAGER}}**. Scripts: `{{PM}} run dev`, `{{PM}} run build`, `{{PM}} run start`, `{{PM}} run lint`, `{{PM}} run typecheck`, `{{PM}} run codemap` / `codemap:check`.
+- `build` must pass typecheck + lint. CI runs `build` and `codemap:check`.
 - Git hooks: husky (v9) + lint-staged, installed via the `prepare` script on
   `{{PM}} install`. `.husky/pre-commit` runs `lint-staged` → `eslint --fix` on
-  staged `*.ts`/`*.tsx`/`*.js`/`*.jsx` (config in `package.json` under `"lint-staged"`).
+  staged `*.ts`/`*.tsx`/`*.js`/`*.jsx`/`*.mjs` (so boundary violations can't be committed), then
+  regenerates and stages `codemap/`.
 
 ## Feature workflow
 

@@ -37,6 +37,12 @@ For each candidate component (e.g. "ProfileAvatar", "Header", "PricingCard"):
 
 ## The search order (do all three, in order)
 
+0. **`codemap/` (when the project has one)** — read `codemap/INDEX.md`, then `components-shared.md`
+   (every shared component with its props signature and purpose), `components-ui.md` (installed
+   primitives, one line each) and the relevant `features/<name>.md`. Generated from the code, so it
+   never lags — it answers "does a Header/Card/Avatar already exist?" without opening files. See
+   `../../CODE-NAV.md`. Icons: the bootstrap ships `components/shared/icons.tsx` — add new icons to
+   its export list (lint rejects icon-library imports anywhere else).
 1. **`MODULE_REGISTRY.md`** — the curated ledger. Scan the shared sections (form, typography,
    overlay, layout, data-display, and any the builders added) and the features table. This is
    fastest and authoritative. If it has been **sharded** — the sections link to

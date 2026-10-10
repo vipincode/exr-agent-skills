@@ -30,7 +30,7 @@ Non-negotiable in **every** change, however small. Rules marked *(lint)* are enf
 15. **No `console.*`** *(lint)* — `req.log` in requests, the root `logger` elsewhere.
 16. **Tests live in the module's `__tests__/`** — `*.test.ts` unit (repository mocked), `*.int.test.ts` integration (`test/helpers.ts` + in-memory Mongo).
 17. **Comments feed the code map** — a file-purpose comment is followed by a blank line; every reusable export gets a one-line `/** … */` directly above it. Never hand-edit `codemap/`.
-18. **Dependencies: latest, verified.** Add with `{{PM}} add <pkg>` — never hand-write a version. Check the library's current docs (context7) before using its API.
+18. **Dependencies: latest, verified.** Add with `{{PM}} add <pkg>@latest` — never hand-write a version, never a bare name (it can reuse an older transitive version). Check the library's current docs (context7) before using its API.
 
 New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
 
@@ -174,7 +174,8 @@ them onto these primitives. Never write new token logic.
 
 `config/env.ts` validates `process.env` through Zod at startup and exits on failure. **No raw
 `process.env` access anywhere else.** New vars go in the schema and `.env.example` in the same
-change. `.env` is loaded by Node's native `--env-file=.env` in `dev`/`start` (no `dotenv`);
+change. `TRUST_PROXY` = number of proxies in front of the API (`1` behind the Next.js BFF) so the
+rate limiter sees real client IPs. `.env` is loaded by Node's native `--env-file=.env` in `dev`/`start` (no `dotenv`);
 tests get values from `vitest.config.ts → test.env`; containers get real env vars.
 
 ## Build & scripts

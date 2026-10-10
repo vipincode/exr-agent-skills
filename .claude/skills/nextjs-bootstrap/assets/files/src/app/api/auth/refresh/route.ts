@@ -1,9 +1,11 @@
 import { cookies } from "next/headers";
-import { NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
+import * as z from "zod";
 
-import { env } from "@/lib/env";
-import { setSession, clearSession } from "@/lib/auth/session";
+import { envelopeSchema } from "@/lib/api/envelope";
+import { clearSession, setSession } from "@/lib/auth/session";
 import { REFRESH_COOKIE } from "@/lib/auth/tokens";
+import { backendUrl, bffError, upstreamHeaders } from "@/lib/bff";
 
 /**
  * Refresh handler (default rotation ON). Called by the axios interceptor on a
@@ -14,36 +16,37 @@ import { REFRESH_COOKIE } from "@/lib/auth/tokens";
  * If you chose "no refresh rotation" at scaffold time, delete this route and the
  * interceptor block in lib/axios.ts.
  */
-export async function POST() {
+
+// The backend's refresh `data`. Adjust to the auth module's actual contract.
+const refreshResponseSchema = envelopeSchema(
+  z.object({ accessToken: z.string().min(1), refreshToken: z.string().min(1).optional() }),
+);
+
+export async function POST(request: NextRequest) {
   const store = await cookies();
   const refreshToken = store.get(REFRESH_COOKIE)?.value;
+  if (!refreshToken) return bffError(401, "UNAUTHORIZED", "No refresh token.");
 
-  if (!refreshToken) {
-    return NextResponse.json({ error: "No refresh token" }, { status: 401 });
+  let backendResponse: Response;
+  try {
+    const headers = upstreamHeaders(request);
+    headers.set("content-type", "application/json");
+    backendResponse = await fetch(backendUrl("auth/refresh"), {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ refreshToken }),
+    });
+  } catch {
+    return bffError(502, "BAD_GATEWAY", "The API is unreachable.");
   }
 
-  const backendResponse = await fetch(`${env.BACKEND_URL}/auth/refresh`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify({ refreshToken }),
-  });
-
-  const data = await backendResponse.json().catch(() => ({}));
-
-  if (!backendResponse.ok) {
+  const parsed = refreshResponseSchema.safeParse(await backendResponse.json().catch(() => null));
+  if (!backendResponse.ok || !parsed.success) {
     await clearSession();
-    return NextResponse.json(data, { status: 401 });
+    return bffError(401, "UNAUTHORIZED", "Session expired. Please sign in again.");
   }
 
-  const accessToken: string | undefined = data.accessToken ?? data.data?.accessToken;
-  const newRefresh: string | undefined =
-    data.refreshToken ?? data.data?.refreshToken ?? refreshToken;
-
-  if (!accessToken) {
-    await clearSession();
-    return NextResponse.json({ error: "No access token in refresh" }, { status: 401 });
-  }
-
-  await setSession({ accessToken, refreshToken: newRefresh });
-  return NextResponse.json({ ok: true });
+  const { accessToken, refreshToken: rotated } = parsed.data.data;
+  await setSession({ accessToken, refreshToken: rotated ?? refreshToken });
+  return NextResponse.json({ success: true, data: { refreshed: true } });
 }

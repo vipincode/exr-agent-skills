@@ -78,7 +78,9 @@ Skip if the slice says `n/a`. Create the files the slice lists under `src/featur
 
 - **Bind to the slice's contract section**, not to a re-reading of the backend. That section is why the plan is unified — the shape was settled once.
 - **Client talks only to the app's own origin** when the project uses a BFF proxy: request fns call the shared HTTP instance → `/api/...` → the proxy → backend. Never call the backend's absolute URL from the browser, never read the backend URL in client code. Add a dedicated route handler only when the slice says the catch-all proxy is insufficient.
-- **Unwrap the envelope, then validate.** The request fn pulls `data` out of the envelope and parses it with the schema, so contract drift fails loudly instead of rendering garbage. Never return raw `any`.
+- **Stay in the feature.** Edit `src/features/<name>/**` and the thin route that renders its template; shared folders only when the dedup gate says so (named in the hand-off); another feature only if the slice lists it. The frontend edit-scope table in `references/frontend-anatomy.md` is the checklist, and `eslint.boundaries.mjs` enforces the import side.
+- **Unwrap the envelope, then validate — with the shared helpers.** Request fns use `parseData(schema, res.data)` / `parsePaginated(itemSchema, res.data)` from `lib/api/envelope.ts` (lists come back as `{ items, meta }`), so contract drift fails loudly instead of rendering garbage. Never re-declare the envelope per feature, never return raw `any`.
+- **Errors through `lib/api/errors.ts`.** UI text from `toApiError(error).message`; form submissions call `applyServerErrors(error, form.setError)` so the backend's field errors land on the right `*Field`.
 - **Types from the schemas** via inference — no parallel interfaces.
 - **Server state through the project's query library.** Hooks live in the module; keys are namespaced by feature; mutations invalidate the keys the slice names (or do the optimistic update it specifies). Don't fetch with `useEffect` + `useState`.
 - **Forms through the shared field components** and the project's resolver — no raw inputs wired by hand, no hand-rolled error text.

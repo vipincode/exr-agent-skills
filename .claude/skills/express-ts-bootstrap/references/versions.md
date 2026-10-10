@@ -8,16 +8,20 @@ major-version gotchas that the shipped code already accounts for.
 ## Install (step 4 of the workflow)
 
 Run from the project dir. Shown for pnpm; npm uses `npm i` / `npm i -D`, bun uses `bun add` /
-`bun add -d`.
+`bun add -d`. **Every package gets an explicit `@latest`** — a bare name can silently reuse an older
+version already in the tree as a transitive dependency (this put Zod 3 into a Next.js scaffold). After
+installing, check `package.json` for the expected majors.
 
 ```bash
 # runtime
-pnpm add express mongoose jose zod pino pino-http helmet cors compression express-rate-limit
+pnpm add express@latest mongoose@latest jose@latest zod@latest pino@latest pino-http@latest \
+  helmet@latest cors@latest compression@latest express-rate-limit@latest
 
 # tooling + tests (typescript is installed separately — see the cap below)
-pnpm add -D tsx @types/node@<node-major> @types/express @types/cors @types/compression \
-  eslint @eslint/js typescript-eslint globals husky lint-staged rimraf pino-pretty \
-  vitest @vitest/coverage-v8 supertest @types/supertest mongodb-memory-server
+pnpm add -D tsx@latest @types/node@<node-major> @types/express@latest @types/cors@latest \
+  @types/compression@latest eslint@latest @eslint/js@latest typescript-eslint@latest globals@latest \
+  husky@latest lint-staged@latest rimraf@latest pino-pretty@latest vitest@latest \
+  @vitest/coverage-v8@latest supertest@latest @types/supertest@latest mongodb-memory-server@latest
 ```
 
 `<node-major>` = the Node major the project targets (`.nvmrc`, default 24) — `@types/node` must
@@ -75,7 +79,7 @@ the pre-commit hook) will break.
 ## Adding a dependency later (module-builder, ad-hoc edits)
 
 1. Check `MODULE_REGISTRY.md` / the code — the capability may already exist.
-2. Install with the PM, no version: `pnpm add <pkg>`.
+2. Install with the PM as `@latest` (never a hand-written version): `pnpm add <pkg>@latest`.
 3. Read the current docs (context7) for the installed major before writing code against it.
 4. If it's a cross-cutting choice (a queue, a cache, a mailer), record it in `ARCHITECTURE.md` →
    Stack and wrap it once in `src/lib/` (registered) so modules import the wrapper, not the

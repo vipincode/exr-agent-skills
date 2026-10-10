@@ -37,13 +37,18 @@ carries its source.
 
 Success envelope:
 ```json
-{ "success": true, "data": { "user": { "id": "…", "email": "…", "name": "…", "role": "user" }, "token": "…" }, "message": "Registered" }
+{ "success": true, "data": { "user": { "id": "…", "email": "…", "name": "…", "role": "user" }, "accessToken": "…", "refreshToken": "…" } }
 ```
 
 Error envelope:
 ```json
 { "success": false, "error": { "code": "CONFLICT", "message": "Email already registered" } }
 ```
+
+(Shapes above follow an express-ts-bootstrap backend: no `message` on success; paginated lists are
+`"data": [...]` plus `"meta": { "page", "limit", "total", "totalPages" }`; validation errors carry
+`"details"`. Paths are relative to the API prefix — `/auth/register` is served at `/api/v1/auth/register`,
+and the browser calls it through the BFF as `/api/auth/register`.)
 
 Source: **declared here** — or — **observed from `backend-shoply/src/modules/auth/auth.controller.ts:42`**
 

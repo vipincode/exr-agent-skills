@@ -1,7 +1,13 @@
 # Module Registry — {{PROJECT_NAME}}
 
-The dedup ledger. **Check here FIRST** before creating any component, hook, util, type, constant, or
-schema. If a suitable piece exists, import it — never recreate; extend rather than fork.
+The curated dedup ledger. Before creating any component, hook, util, type, constant, or schema, read
+`codemap/INDEX.md` → the relevant shard (generated, exhaustive) **and** this file (intent, ownership,
+decisions) — grep only to confirm. If a suitable piece exists, import it — never recreate; extend
+rather than fork.
+
+> **Registry vs code map.** `codemap/` lists every export, generated from the code. This registry is
+> the short curated layer on top: what each shared piece is *for*, which feature owns what, and the
+> decisions log. Don't copy the map in here.
 
 > **This file is a ledger, not a rulebook.** One row per entry: name, path, ≤8-word purpose. The
 > *rules* about how these pieces are used live in `ARCHITECTURE.md` — never restate them here, or
@@ -55,6 +61,12 @@ Barrel: `components/shared/typography/index.ts`.
 
 Barrel: `components/shared/overlay/index.ts`.
 
+## Icon registry (src/components/shared/icons.tsx)
+
+| Name | Path | Purpose |
+| --- | --- | --- |
+| icon re-exports | shared/icons.tsx | the only place icon libraries are imported; add new icons here |
+
 ## Shared library (src/lib/)
 
 | Name | Path | Purpose |
@@ -63,6 +75,9 @@ Barrel: `components/shared/overlay/index.ts`.
 | queryClient | lib/query-client.ts | single TanStack QueryClient + defaults |
 | env | lib/env.ts | T3 Env `createEnv` — typed server/client env |
 | cn | lib/utils.ts | className merge (shadcn) |
+| parseData / parsePaginated / pageMetaSchema | lib/api/envelope.ts | unwrap + validate the backend envelope |
+| toApiError / fieldErrors / applyServerErrors | lib/api/errors.ts | normalize errors; server errors → form fields |
+| backendUrl / upstreamHeaders / bffError | lib/bff.ts | server-only BFF helpers (URL, headers, error envelope) |
 | getSession / setSession / clearSession | lib/auth/session.ts | httpOnly cookie read/set/clear (server) |
 | ROLE_ROUTES / routeForRole | lib/auth/roles.ts | role → dashboard route map |
 | token helpers | lib/auth/tokens.ts | storage/transport for the token strategy |
@@ -74,7 +89,16 @@ Barrel: `components/shared/overlay/index.ts`.
 | Providers | app/providers.tsx | QueryClientProvider (+ devtools) |
 | BFF proxy | app/api/[...path]/route.ts | forwards `/api/*` to the backend |
 | login handler | app/api/auth/login/route.ts | logs in, applies token strategy |
+| refresh handler | app/api/auth/refresh/route.ts | rotates tokens on 401 (if enabled) |
 | proxy (role routing) | proxy.ts | role-based protection + redirects (`middleware.ts` on ≤15) |
+
+## Test helpers (test/)
+
+| Name | Path | Purpose |
+| --- | --- | --- |
+| server / ok / okPage / fail / validationFailed | test/msw.ts | MSW server + backend-envelope response builders |
+| renderWithProviders / renderHookWithProviders | test/render.tsx | render inside a fresh QueryClient (retries off) |
+| setup | test/setup.ts | jest-dom, cleanup, MSW lifecycle (unmocked requests fail) |
 
 ## Hooks (src/hooks/)
 
@@ -99,3 +123,4 @@ Barrel: `components/shared/overlay/index.ts`.
 - Project: `{{PROJECT_PATH}}` · PM **{{PACKAGE_MANAGER}}** · BFF proxy · token strategy {{TOKEN_STRATEGY_SHORT}}.
 - Roles → routes: {{ROLE_ROUTES}}.
 - Theming/fonts: deferred to `font-theme-setup`.
+- Backend base `BACKEND_URL` includes `/api/v1`; envelope `{ success, data, meta? }`; lists → `{ items, meta }` via `parsePaginated`.

@@ -16,11 +16,17 @@ The scaffold's real safety net doesn't depend on context7 at all — it's the **
 1. **Trust the CLIs.** `create-next-app@latest` and `shadcn@latest` emit config against *current*
    conventions at install time. Our overlay only adds files the CLIs don't generate, so the
    framework/UI surface is always as fresh as the install — no memory, no context7 required.
-2. **Let the lockfile pin versions.** Install latest; the lockfile records the real resolved
-   versions. Pin nothing from memory.
-3. **Generate against the bundled snapshot** (current stable as of authoring) for the files we own
+2. **Let the lockfile pin versions.** Install latest — **always as `<pkg>@latest`** — and the lockfile
+   records the real resolved versions. Pin nothing from memory. A bare `npm i zod` silently reuses a
+   version already in the tree as a transitive dependency: shadcn and `eslint-plugin-react-hooks`
+   pull in Zod 3, and a scaffold once ended up on Zod 3 that way (`z.url()` / `z.treeifyError()` then
+   fail the build). After installing, check `package.json` for the expected majors.
+3. **Read Next's own docs.** Next.js 16+ ships version-matched docs in
+   `node_modules/next/dist/docs/` (the Next-managed `AGENTS.md` points there) — exact, offline, and
+   already the installed version. Prefer them to memory for Next APIs.
+4. **Generate against the bundled snapshot** (current stable as of authoring) for the files we own
    (`lib/`, BFF, shared components).
-4. **Tell the user context7 was unavailable** in your summary, and point them at the fast-moving bits
+5. **Tell the user context7 was unavailable** in your summary, and point them at the fast-moving bits
    worth a sanity-check — the libraries/topics in the table below (Next.js `proxy.ts` rename, shadcn
    `field` primitive + interactive `init`, Zod v4 import style, Tailwind v4 CSS-first config are the
    most likely to have drifted).

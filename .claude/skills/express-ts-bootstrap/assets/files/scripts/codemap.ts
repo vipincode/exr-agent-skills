@@ -4,6 +4,10 @@
  * comment above it. AI (and people) read the map instead of opening files to
  * find out what exists and where.
  *
+ * Shared, identical file in express-ts-bootstrap and nextjs-bootstrap — it
+ * understands both layouts (src/modules/* for Express; src/features/*,
+ * src/components/*, src/app/* for Next.js). Keep the two copies identical.
+ *
  *   tsx scripts/codemap.ts           regenerate codemap/
  *   tsx scripts/codemap.ts --check   exit 1 if codemap/ is stale (CI)
  *
@@ -38,12 +42,15 @@ interface FileMap {
 // Collect files
 // ---------------------------------------------------------------------------
 
+const SOURCE = /\.tsx?$/;
+const SKIP_FILE = /\.(test|spec|stories)\.tsx?$/;
+
 function walk(dir: string): string[] {
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true }).flatMap((d) => {
     const full = path.join(dir, d.name);
     if (d.isDirectory()) return d.name === "__tests__" || d.name === "node_modules" ? [] : walk(full);
-    return d.name.endsWith(".ts") && !d.name.endsWith(".test.ts") ? [full] : [];
+    return SOURCE.test(d.name) && !SKIP_FILE.test(d.name) ? [full] : [];
   });
 }
 
@@ -129,7 +136,8 @@ function describeValue(init: ts.Expression | undefined, sf: ts.SourceFile): { ki
 
 function extract(file: string): { about: string; entries: Entry[] } {
   const text = readFileSync(file, "utf8");
-  const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true);
+  const scriptKind = file.endsWith(".tsx") ? ts.ScriptKind.TSX : ts.ScriptKind.TS;
+  const sf = ts.createSourceFile(file, text, ts.ScriptTarget.Latest, true, scriptKind);
   const entries: Entry[] = [];
   const about = sf.statements.map((st) => comments(st, text).detached).find(Boolean) ?? "";
   const add = (name: string, kind: string, sig: string, node: ts.Node) =>
@@ -177,7 +185,7 @@ function extract(file: string): { about: string; entries: Entry[] } {
     if (!hasExport(st)) continue;
 
     if (ts.isFunctionDeclaration(st)) {
-      add(isDefault(st) ? "default" : (st.name?.text ?? "default"), "fn", params(st, sf), st);
+      add(st.name?.text ?? "default", isDefault(st) ? "default fn" : "fn", params(st, sf), st);
     } else if (ts.isVariableStatement(st)) {
       for (const d of st.declarationList.declarations) {
         const { kind, sig } = describeValue(d.initializer, sf);
@@ -208,13 +216,22 @@ function extract(file: string): { about: string; entries: Entry[] } {
 // Group into shards
 // ---------------------------------------------------------------------------
 
-/** Shard name for a file, e.g. lib, middleware, modules/product, test-helpers. */
+/**
+ * Shard name for a file. Express: app, config, lib, middleware, modules/<name>.
+ * Next.js: app (routes + proxy.ts), components-ui, components-shared,
+ * features/<name>, hooks, lib, services. Both: types-constants, test-helpers.
+ */
 function shardOf(rel: string): string {
-  const [top, second] = rel.split("/");
-  if (top === "test") return "test-helpers";
-  if (rel.startsWith("src/modules/") && second) return `modules/${rel.split("/")[2]}`;
-  const area = rel.split("/")[1] ?? "";
-  if (area.endsWith(".ts")) return "app"; // src/app.ts, src/routes.ts, src/server.ts
+  const parts = rel.split("/");
+  if (parts[0] === "test") return "test-helpers";
+  if (parts[0] !== "src") return parts[0]!;
+  const area = parts[1] ?? "";
+  if (SOURCE.test(area)) return "app"; // src/app.ts, src/routes.ts, src/proxy.ts, …
+  if ((area === "modules" || area === "features") && parts.length > 3) return `${area}/${parts[2]}`;
+  if (area === "components") {
+    const group = parts[2] ?? "";
+    return group === "ui" || group === "shared" ? `components-${group}` : "components";
+  }
   if (area === "types" || area === "constants") return "types-constants";
   return area;
 }
@@ -226,6 +243,16 @@ function renderEntry(e: Entry): string {
 
 function renderShard(name: string, files: FileMap[]): string {
   const lines = [HEADER, "", `# ${name}`, ""];
+  if (name === "components-ui") {
+    // CLI-managed primitives (shadcn): one compact line per file — the names are what matter.
+    lines.push("CLI-managed primitives — compose them, never fork. Exports per file:", "");
+    for (const f of files) {
+      const names = f.entries.map((e) => e.name).join(", ") || "*(no exports)*";
+      lines.push(`- \`${path.posix.basename(f.rel)}\`: ${names}`);
+    }
+    lines.push("");
+    return lines.join("\n");
+  }
   for (const f of files) {
     lines.push(`## ${f.rel}`);
     if (f.about) lines.push(`> ${f.about}`, "");
@@ -264,12 +291,12 @@ function renderIndex(shards: Map<string, FileMap[]>): string {
   for (const [name, files] of shards) {
     lines.push(`| [${name}](${name}.md) | ${files.length} | ${count(files)} |`);
   }
-  const modules = [...shards.keys()].filter((k) => k.startsWith("modules/"));
+  const modules = [...shards.keys()].filter((k) => k.startsWith("modules/") || k.startsWith("features/"));
   if (modules.length) {
-    lines.push("", "## Module public surfaces", "");
+    lines.push("", "## Public surfaces (`index.ts` — the only legal import from outside)", "");
     for (const m of modules) {
-      const name = m.slice("modules/".length);
-      const index = shards.get(m)!.find((f) => f.rel.endsWith(`/${name}/index.ts`));
+      const name = m.slice(m.indexOf("/") + 1);
+      const index = shards.get(m)!.find((f) => /^src\/[^/]+\/[^/]+\/index\.tsx?$/.test(f.rel));
       const surface = index?.entries ?? [];
       const routes = surface.find((e) => e.name.endsWith("Routes"));
       const mount = routes && mountOf.get(routes.name);
@@ -277,8 +304,25 @@ function renderIndex(shards: Map<string, FileMap[]>): string {
       lines.push(`- **${name}**${mount ? ` (\`/api/v1${mount}\`)` : ""}: ${names.join(", ") || "*(no index.ts)*"}`);
     }
   }
+  const routes = nextRoutes(shards.get("app") ?? []);
+  if (routes.length) lines.push("", "## Routes (Next.js `src/app`)", "", ...routes);
   lines.push("");
   return lines.join("\n");
+}
+
+/** URL → file for Next.js App Router pages and route handlers. */
+function nextRoutes(files: FileMap[]): string[] {
+  return files
+    .filter((f) => /^src\/app\/(.+\/)?(page|route)\.tsx?$/.test(f.rel))
+    .map((f) => {
+      const segments = f.rel
+        .split("/")
+        .slice(2, -1) // drop "src/app" and the file name
+        .filter((s) => !/^\(.*\)$/.test(s) && !s.startsWith("@")); // route (groups) and @slots aren't URL segments
+      const kind = /\/route\.tsx?$/.test(f.rel) ? "handler" : "page";
+      return `- \`/${segments.join("/")}\` *${kind}* → ${f.rel}`;
+    })
+    .sort();
 }
 
 // ---------------------------------------------------------------------------

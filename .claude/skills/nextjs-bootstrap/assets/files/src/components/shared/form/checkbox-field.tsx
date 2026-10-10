@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 
 import { type BaseFieldProps } from "./field-base";
 
-export interface CheckboxFieldProps<T extends FieldValues> extends BaseFieldProps<T> {}
+export type CheckboxFieldProps<T extends FieldValues> = BaseFieldProps<T>;
 
 /**
  * Single boolean opt-in (terms, remember-me), bound to React Hook Form. The box

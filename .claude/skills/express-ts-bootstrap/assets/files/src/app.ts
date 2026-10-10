@@ -4,6 +4,7 @@ import cors from "cors";
 import compression from "compression";
 import { rateLimit } from "express-rate-limit";
 import { pinoHttp } from "pino-http";
+import { env } from "./config/env.js";
 import { logger } from "./lib/logger.js";
 import { requestContext } from "./middleware/request-context.js";
 import { notFound } from "./middleware/not-found.js";
@@ -18,6 +19,9 @@ export const API_PREFIX = "/api/v1";
 export function createApp() {
   const app = express();
 
+  // Behind the BFF / a load balancer, trust that many X-Forwarded-For hops so
+  // req.ip (and therefore the rate limiter) sees the real client, not the proxy.
+  app.set("trust proxy", env.TRUST_PROXY);
   app.use(helmet());
   app.use(cors());
   app.use(compression());

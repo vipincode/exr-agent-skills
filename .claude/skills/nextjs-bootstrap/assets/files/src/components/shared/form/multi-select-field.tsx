@@ -1,8 +1,8 @@
 "use client";
 
-import { Check, ChevronsUpDown, X } from "lucide-react";
 import { useController, type FieldValues } from "react-hook-form";
 
+import { Check, ChevronsUpDown, X } from "@/components/shared/icons";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {

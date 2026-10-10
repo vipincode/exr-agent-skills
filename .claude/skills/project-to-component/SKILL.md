@@ -45,7 +45,7 @@ Locate the route in the source (profile's route map, else the source's router/pa
 
 ### 5. Decompose & dedup (the family rules)
 
-Classify each piece reusable-generic vs feature-specific with `../html-to-component/references/shared-taxonomy.md`, then run the dedup protocol from `../html-to-component/references/dedup-protocol.md` for **every** candidate — components AND non-component reusables (utils, hooks, types, constants): check `MODULE_REGISTRY.md` → grep `components/shared`, `components/ui`, `features/*/components`, `lib`, `hooks` → **reuse / extend / create**. Source repetition is a strong hint: a component used on many source pages is almost certainly a `components/shared/` piece in the target. Fill primitive gaps with `<pm> dlx shadcn@latest add <name>` — never hand-port the source's primitive.
+Classify each piece reusable-generic vs feature-specific with `../html-to-component/references/shared-taxonomy.md`, then run the dedup protocol from `../html-to-component/references/dedup-protocol.md` for **every** candidate — components AND non-component reusables (utils, hooks, types, constants): read `codemap/INDEX.md` + its `components-shared` / `components-ui` shards (when present) and `MODULE_REGISTRY.md` → grep to confirm → **reuse / extend / create**. Source repetition is a strong hint: a component used on many source pages is almost certainly a `components/shared/` piece in the target. Fill primitive gaps with `<pm> dlx shadcn@latest add <name>` — never hand-port the source's primitive.
 
 ### 6. Build — mobile-first, token-based
 

@@ -35,6 +35,12 @@ Notes:
   if two features need the same thing, that thing is shared (see below), not cross-imported: components
   move to `components/shared`, utils/hooks to `lib`/`hooks`/`services`, types to `src/types/`,
   constants/enums to `src/constants/` — and get registered.
+- These import rules are **lint errors**, not just conventions (`eslint.boundaries.mjs`): another
+  feature via alias or via a relative path that climbs out of the folder, a deep import past
+  `@/features/<name>` from outside, and shared layers importing any feature. Inside a feature, import
+  its own files relatively or via its own `@/features/<name>/…` alias — both are allowed.
+- **Edit scope:** work on feature `<x>` stays in `src/features/<x>/**` plus the thin `app/` route
+  that renders its template. Shared folders change only when the dedup check calls for it.
 
 ## The shared-vs-feature component rule (strict)
 

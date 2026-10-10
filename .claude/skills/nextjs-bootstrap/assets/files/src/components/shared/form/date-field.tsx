@@ -1,8 +1,8 @@
 "use client";
 
-import { CalendarIcon } from "lucide-react";
 import { useController, type FieldValues } from "react-hook-form";
 
+import { CalendarIcon } from "@/components/shared/icons";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";

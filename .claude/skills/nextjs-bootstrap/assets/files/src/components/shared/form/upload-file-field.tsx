@@ -41,6 +41,9 @@ export function UploadFileField<T extends FieldValues>({
 }: UploadFileFieldProps<T>) {
   const id = useId();
   const { field, fieldState } = useController({ name, control });
+  // Destructure once: reading properties off `field` (which carries `ref`) during
+  // render trips React's refs rule.
+  const { ref, name: fieldName, onBlur, onChange, disabled } = field;
 
   return (
     <FieldShell
@@ -57,15 +60,15 @@ export function UploadFileField<T extends FieldValues>({
         id={id}
         type="file"
         multiple={multiple}
-        name={field.name}
-        ref={field.ref}
-        onBlur={field.onBlur}
-        disabled={field.disabled}
+        name={fieldName}
+        ref={ref}
+        onBlur={onBlur}
+        disabled={disabled}
         className={cn(fieldControlVariants({ size }))}
         onChange={(event) => {
           const files = event.target.files;
-          if (!files) return field.onChange(multiple ? [] : undefined);
-          field.onChange(multiple ? Array.from(files) : files[0]);
+          if (!files) return onChange(multiple ? [] : undefined);
+          onChange(multiple ? Array.from(files) : files[0]);
         }}
       />
     </FieldShell>

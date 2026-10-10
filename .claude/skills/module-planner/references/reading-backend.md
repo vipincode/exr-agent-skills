@@ -42,7 +42,7 @@ Extract, per endpoint:
   route needs the session and whether the UI gates the action by role.
 - **Request shape** — path params, query params (filters/pagination), and body fields with types.
 - **Success envelope + `data` shape** — read the controller's response helper. The backend
-  ARCHITECTURE.md fixes the envelope (commonly `{ success: true, data, message }`); the `data`
+  ARCHITECTURE.md fixes the envelope (an express-ts-bootstrap backend: `{ success: true, data, meta? }`, no `message`); the `data`
   shape comes from the service return / model. Note list vs single, and any pagination meta
   (`total`, `page`, `limit`).
 - **Error cases** — which `AppError` subclasses / status codes the path throws (404/409/401/422).

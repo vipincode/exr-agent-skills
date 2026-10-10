@@ -1,7 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
+import * as z from "zod";
 
-import { env } from "@/lib/env";
+import { envelopeSchema } from "@/lib/api/envelope";
 import { setSession } from "@/lib/auth/session";
+import { backendUrl, bffError, upstreamHeaders } from "@/lib/bff";
 
 /**
  * Login handler — STRATEGY (a): backend returns tokens in the body, we set the
@@ -13,35 +15,46 @@ import { setSession } from "@/lib/auth/session";
  *   (c) header/client-stored → return the access token in the body for the client
  *       to keep; do NOT set cookies here.
  */
+
+// The backend's login `data`. Adjust to the auth module's actual contract
+// (the slice file's API contract section) — a mismatch fails loudly with 502.
+const loginResponseSchema = envelopeSchema(
+  z.object({
+    accessToken: z.string().min(1),
+    refreshToken: z.string().min(1).optional(),
+    user: z.unknown().optional(),
+  }),
+);
+
 export async function POST(request: NextRequest) {
-  const credentials = await request.json();
+  let backendResponse: Response;
+  try {
+    backendResponse = await fetch(backendUrl("auth/login"), {
+      method: "POST",
+      headers: upstreamHeaders(request),
+      body: await request.text(),
+    });
+  } catch {
+    return bffError(502, "BAD_GATEWAY", "The API is unreachable.");
+  }
 
-  const backendResponse = await fetch(`${env.BACKEND_URL}/auth/login`, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body: JSON.stringify(credentials),
-  });
+  const body: unknown = await backendResponse.json().catch(() => null);
 
-  const data = await backendResponse.json().catch(() => ({}));
-
+  // Backend errors are already in the shared error envelope — pass them through.
   if (!backendResponse.ok) {
-    return NextResponse.json(data, { status: backendResponse.status });
+    return body
+      ? NextResponse.json(body, { status: backendResponse.status })
+      : bffError(backendResponse.status, "UPSTREAM_ERROR", "Login failed.");
   }
 
-  // Adjust these property paths to match your backend's login response shape.
-  const accessToken: string | undefined = data.accessToken ?? data.data?.accessToken;
-  const refreshToken: string | undefined =
-    data.refreshToken ?? data.data?.refreshToken;
-
-  if (!accessToken) {
-    return NextResponse.json(
-      { error: "Login response did not include an access token" },
-      { status: 502 },
-    );
+  const parsed = loginResponseSchema.safeParse(body);
+  if (!parsed.success) {
+    return bffError(502, "CONTRACT", "Login response did not match the expected shape.");
   }
 
+  const { accessToken, refreshToken, user } = parsed.data.data;
   await setSession({ accessToken, refreshToken });
 
-  // Return the user, not the tokens — the cookies carry auth from here on.
-  return NextResponse.json({ user: data.user ?? data.data?.user ?? null });
+  // Return the user, not the tokens — the httpOnly cookies carry auth from here on.
+  return NextResponse.json({ success: true, data: { user: user ?? null } });
 }

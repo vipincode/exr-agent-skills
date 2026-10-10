@@ -6,6 +6,10 @@ import * as z from "zod";
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().positive().default(4000),
+  // Number of proxies in front of this API (the Next.js BFF, a load balancer).
+  // Express then reads the real client IP from X-Forwarded-For, so rate limits
+  // apply per user instead of per proxy. 0 = exposed directly.
+  TRUST_PROXY: z.coerce.number().int().min(0).default(0),
   MONGODB_URI: z.string().min(1, "MONGODB_URI is required"),
   JWT_SECRET: z.string().min(32, "JWT_SECRET must be at least 32 characters"),
   ACCESS_TOKEN_TTL: z.string().default("15m"),

@@ -22,16 +22,20 @@ export const api = axios.create({
 // original request. The refresh endpoint is a Route Handler that rotates the
 // httpOnly cookies server-side — no token ever touches client JS.
 // If you chose "no refresh rotation" at scaffold time, delete this block.
+const REFRESH_PATH = "/auth/refresh";
 let refreshing: Promise<void> | null = null;
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const original = error.config;
-    if (error.response?.status === 401 && original && !original._retry) {
+    // Never try to refresh the refresh call itself — it would await its own
+    // in-flight promise and hang forever.
+    const isRefreshCall = original?.url === REFRESH_PATH;
+    if (error.response?.status === 401 && original && !original._retry && !isRefreshCall) {
       original._retry = true;
       try {
-        refreshing ??= api.post("/auth/refresh").then(() => undefined);
+        refreshing ??= api.post(REFRESH_PATH).then(() => undefined);
         await refreshing;
         refreshing = null;
         return api(original);

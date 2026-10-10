@@ -1,1 +1,2 @@
 lint-staged
+tsx scripts/codemap.ts && git add codemap

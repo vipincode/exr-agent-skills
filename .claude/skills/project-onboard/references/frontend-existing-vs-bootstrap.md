@@ -3,7 +3,7 @@
 The contract must describe what the frontend *does*. If it instead prescribes `nextjs-bootstrap`'s fixed stack, `module-builder` will generate code that clashes with the surrounding codebase. Below: how to faithfully record common existing patterns, and how the other frontend skills then adapt because they are contract-driven.
 
 ## The governing rule
-Record reality + the user's Step 2 decisions. Never silently "upgrade" the repo's conventions into the contract. If something is genuinely worth changing (Pages Router → App Router, direct backend calls → BFF, raw `process.env` → typed env, ad-hoc forms → shared field layer), raise it as a **finding/recommendation** in the report — do not bake the change into the contract unless the user opts in.
+Record reality + the user's Step 2 decisions. Never silently "upgrade" the repo's conventions into the contract. If something is genuinely worth changing (Pages Router → App Router, direct backend calls → BFF, raw `process.env` → typed env, ad-hoc forms → shared field layer, placement rules with no lint enforcement → `eslint.boundaries.mjs`, no generated code map → `scripts/codemap.ts`, per-feature envelope/error parsing → shared `lib/api/` helpers, no test setup → Vitest + RTL + MSW), raise it as a **finding/recommendation** in the report — do not bake the change into the contract unless the user opts in.
 
 The bootstrap's stack — Next.js App Router + Tailwind v4 + shadcn/ui + axios + Zod 4 + T3 Env + TanStack Query v5 + React Hook Form — is the *target greenfield* stack, not a requirement to impose on an existing app. Onboarding's job is to capture the existing app accurately so the toolkit works *with* it.
 

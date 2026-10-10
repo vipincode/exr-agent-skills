@@ -17,6 +17,7 @@ the scaffold-time choice. Read this before generating the auth wiring (workflow 
 | `lib/axios.ts` | the `/api` instance + the 401→refresh interceptor |
 | `proxy.ts` | role-based redirects (reads the cookie off the request). Next 16+ name; `middleware.ts` / `middleware` on ≤15 |
 | `lib/auth/roles.ts` | role → route map (extensible) |
+| `lib/bff.ts` | `backendUrl(path)` (BACKEND_URL already includes `/api/v1`), `upstreamHeaders` (drops hop-by-hop headers, keeps `x-forwarded-for`, adds `x-request-id` + Bearer), `bffError` (the backend's error envelope for BFF-side failures) |
 
 The BFF proxy route, `proxy.ts` (role routing), and `roles.ts` are the **same across all strategies**. Only the login/refresh
 handlers, `session.ts`, `tokens.ts`, and the axios interceptor change.
@@ -28,7 +29,10 @@ Handler sets them as **httpOnly cookies** via `setSession`. The proxy reads the 
 forwards it as `Authorization: Bearer`. This is what the bundled files implement.
 
 - Most secure: tokens never touch client JS; backend URL hidden.
-- Adjust the property paths in `login/route.ts` to match the backend's actual response shape.
+- `login/route.ts` validates the backend's response with a Zod `envelopeSchema({ accessToken, refreshToken?, user? })`
+  and answers the browser with `{ success: true, data: { user } }`. A mismatch is a `502 CONTRACT`
+  error, not a silent half-login — adjust the schema to the auth module's contract (its slice file).
+- Every BFF response uses the backend's envelope, including BFF-originated errors (`bffError`).
 
 ## Strategy (b) — backend sets cookies
 
@@ -64,6 +68,8 @@ once and replays the original request. The refresh Route Handler uses the refres
 a/b, body/header for c) to get a new access token from the backend and rotates storage server-side.
 
 - Bundled in `lib/axios.ts` (interceptor) + `app/api/auth/refresh/route.ts`.
+- The interceptor skips the refresh call itself — refreshing a failed refresh would await its own
+  in-flight promise and hang every request. Keep that guard in any strategy rewrite.
 - If the user picks **no rotation**, delete the interceptor block in `lib/axios.ts` and the refresh
   route, and note it in `ARCHITECTURE.md`.
 
