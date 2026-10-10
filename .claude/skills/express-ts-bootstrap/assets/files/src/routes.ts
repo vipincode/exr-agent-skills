@@ -5,6 +5,7 @@ import { healthRoutes } from "./modules/health/index.js";
 // adds a single mount line here, importing its router from the module's public
 // index.js. app.ts mounts this whole router under /api/v1 and is never edited
 // for a feature.
+
 export const apiRouter = Router();
 
 // --- Module routes: one line per module, alphabetical. module-builder appends here. ---

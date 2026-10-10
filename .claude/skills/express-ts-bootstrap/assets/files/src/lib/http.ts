@@ -2,6 +2,7 @@ import type { Response } from "express";
 
 // The single success envelope. Controllers call these — they never hand-roll a
 // response shape. The matching error envelope lives only in error-handler.ts.
+
 export function ok<T>(res: Response, data: T, meta?: unknown): void {
   res.status(200).json({ success: true, data, ...(meta ? { meta } : {}) });
 }

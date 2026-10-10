@@ -1,5 +1,5 @@
 {
-  // Editor + typecheck config: covers src (including tests), test/ helpers, and tool configs.
+  // Editor + typecheck config: covers src (including tests), test/ helpers, scripts/, and tool configs.
   // The build uses tsconfig.build.json, which emits src only and leaves tests out of dist/.
   "compilerOptions": {
     "target": "ES2023",
@@ -19,6 +19,6 @@
     "sourceMap": true,
     "noEmit": true
   },
-  "include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts"],
+  "include": ["src/**/*.ts", "test/**/*.ts", "scripts/**/*.ts", "vitest.config.ts"],
   "exclude": ["node_modules", "dist", "coverage"]
 }

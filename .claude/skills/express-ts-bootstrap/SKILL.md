@@ -7,7 +7,7 @@ description: Scaffold a new production-grade Express.js + TypeScript + Mongoose 
 
 Scaffold a runnable, production-grade Express + TypeScript + Mongoose + JOSE backend on the **latest library releases**, and — critically — emit `ARCHITECTURE.md` and `MODULE_REGISTRY.md`. Those two files are the shared memory that lets the other skills avoid re-asking decisions and stop generating duplicate code. Getting them right matters more than the boilerplate.
 
-The structure is built around one goal: **work on one module touches one folder.** Each domain lives in `src/modules/<name>/` with a strict internal layering (routes → controller → service → repository → model, plus a mapper for responses), exposes itself only through `index.ts`, mounts with one line in `src/routes.ts`, and carries its own tests in `__tests__/`. ESLint enforces the boundaries, so they hold even when nobody re-reads the rules.
+The structure is built around one goal: **work on one module touches one folder.** Each domain lives in `src/modules/<name>/` with a strict internal layering (routes → controller → service → repository → model, plus a mapper for responses), exposes itself only through `index.ts`, mounts with one line in `src/routes.ts`, and carries its own tests in `__tests__/`. ESLint enforces the boundaries, so they hold even when nobody re-reads the rules. A generated **code map** (`codemap/`, rebuilt on every commit) lists every export with its file and purpose, so AI finds existing code by reading one small shard instead of opening files.
 
 This skill runs **once per project**. It does NOT build feature modules (auth, products, etc.) — it lays the foundation and a single `health` module that demonstrates the skeleton so later skills have a concrete pattern to copy.
 
@@ -23,7 +23,8 @@ Libraries are fixed; **versions are not**. The template `package.json` has no de
 - **ESLint** flat config + typescript-eslint, including the **architecture-boundary rules**.
 - **rimraf** so `dist/` is wiped before every build and dev run (Windows-safe, never `rm -rf`).
 - **Native `--env-file=.env`** in `dev` and `start` — this is what loads `.env` (no `dotenv`; `config/env.ts` only validates). Omitting the flag ships a scaffold that dies at the env check on first boot.
-- **husky (v9) + lint-staged** — pre-commit runs `eslint --fix` on staged files, so boundary violations can't be committed. See "Git hooks" in `references/conventions-core.md`, including the subfolder form.
+- **husky (v9) + lint-staged** — pre-commit runs `eslint --fix` on staged files, so boundary violations can't be committed, then regenerates and stages `codemap/`.
+- **Code map** — `scripts/codemap.ts` (TypeScript parser, no extra dependency) writes `codemap/INDEX.md` + per-area/per-module shards. See "Code map" in `references/conventions-core.md` and the toolkit-wide `../CODE-NAV.md`. See "Git hooks" in `references/conventions-core.md`, including the subfolder form.
 - **Node 24 LTS** by default (`.nvmrc`, `engines`, Dockerfile `node:24-alpine`) — raised if a tool's engine floor requires it.
 
 ## Decision gate (ask ONLY these)
@@ -47,7 +48,7 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 > always stay at the repo root. See `../LAYOUT.md`.
 
 1. **Resolve decisions.** Apply the decision gate. Confirm the resolved set in one line before scaffolding (e.g. "Hybrid paradigm, pnpm, Node 24, Docker for Mongo, in `backend-shoply/` — scaffolding now."). Create `<proj>` if it doesn't exist.
-2. **Copy the infrastructure** from `assets/files/` verbatim into `<proj>` — the whole tree, including dotfiles (`.husky/`, `.gitignore`, `.dockerignore`, `.nvmrc`, `.env.example`), `test/`, `vitest.config.ts`, both tsconfigs, and `eslint.config.js`. Fill `{{PROJECT_SLUG}}` (package name = folder name), `{{PROJECT_NAME}}`, `{{PM}}`, `{{NODE_MAJOR}}` placeholders. If the PM isn't pnpm, adapt the `Dockerfile` install lines as its header comment says.
+2. **Copy the infrastructure** from `assets/files/` verbatim into `<proj>` — the whole tree, including dotfiles (`.husky/`, `.gitignore`, `.gitattributes`, `.dockerignore`, `.nvmrc`, `.env.example`), `test/`, `scripts/`, `vitest.config.ts`, both tsconfigs, and `eslint.config.js`. Fill `{{PROJECT_SLUG}}` (package name = folder name), `{{PROJECT_NAME}}`, `{{PM}}`, `{{NODE_MAJOR}}` placeholders. If the PM isn't pnpm, adapt the `Dockerfile` install lines as its header comment says.
 3. **Shape the `health` module** to the chosen paradigm. The functional version ships in `assets/files/src/modules/health/` (index, routes, controller, service, types, and two tests). Health owns no data, so under hybrid it stays functional; under OOP rewrite service + controller as classes and wire them in a `health.container.ts`, per `references/paradigm-oop.md`. Keep `index.ts` and the tests passing.
 4. **Install dependencies — latest releases.** Follow `references/versions.md` exactly: runtime deps and dev deps via `<pm> add` with no versions, `@types/node` at the Node major, TypeScript resolved to the newest version inside typescript-eslint's peer range (pinned with `~`). Read the engine warnings; if any tool needs a newer Node than `.nvmrc`, raise `.nvmrc`/`engines`/Dockerfile together and tell the user. If an installed major is newer than the verified table, check its migration notes (context7) before moving on.
 5. **Generate `ARCHITECTURE.md`** from `assets/ARCHITECTURE.template.md`, filling every `{{placeholder}}` with the resolved decisions. `{{PARADIGM_DESCRIPTION}}` = the decision rule and the repository/service/controller/routes examples from the matching `references/paradigm-*.md` (copied, `.js` extensions intact). This file is read by every other skill before it writes code — it must be concrete, not aspirational.
@@ -58,9 +59,10 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
    - `<pm> run typecheck` and `<pm> run lint` — clean.
    - `<pm> test` — both projects pass (the first integration run downloads a `mongod` binary; allow time).
    - `<pm> run build` — `dist/` contains no `__tests__`.
+   - `<pm> run codemap`, then `<pm> run codemap:check` — `codemap/INDEX.md` lists the health module with its `/api/v1/health` mount.
    - `<pm> run dev` smoke check — env validation passes and `GET /api/v1/health` responds (needs a reachable Mongo: `docker compose up -d`, or say it was skipped).
    - husky installed (`.husky/pre-commit` present, `core.hooksPath` set; subfolder form if `<proj>` isn't the git root).
-   Report honestly — a step you couldn't run is "skipped", not "passed". Remind the user that `.env` holds example values they must edit.
+   Report honestly — a step you couldn't run is "skipped", not "passed". Remind the user that `.env` holds example values they must edit. Mention once, as an option, that GitNexus can add call-graph/impact tools over MCP — with its Node floor and noncommercial license — per `../CODE-NAV.md`; never install it yourself.
 
 ## What to read when
 
@@ -70,6 +72,7 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 - `references/auth-jose.md` — the JOSE token utilities and `protect`/`getAuthUser`/`requireRole`. Read it to describe them correctly in the registry. Do NOT build auth endpoints here.
 - `assets/files/` — literal boilerplate, copied verbatim (except placeholders and the paradigm-shaped health module).
 - `assets/*.template.md` — the three generated docs.
+- `../CODE-NAV.md` — the toolkit-wide navigation ladder (code map → registry → optional GitNexus → grep → read). The generated ARCHITECTURE.md and CLAUDE.md point to it.
 
 ## Non-negotiables (these are the reasons this toolkit exists)
 
@@ -83,6 +86,7 @@ If the user already stated a paradigm earlier in the conversation, do not re-ask
 - **`dist/` is always clean**, and never contains tests.
 - **`.env` must actually load.** `dev` and `start` pass `--env-file=.env`. A scaffold that exits with "env validation failed" against a correct `.env` is a bug (this shipped once — don't regress it).
 - **Git hooks work out of the box.** If the project dir isn't the git root, use the subfolder form from conventions-core.
+- **The code map ships and stays fresh.** `scripts/codemap.ts`, the `codemap`/`codemap:check` scripts, and the pre-commit step are part of every scaffold, and `codemap/` is generated before the first commit. A missing or stale map sends AI back to opening files.
 - **Seed the registry honestly.** Every reusable thing the scaffold creates is in MODULE_REGISTRY.md.
 - **`CLAUDE.md` is a strict subset, never a fork** of ARCHITECTURE.md's invariants.
 - **Record the project location** in `.claude/workspace.json`.

@@ -24,12 +24,13 @@ Non-negotiable in **every** change, however small. Rules marked *(lint)* are enf
 9. **Lists paginate** with `lib/pagination.ts` (`paginationQuerySchema.extend(...)`, `toSkip`, `toPageMeta`). Ids validate with `lib/common-schemas.ts`. No unbounded `find()`.
 10. **Relative imports carry explicit `.js` extensions** (NodeNext ESM). Type-only imports use `import type` *(lint)*.
 11. **Placement by reach** — used by 2+ modules → `lib/` / `middleware/` / `types/` / `constants/` and **registered**; single-use → the module's own `<name>.types.ts` / `.constants.ts` / `.utils.ts`. No inline magic literals.
-12. **Check `MODULE_REGISTRY.md` before creating** any util, middleware, type, constant, or schema — then grep. If it exists, import it. Extend rather than fork.
+12. **Find before you create — map first.** Read `codemap/INDEX.md` → the relevant shard (generated list of every export) and `MODULE_REGISTRY.md` before creating any util, middleware, type, constant, or schema; grep only to confirm; open only files you will change. If it exists, import it. Extend rather than fork.
 13. **Auth reuses `lib/jwt.ts` + `protect` / `getAuthUser` + `requireRole`.** Never write new token logic; never `req.user!`.
 14. **Env only through the typed `config/env.ts`** — no raw `process.env` elsewhere. New vars land in the schema and `.env.example` in the same change.
 15. **No `console.*`** *(lint)* — `req.log` in requests, the root `logger` elsewhere.
 16. **Tests live in the module's `__tests__/`** — `*.test.ts` unit (repository mocked), `*.int.test.ts` integration (`test/helpers.ts` + in-memory Mongo).
-17. **Dependencies: latest, verified.** Add with `{{PM}} add <pkg>` — never hand-write a version. Check the library's current docs (context7) before using its API.
+17. **Comments feed the code map** — a file-purpose comment is followed by a blank line; every reusable export gets a one-line `/** … */` directly above it. Never hand-edit `codemap/`.
+18. **Dependencies: latest, verified.** Add with `{{PM}} add <pkg>` — never hand-write a version. Check the library's current docs (context7) before using its API.
 
 New shared code is **not done** until it is listed in `MODULE_REGISTRY.md`.
 
@@ -82,6 +83,8 @@ src/
 test/
   setup-db.ts  in-memory Mongo for *.int.test.ts
   helpers.ts   api(), authHeader(role)
+scripts/codemap.ts   generates codemap/
+codemap/             GENERATED: INDEX.md + one shard per area/module (never hand-edit)
 ```
 
 A module that owns no data has no model/repository/mapper.
@@ -100,6 +103,13 @@ routes → controller → service → repository → model
 - **`index.ts`** — exports the router (as `<name>Routes`), the service functions other modules may call, and public DTO types. Never the model or repository.
 
 Enforced by `eslint.config.js` (`@typescript-eslint/no-restricted-imports`): cross-module internals, model outside repository, repository from controllers/routes, and shared layers importing modules are all lint errors — and the pre-commit hook runs lint.
+
+## Code navigation (read before searching)
+
+`codemap/` is generated from the code by `scripts/codemap.ts` and committed by the pre-commit hook
+(`{{PM}} run codemap` regenerates, `{{PM}} run codemap:check` fails if stale). Every task starts at
+`codemap/INDEX.md` → one shard → only the files being changed; grep confirms, it doesn't discover.
+Full protocol, including the optional GitNexus graph tools: `.claude/skills/CODE-NAV.md`.
 
 ## Route registry
 
@@ -175,11 +185,13 @@ tests get values from `vitest.config.ts → test.env`; containers get real env v
 - `{{PM}} run typecheck` — `tsc --noEmit` (src + tests)
 - `{{PM}} run lint` — ESLint incl. boundary rules
 - `{{PM}} test` / `test:unit` / `test:int` / `test:watch` / `test:coverage`
+- `{{PM}} run codemap` / `codemap:check` — regenerate / verify the code map
 
 ## Git hooks
 
 husky (v9) + lint-staged, installed via `prepare` on `{{PM}} install`. The pre-commit hook runs
-`eslint --fix` on staged `*.ts`/`*.js` — so boundary violations can't be committed.
+`eslint --fix` on staged `*.ts`/`*.js` — so boundary violations can't be committed — then
+regenerates and stages `codemap/`.
 
 ## Logging
 

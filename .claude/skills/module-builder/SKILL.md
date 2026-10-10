@@ -35,18 +35,20 @@ Resolve the project dir for **each domain the slice touches** via `../LAYOUT.md`
 1. **The slice file** — the work order. Its **API contract** section is the single shape both halves implement.
 2. **The master plan** (`<module>-plan.md`) — the data model, module-wide decisions, envelope conventions, and the reuse inventory. The slice assumes you've read this.
 3. **`ARCHITECTURE.md`** per domain — paradigm, envelope, error model, validation flow, import convention, layout, auth primitives (backend); how the browser reaches the backend, HTTP instance, validation library, type derivation, server-state library and query-key style, form stack, feature-module anatomy, component placement (frontend). **Follow it literally.** If it contradicts the defaults below, ARCHITECTURE.md wins — it describes this repo; the defaults describe the common case.
-4. **`MODULE_REGISTRY.md`** per domain — the catalog of shared pieces and existing modules.
-5. **The built design** (frontend half) — read the actual files the slice binds (`features/<name>/template/*.tsx`, `features/<name>/components/*.tsx`). You're editing these, so read what's really there: the props, the hardcoded sample shape. Assuming their shape and then editing blind is how bindings break.
+4. **`codemap/INDEX.md`** per domain, when the project has one — the generated map of every export, and each module's public surface. Read the index, then only the shards for the areas this slice touches (`lib.md`, `middleware.md`, `modules/<name>.md`). This replaces opening files to learn what exists; follow `../CODE-NAV.md`.
+5. **`MODULE_REGISTRY.md`** per domain — the curated catalog: what shared pieces are for, module ownership, decisions.
+6. **The built design** (frontend half) — read the actual files the slice binds (`features/<name>/template/*.tsx`, `features/<name>/components/*.tsx`). You're editing these, so read what's really there: the props, the hardcoded sample shape. Assuming their shape and then editing blind is how bindings break.
 
 ## Step 2 — The dedup gate (before creating ANY shared code)
 
 This is the heart of the skill. Before writing any util, middleware, component, hook, helper, type, constant, or schema that *could* be shared, run the procedure in `references/dedup-protocol.md`:
 
 1. Check the plan's / slice's **Reuse** list — the planner already searched; verify each path still exists.
-2. Check `MODULE_REGISTRY.md` for the capability.
-3. Grep the codebase — the registry can lag, so don't trust it alone.
-4. Found something? → **import it.** "It's only one feature" is not a reason to inline a duplicate. If it almost fits, extend the shared piece rather than fork it — unless extending would overload it with unrelated concerns.
-5. Nothing exists → create it, place it by the placement rules in the protocol, and mark it for registration (Step 6).
+2. Check the **code map** shard for the area (`codemap/lib.md`, `middleware.md`, …) and `MODULE_REGISTRY.md` for the capability.
+3. Grep to confirm — by intent as well as name — only for what the map can't show (non-exported code, string literals) or when there is no code map.
+4. **About to change something other modules already use** (an export of another module's `index.ts`, or of `lib/`/`middleware/`)? If GitNexus tools are connected, run `impact` on it first and widen Step 5's verification to the callers it reports; otherwise find callers with grep. See `../CODE-NAV.md`.
+5. Found something? → **import it.** "It's only one feature" is not a reason to inline a duplicate. If it almost fits, extend the shared piece rather than fork it — unless extending would overload it with unrelated concerns.
+6. Nothing exists → create it, place it by the placement rules in the protocol, and mark it for registration (Step 6).
 
 Genuinely single-use code — a private helper used by exactly one module — stays local and is **not** registered. Over-sharing is its own failure mode; the gate is about capabilities that will be needed twice, not about hoisting everything.
 
@@ -67,6 +69,7 @@ Skip if the slice says `n/a`. Create the files the slice lists under `src/module
 - **Imports** follow the project's extension convention exactly (`.js` under NodeNext); type-only imports use `import type`.
 - **Auth** reuses `protect` / `getAuthUser` / `requireRole` / the JWT helpers — never new token logic.
 - **Expose and mount** — add what other modules may call to `index.ts`; mount the router in `src/routes.ts` between the markers (never in `app.ts` when the project has a route registry).
+- **Comment for the map** — a file-purpose comment followed by a blank line, and a one-line `/** … */` directly above every export someone might reuse; that is what the generated code map shows the next slice.
 - **New dependency?** Install with the PM, no version (`<pm> add <pkg>`), and read its current docs (context7) before writing code against it. Cross-cutting ones get a registered wrapper in `src/lib/`.
 
 ## Step 4 — Build the frontend half and wire the design
@@ -97,6 +100,8 @@ Run the project's typecheck / lint / build for each domain you touched (`<pm> ru
 **Report the result honestly.** If a check fails and you couldn't fix it, say which and why. If you couldn't run them at all, say that instead of implying they passed.
 
 ## Step 6 — Update the registries and the slice status (same change)
+
+**Regenerate the code map** for each domain that has one (`<pm> run codemap`), so the next slice — and the next session — sees what this one added even before it is committed. Never hand-edit `codemap/`.
 
 For each domain you touched, edit `MODULE_REGISTRY.md`:
 

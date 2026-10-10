@@ -9,3 +9,5 @@ coverage
 **/__tests__
 test
 *.log
+codemap
+scripts

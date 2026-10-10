@@ -27,6 +27,7 @@ test/                         api() + authHeader() helpers, in-memory MongoDB se
 
 - **Enforces the boundaries with ESLint**, and the pre-commit hook runs it. Importing another module's internals, touching a model outside its repository, or calling a repository from a controller fails lint.
 - Ships working tests (unit + integration with an in-memory MongoDB), typed controllers (`ValidatedRequest<…>`), shared pagination, and a response mapper so raw database documents never leak.
+- Ships a **generated code map** (`codemap/INDEX.md` + one small file per area/module) listing every export with its file and purpose. The pre-commit hook keeps it current, so AI reads a shard instead of opening files to find out what exists.
 - Generates the contract files the rest of the toolkit depends on: `ARCHITECTURE.md`, `MODULE_REGISTRY.md`, and an always-loaded `CLAUDE.md`.
 - Verifies the result: typecheck, lint, tests, build, and a boot smoke check.
 
@@ -42,3 +43,4 @@ test/                         api() + authHeader() helpers, in-memory MongoDB se
 - **The libraries are fixed** (Express/TS/Mongoose/JOSE/Zod/Vitest), **the versions are not**: always the latest compatible ones. It will not bootstrap Django, Rails, Spring, Go, Next.js, etc.
 - Needs a recent Node (24 LTS recommended). It tells you if a tool needs a newer Node than you have.
 - If you point the toolkit at an empty directory via `project-onboard`, it hands off to this skill automatically.
+- **Optional GitNexus:** for call-graph and impact questions, you can connect GitNexus yourself (`npm i -g gitnexus`, `gitnexus analyze --index-only`, then `claude mcp add gitnexus -- gitnexus mcp`). The skills use it when present and work fine without it. It needs Node 22.18+ and is licensed PolyForm Noncommercial. See `.claude/skills/CODE-NAV.md`.

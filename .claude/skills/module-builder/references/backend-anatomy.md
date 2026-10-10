@@ -148,6 +148,19 @@ Full path = `/api/v1` + mount + route path. `app.ts` is never edited.
 
 Non-schema types; named constants and enums (no magic literals); private helpers. The moment a second module needs one, it moves to `src/types/`, `src/constants/`, or `src/lib/` and gets registered — never copied.
 
+```ts
+// product.constants.ts
+export const PRODUCT_NOT_FOUND = "Product not found";
+```
+
+```ts
+// product.utils.ts
+/** Escape user text before using it inside a $regex filter. */
+export function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+```
+
 ## `__tests__/` — owned by test-writer
 
 module-builder does not write tests (test-writer does, on request), but it keeps code testable: services depend only on the repository and other modules' public surfaces, so `vi.mock("../<name>.repository.js")` is all a unit test needs. Conventions test-writer follows: `<name>.service.test.ts` (unit) and `<name>.routes.int.test.ts` (integration via `test/helpers.ts`).

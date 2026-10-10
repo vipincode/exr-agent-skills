@@ -83,8 +83,8 @@ export default defineConfig(
 
   // --- Exceptions ---
   {
-    // Fails before the logger exists, so it is the one allowed console user.
-    files: ["src/config/env.ts"],
+    // env.ts fails before the logger exists; scripts/ are CLI tools.
+    files: ["src/config/env.ts", "scripts/**/*.ts"],
     rules: { "no-console": "off" },
   },
   {

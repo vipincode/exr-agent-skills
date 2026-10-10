@@ -16,6 +16,8 @@
     "test:int": "vitest run --project integration",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "codemap": "tsx scripts/codemap.ts",
+    "codemap:check": "tsx scripts/codemap.ts --check",
     "prepare": "husky || true"
   },
   "lint-staged": {

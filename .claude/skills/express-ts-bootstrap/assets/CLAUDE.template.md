@@ -21,7 +21,9 @@ Keep this file small — it is in context for **every** change. Read further onl
 | Need | Read |
 | --- | --- |
 | The full conventions (layout, layering, envelope, errors, validation, pagination, tests, auth, env) | `ARCHITECTURE.md` |
-| Does this util/middleware/type/constant/schema already exist? | `MODULE_REGISTRY.md` (index → shard) |
+| Does this util/middleware/type/constant/schema already exist? Where is X? | `codemap/INDEX.md` → one shard (generated, always current) |
+| What is a shared piece for / what was decided? | `MODULE_REGISTRY.md` |
+| How to search without wasting tokens (+ optional GitNexus) | `.claude/skills/CODE-NAV.md` |
 | What is being built and in what order | `_docs/features/<module>/` at the **repo root** |
 | Which folder each project lives in | `.claude/workspace.json` at the repo root |
 

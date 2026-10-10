@@ -31,14 +31,19 @@ That stays local and is not registered. Over-sharing is its own failure mode.
 2. **Consult the plan's Reuse list.** `module-planner` already searched — treat its entries as the
    first candidates, and verify each path still exists before importing it.
 
-3. **Search `MODULE_REGISTRY.md`** for that capability, among shared pieces and existing
-   modules' public surfaces.
+3. **Read the code map, then the registry.** When the project has `<proj>/codemap/`, read
+   `INDEX.md` and the shard(s) for where the capability would live (`lib.md`, `middleware.md`,
+   `types-constants.md`, another module's surface in INDEX.md). It is generated from the code, so it
+   is complete for exports and never lags. Then search `MODULE_REGISTRY.md` for intent and
+   ownership. See `../../CODE-NAV.md`.
 
    If it has been **sharded** — the sections link to `<proj>/_registry/*.md` instead of listing
    rows — read the index, then only the shard(s) covering what you are about to create. Step 4's
    grep is what makes that partial read safe.
 
-4. **Grep the codebase.** The registry can lag behind the code, so never trust it alone. Search by
+4. **Grep to confirm.** With a code map, grep only for what it can't show (non-exported helpers,
+   string literals, frontend markup). Without one, grep is required — the registry can lag behind
+   the code, so never trust it alone. Search by
    likely identifiers *and* by intent (`paginate`, `pageSize`, `cursor` for pagination;
    `jwtVerify`, `verifyToken` for token checks; `card`, `modal`, `dialog`, `empty`, `skeleton`,
    `Field` for UI).

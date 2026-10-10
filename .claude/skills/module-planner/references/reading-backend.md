@@ -23,6 +23,9 @@ When `.claude/workspace.json` has a `backend` entry, the real code is right ther
 project dir and read the chain for the requested capability:
 
 ```
+codemap/INDEX.md + modules/<name>.md → START HERE when present: mount paths, public surfaces,
+                                   every exported schema/service/mapper signature — often enough
+                                   to write the contract without opening the files below
 src/routes.ts (or src/app.ts)    → where routers mount (base path, e.g. /api/v1 + /products)
 src/modules/<name>/index.ts              → the module's public surface (what other modules may call)
 src/modules/<name>/<name>.routes.ts      → method + path + which middleware (auth/validate)

@@ -6,11 +6,11 @@ Builds **one slice** of a planned module into working code — the backend endpo
 
 - Picks the slice: the one you name, or the lowest-numbered slice that isn't `built` yet.
 - Reads the slice file, the master plan, and `ARCHITECTURE.md` + `MODULE_REGISTRY.md` for each domain it touches.
-- Runs the **dedup gate** before creating anything shared — checks the plan's reuse list, the registry, then greps the code. If a util, middleware, component, or hook already exists, it imports it instead of writing a second one.
+- Runs the **dedup gate** before creating anything shared — checks the plan's reuse list, the generated code map and the registry, and greps only to confirm. With GitNexus connected, it checks the impact of changing anything other modules use. If a util, middleware, component, or hook already exists, it imports it instead of writing a second one.
 - Builds the backend half inside the module folder — schema (typed request bundles), model, repository, mapper, service, controller, routes, `index.ts` — in your project's paradigm, plus one mount line in `src/routes.ts`. It never edits another module's files unless the slice lists that change, and names every file it touched outside the module.
 - Builds the frontend half (types, schemas, request fns, query hooks) and **edits the already-built design** to consume it — dropping the hardcoded samples, applying the slice's data-binding map, rendering loading/empty/error states.
 - Runs typecheck/lint/build and the existing tests, and reports what actually happened. Boundary lint errors get fixed by moving code, never by loosening the rule.
-- Updates each registry, marks the slice `built`, and ticks the master plan's build-order table.
+- Regenerates the code map, updates each registry, marks the slice `built`, and ticks the master plan's build-order table.
 - Ends by showing the slice's **testing checklist** and offering `test-writer` and `code-review`.
 
 ## Why one slice at a time

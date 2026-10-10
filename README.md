@@ -74,6 +74,15 @@ The number is the build order, and each slice tracks its own `Status:` (`ready` 
 `built`) so work stops and resumes cleanly. Each slice states its API contract **once**, which is
 what keeps the frontend's types matching what the backend actually returns.
 
+### Finding code without wasting tokens
+
+A bootstrapped backend ships a generated **code map** (`codemap/`): every exported function, type,
+schema and constant with its file and one-line purpose, split into small shards and regenerated on
+every commit. The skills read the map first, then only the files they change — instead of opening
+files to discover what exists. [GitNexus](https://github.com/abhigyanpatwari/GitNexus) can be added
+as an **optional** call-graph layer ("who calls this / what breaks if it changes"); it is never
+required and has a noncommercial license. The protocol is in `.claude/skills/CODE-NAV.md`.
+
 ## Installation
 
 ### Claude Code
@@ -142,6 +151,7 @@ SkillsMP indexes public GitHub repositories that contain `SKILL.md` files. To ma
   skills/
     NAMING.md             # skill naming & domain taxonomy, plus the merge history
     LAYOUT.md             # project-location manifest, resolution protocol, doc locations
+    CODE-NAV.md           # how skills find code cheaply: code map -> registry -> GitNexus (optional) -> grep
     toolkit-guide/
     prd-creator/
     express-ts-bootstrap/

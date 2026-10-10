@@ -1,9 +1,14 @@
 # Module Registry — {{PROJECT_NAME}}
 
-The dedup ledger. **Check here FIRST** before creating any util, middleware, helper, type, constant,
-schema, or model — then grep `src/lib` / `src/middleware` / sibling modules. If a suitable piece
-exists, **import it**; extend rather than fork. New reusable pieces are added here in the same change.
+The curated dedup ledger. Before creating any util, middleware, helper, type, constant, schema, or
+model, read `codemap/INDEX.md` → the relevant shard (generated, exhaustive) **and** this file (intent,
+ownership, decisions) — grep only to confirm. If a suitable piece exists, **import it**; extend rather
+than fork. New reusable pieces are added here in the same change.
 
+> **Registry vs code map.** `codemap/` is the generated, exhaustive list of every export — read it
+> to find out what exists. This registry is the short, curated layer on top: what each shared piece
+> is *for*, which module owns what, and the decisions log. Don't copy the map in here.
+>
 > **This file is a ledger, not a rulebook.** One row per entry: name, path, ≤8-word purpose. The
 > *rules* about how these pieces are used live in `ARCHITECTURE.md` — never restate them here, or
 > both files grow and drift. Rows stay terse because this file is read on every build.

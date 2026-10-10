@@ -1,5 +1,6 @@
 // One error model for the whole app. Services throw these; the central error
 // handler renders them into the standard envelope. Never `throw new Error()`.
+
 export class AppError extends Error {
   readonly statusCode: number;
   readonly code: string;

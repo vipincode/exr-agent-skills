@@ -94,6 +94,7 @@ Once the project dir is resolved (call it `<proj>`), the familiar paths all hang
 | `src/lib`, `src/middleware`, `src/modules/<name>/` | `<proj>/src/...` |
 | `src/features/<name>/`, `src/components/shared/` | `<proj>/src/...` |
 | `src/routes.ts` (router mount; `src/app.ts` in older/onboarded projects) | `<proj>/src/routes.ts` |
+| `codemap/` (generated code map — see [`CODE-NAV.md`](./CODE-NAV.md)) | `<proj>/codemap/` |
 | `package.json` (framework / PM detection) | `<proj>/package.json` |
 
 When the project dir is the repo root, these are exactly the old paths — so behavior is

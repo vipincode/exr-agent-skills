@@ -53,6 +53,9 @@ The design goal behind every rule here: **work on one module touches one folder.
   test/
     setup-db.ts         # in-memory Mongo lifecycle for *.int.test.ts
     helpers.ts          # api() supertest agent, authHeader(role)
+  scripts/
+    codemap.ts          # generates codemap/ from the code
+  codemap/              # GENERATED map of every export — read before searching (never hand-edit)
   vitest.config.ts      # unit + integration projects
   tsconfig.json         # typecheck (src + tests); tsconfig.build.json emits src only
   eslint.config.js      # includes the architecture-boundary rules
@@ -90,6 +93,16 @@ Lint enforces the layering (`eslint.config.js`): only `*.repository.ts` may impo
 - `index.ts` exports the router (for `routes.ts`), the service functions other modules may call, and public DTO types. Nothing else — not the model, not the repository.
 - Cross-module needs go through the other module's **service** surface, never its model or repository.
 - `lib/`, `middleware/`, `config/`, `types/`, `constants/` must never import from `modules/` (lint error). If a shared piece needs module knowledge, it is not shared — or the knowledge moves down.
+
+## Code map (generated — how AI finds code cheaply)
+
+`scripts/codemap.ts` parses `src/` and `test/` (TypeScript parser, syntax only, under a second) and writes `codemap/`: an `INDEX.md` (shard table, every module's public surface and mount path) plus one shard per area (`lib.md`, `middleware.md`, `config.md`, `types-constants.md`, `app.md`, `test-helpers.md`, `modules/<name>.md`). Each line is an exported symbol with its file, compact signature, and one-line purpose.
+
+- **Read order for any task:** `codemap/INDEX.md` → the one shard you need → only the files you will change. Grep confirms; it doesn't discover. (The toolkit-wide protocol is `.claude/skills/CODE-NAV.md`.)
+- **Always fresh:** the pre-commit hook regenerates and stages it; `codemap:check` fails CI if it's stale; module-builder runs `codemap` at the end of every slice.
+- **Comment convention** (this is where descriptions come from): a comment block **followed by a blank line** describes the file; a `/** one line */` **directly above** an export describes that export. Give every export someone might reuse a one-line purpose.
+- `codemap/` is generated: never edit it by hand, and don't restate it in `MODULE_REGISTRY.md` — the registry keeps curated purposes, ownership, and decisions; the map is the exhaustive inventory.
+- Optional: GitNexus (code knowledge graph over MCP) answers "who calls this / what breaks if it changes". It is never required — see `CODE-NAV.md` for setup (`--index-only`), license (PolyForm Noncommercial), and when skills use it.
 
 ## Route registry
 
@@ -185,7 +198,7 @@ Vitest, two projects (`vitest.config.ts`):
 
 ## DRY rules (the point of the registry)
 
-Before creating any util, middleware, helper, type, schema, or constant: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists. If a genuinely new reusable piece is created, place it by kind (util/shared schema → `lib/`, middleware → `middleware/`, type → `types/`, constant/enum → `constants/`) and add it to the registry in the same change. Module-local, single-use code stays in the module (in its `<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts` file) and is not registered.
+Before creating any util, middleware, helper, type, schema, or constant: **check `codemap/INDEX.md` → the relevant shard and `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists. If a genuinely new reusable piece is created, place it by kind (util/shared schema → `lib/`, middleware → `middleware/`, type → `types/`, constant/enum → `constants/`) and add it to the registry in the same change. Module-local, single-use code stays in the module (in its `<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts` file) and is not registered.
 
 ## Dependencies (always latest, verified)
 
@@ -210,6 +223,8 @@ The compiled output lives in `dist/`. A stale `dist/` is a recurring footgun —
   "test:int": "vitest run --project integration",
   "test:watch": "vitest",
   "test:coverage": "vitest run --coverage",
+  "codemap": "tsx scripts/codemap.ts",
+  "codemap:check": "tsx scripts/codemap.ts --check",
   "prepare": "husky || true"
 }
 ```
@@ -218,11 +233,11 @@ Script bodies are PM-agnostic (chain with `&&`, never `npm run`). `prepare`'s `|
 
 ## Git hooks (husky + lint-staged)
 
-- `.husky/pre-commit` contains just `lint-staged` (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing).
+- `.husky/pre-commit` runs `lint-staged`, then `tsx scripts/codemap.ts && git add codemap`, so the code map is committed with the code it describes (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing).
 - `package.json` carries `"lint-staged": { "*.{ts,js}": "eslint --fix" }` — staged files only, so the boundary rules run on every commit.
 - Hooks activate via `prepare` on first install.
 
-If the project dir is not the git root (e.g. `backend-shoply/` inside a monorepo), husky refuses to install from the subfolder. Use `"prepare": "cd .. && husky backend-shoply/.husky || true"` (adjust to the real folder name) and make the hook `cd backend-shoply && npx lint-staged` (`npx`, because the hook now runs from the git root).
+If the project dir is not the git root (e.g. `backend-shoply/` inside a monorepo), husky refuses to install from the subfolder. Use `"prepare": "cd .. && husky backend-shoply/.husky || true"` (adjust to the real folder name) and make the hook `cd backend-shoply && npx lint-staged && npx tsx scripts/codemap.ts && git add codemap` (`npx`, because the hook now runs from the git root).
 
 ## Graceful shutdown
 

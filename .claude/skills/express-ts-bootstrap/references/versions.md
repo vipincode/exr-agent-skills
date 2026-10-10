@@ -65,6 +65,13 @@ trusting the shipped code, and update this table plus the code in the same chang
 | mongodb-memory-server | 11 | Downloads a `mongod` binary on first run (cached afterwards). |
 | husky / lint-staged | 9 / 17 | `.husky/pre-commit` is one line: `lint-staged`. |
 
+## The code map generator and TypeScript
+
+`scripts/codemap.ts` uses the `typescript` package's JavaScript parser API (`ts.createSourceFile`).
+TypeScript 7 is the native (Go) compiler; when typescript-eslint's range finally allows 7.x, confirm
+the installed `typescript` package still exposes that API before upgrading, or the generator (and
+the pre-commit hook) will break.
+
 ## Adding a dependency later (module-builder, ad-hoc edits)
 
 1. Check `MODULE_REGISTRY.md` / the code — the capability may already exist.
