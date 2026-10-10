@@ -2,49 +2,106 @@
 
 These are the project-wide rules that hold regardless of paradigm. They are the canonical source for the generated `ARCHITECTURE.md`. Keep them concrete — vague conventions produce inconsistent modules, which is exactly what defeats the registry/dedup workflow.
 
+The design goal behind every rule here: **work on one module touches one folder.** An AI (or a person) building `product` should edit `src/modules/product/**`, add one line to `src/routes.ts`, and update the registry — nothing else, unless the dedup protocol says a shared piece must be created or extended. The lint config enforces the import boundaries mechanically, so this holds even when nobody re-reads the rules.
+
 ## Project layout (domain-module, always)
 
 ```
-src/
-  config/
-    env.ts            # Zod-validated process.env, exported as typed `env`
-    db.ts             # mongoose connection + disconnect
-  lib/
-    app-error.ts      # AppError + typed subclasses (NotFound, BadRequest, ...)
-    http.ts           # response envelope helpers: ok(), created(), noContent()
-    db-errors.ts      # normalizeDbError(): maps Mongoose/Zod errors -> AppError
-    logger.ts         # pino instance
-    jwt.ts            # JOSE sign/verify helpers (see auth-jose.md)
-  middleware/
-    error-handler.ts  # central error handler (AppError-, Mongoose-, Zod-aware)
-    not-found.ts      # 404 fallthrough
-    request-context.ts# request id + child logger per request
-    protect.ts        # JOSE auth guard (see auth-jose.md)
-    require-role.ts    # role gate (see auth-jose.md)
-    validate.ts       # Zod request validation factory
-  modules/
-    <name>/           # one folder per domain (health, auth, product, ...)
-      <name>.model.ts     # Mongoose schema/model (if it owns data)
-      <name>.schema.ts    # Zod input/output schemas
-      <name>.service.ts   # business logic
-      <name>.controller.ts# thin HTTP layer
-      <name>.routes.ts    # express.Router wiring
-      <name>.types.ts     # module-local types (optional)
-      <name>.constants.ts # module-local constants/enums (optional)
-      <name>.utils.ts     # module-local helpers (optional)
-  types/
-    express.d.ts      # augment Express.Request (req.user, req.id, req.log)
-                      # + types shared by 2+ modules (one file per topic, created on first need)
-  constants/          # constants/enums shared by 2+ modules (created on first need)
-  app.ts              # build & configure the Express app (no listen)
-  server.ts           # bootstrap: connect db, listen, graceful shutdown
+<proj>/
+  src/
+    app.ts              # middleware stack + mounts apiRouter at /api/v1 — never edited per feature
+    routes.ts           # THE route registry: one mount line per module
+    server.ts           # bootstrap: connect db, listen, graceful shutdown
+    config/
+      env.ts            # Zod-validated process.env, exported as typed `env`
+      db.ts             # mongoose connection + disconnect
+    lib/
+      app-error.ts      # AppError + typed subclasses (NotFound, BadRequest, ...)
+      http.ts           # response envelope helpers: ok(), created(), noContent()
+      db-errors.ts      # normalizeDbError(): maps Mongoose/Zod errors -> AppError
+      pagination.ts     # paginationQuerySchema, toSkip(), toPageMeta()
+      common-schemas.ts # objectIdSchema, idParamsSchema
+      logger.ts         # pino instance
+      jwt.ts            # JOSE sign/verify helpers (see auth-jose.md)
+    middleware/
+      error-handler.ts  # the single error-envelope renderer
+      not-found.ts      # 404 fallthrough
+      request-context.ts# request id + child logger per request
+      protect.ts        # JOSE auth guard (see auth-jose.md)
+      require-role.ts   # role gate (see auth-jose.md)
+      validate.ts       # validate() factory + ValidatedRequest<> type
+    modules/
+      <name>/                 # one folder per domain (health, auth, product, ...)
+        index.ts              # PUBLIC API — the only file other code may import
+        <name>.routes.ts      # express.Router wiring: validate → auth → handler
+        <name>.controller.ts  # thin HTTP layer (typed req → service → envelope)
+        <name>.service.ts     # business rules; returns DTOs; throws AppErrors
+        <name>.repository.ts  # data access — the only file that imports the model
+        <name>.model.ts       # Mongoose schema/model + indexes
+        <name>.schema.ts      # Zod request schemas, inferred input types, route bundles
+        <name>.mapper.ts      # doc → response DTO (explicit field allowlist)
+        <name>.types.ts       # module-local types (optional)
+        <name>.constants.ts   # module-local constants/enums (optional)
+        <name>.utils.ts       # module-local helpers (optional)
+        __tests__/
+          <name>.service.test.ts      # unit — repository mocked, no DB
+          <name>.routes.int.test.ts   # integration — real app + in-memory Mongo
+    types/
+      express.d.ts      # augment Express.Request (req.user, req.id, req.log, req.cookies)
+                        # + types shared by 2+ modules (one file per topic, created on first need)
+    constants/          # constants/enums shared by 2+ modules (created on first need)
+  test/
+    setup-db.ts         # in-memory Mongo lifecycle for *.int.test.ts
+    helpers.ts          # api() supertest agent, authHeader(role)
+  vitest.config.ts      # unit + integration projects
+  tsconfig.json         # typecheck (src + tests); tsconfig.build.json emits src only
+  eslint.config.js      # includes the architecture-boundary rules
 ```
 
-Rule: a module folder contains everything that module owns and nothing another module owns. Cross-module needs go through the other module's `service`, never by reaching into its model directly. Anything used by two or more modules belongs at the global level — utils/helpers in `lib/`, middleware in `middleware/`, types in `types/`, constants/enums in `constants/` — and **must** be registered in MODULE_REGISTRY.md. Single-use pieces stay module-local, but still in their named file (`<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts`), never as inline magic literals.
+A module that owns no data (like `health`) has no model, repository, or mapper. Everything else is the same.
+
+## Layering inside a module
+
+```
+routes → controller → service → repository → model
+                         ↘ mapper (doc → DTO)
+schema is imported by routes (validate), controller (types), service + repository (input types)
+```
+
+| File | Owns | Never |
+|---|---|---|
+| `routes` | `validate(bundle)` → `protect`/`requireRole` → handler; default-exports the Router | logic, data access |
+| `controller` | typed `req` → one service call → `ok`/`created`/`noContent` | try/catch, logic, repository/model imports |
+| `service` | business rules, cross-module calls (via the other module's `index.ts`), DTO mapping, throwing `AppError`s | `req`/`res`, importing the model |
+| `repository` | every Mongoose call for this module; returns **lean plain objects** | business rules, throwing HTTP errors |
+| `model` | schema shape, indexes, `ProductDoc` type | logic, hooks that call other modules |
+| `schema` | Zod operation schemas, `z.output` input types, one **request bundle** per route | response shaping |
+| `mapper` | `toXDto(doc)` — the explicit list of fields that leave the API, and `XDto = ReturnType<…>` | queries, side effects |
+
+Why a mandatory repository: services become testable by mocking a handful of plain functions instead of Mongoose query chains, and swapping a query (index hint, aggregation, caching) never touches business rules.
+
+Why a mandatory mapper: returning a raw Mongoose doc leaks `_id`, `__v`, and any field added later — including secrets such as `passwordHash`. An allowlist means new fields stay private until someone adds them on purpose.
+
+Lint enforces the layering (`eslint.config.js`): only `*.repository.ts` may import a `*.model.js` at runtime (type-only imports are fine); controllers/routes may not import a repository.
+
+## Module boundaries (enforced)
+
+- Other code imports a module **only through its `index.ts`**. `../product/product.model.js` is a lint error; `../product/index.js` is allowed.
+- `index.ts` exports the router (for `routes.ts`), the service functions other modules may call, and public DTO types. Nothing else — not the model, not the repository.
+- Cross-module needs go through the other module's **service** surface, never its model or repository.
+- `lib/`, `middleware/`, `config/`, `types/`, `constants/` must never import from `modules/` (lint error). If a shared piece needs module knowledge, it is not shared — or the knowledge moves down.
+
+## Route registry
+
+`src/routes.ts` owns every module mount, one line each, alphabetical, between the marker comments:
+
+```ts
+apiRouter.use("/products", productRoutes);
+```
+
+`app.ts` mounts `apiRouter` at `API_PREFIX` (`/api/v1`) and is never edited for a feature. A breaking API change later gets a second router (`/api/v2`), not edits to v1 routes.
 
 ## Response envelope (single shape)
-
-Success and error responses share one shape so clients and the test-writer skill can rely on it:
 
 ```jsonc
 // success
@@ -53,7 +110,17 @@ Success and error responses share one shape so clients and the test-writer skill
 { "success": false, "error": { "code": "NOT_FOUND", "message": "...", "details": <optional> } }
 ```
 
-Controllers never hand-roll this. They call `ok(res, data, meta?)`, `created(res, data)`, or `noContent(res)` from `lib/http.ts`. Errors are produced by throwing `AppError` subclasses; the error handler renders the envelope. There is exactly one place that calls `res.json` with an error shape: `middleware/error-handler.ts`.
+Controllers never hand-roll this. They call `ok(res, data, meta?)`, `created(res, data)`, or `noContent(res)` from `lib/http.ts`. `data` is always a DTO (or array of DTOs) from a mapper — never a Mongoose document. Errors are produced by throwing `AppError` subclasses; `middleware/error-handler.ts` is the one place that renders the error shape.
+
+## Pagination (one shape)
+
+Every list endpoint paginates with `lib/pagination.ts`:
+
+- Query: extend `paginationQuerySchema` (`page` ≥ 1, default 1; `limit` 1–100, default 20) — `paginationQuerySchema.extend({ search: … })`. Never re-declare page/limit.
+- Service: `repository.findPage(filter, { skip: toSkip(query), limit: query.limit })` returning `{ items, total }`, then `toPageMeta(query, total)`.
+- Controller: `ok(res, items, meta)` → `meta = { page, limit, total, totalPages }`.
+
+An unbounded `find()` on a growing collection is a bug.
 
 ## Error model
 
@@ -63,79 +130,99 @@ Controllers never hand-roll this. They call `ok(res, data, meta?)`, `created(res
 
 ### Mongoose & Zod error normalization (reusable)
 
-Mongoose and Zod throw their own error shapes, not `AppError`. Rather than scattering `instanceof` checks across modules, normalize them in **one reusable place**: `lib/db-errors.ts` exports `normalizeDbError(err: unknown): AppError | null`, which returns a mapped `AppError` for a recognized error and `null` otherwise. `middleware/error-handler.ts` calls it first; if it returns an `AppError`, render that, else fall through to the AppError/`INTERNAL` logic above. This keeps the mapping testable, shared, and the single source of truth — module code never re-implements it.
+`lib/db-errors.ts` exports `normalizeDbError(err: unknown): AppError | null`; `middleware/error-handler.ts` calls it first. Module code never re-implements these mappings:
 
-`normalizeDbError` maps:
-- Mongoose `CastError` (e.g. malformed ObjectId) → `BadRequestError` (400, `BAD_REQUEST`), `details` = `{ path, value }`.
-- Mongoose `ValidationError` → `UnprocessableError` (422, `UNPROCESSABLE`), `details` = per-field messages keyed by path.
-- Mongoose duplicate key (`MongoServerError` with `code === 11000`) → `ConflictError` (409, `CONFLICT`), `details` = the conflicting `keyValue`.
-- Zod `ZodError` (a raw one that reached the handler, not via `validate`) → `BadRequestError` (400, `BAD_REQUEST`), `details = z.treeifyError(err)`.
+- Mongoose `CastError` → `BadRequestError` (400), `details = { path, value }`.
+- Mongoose `ValidationError` → `UnprocessableError` (422), `details` = per-field messages keyed by path.
+- Duplicate key (`code === 11000`) → `ConflictError` (409), `details = { keyValue }`.
+- A raw `ZodError` that reached the handler → `BadRequestError` (400), `details = z.treeifyError(err)`.
 
-Detection is by shape/`name`, not a hard `instanceof mongoose.Error` import chain where avoidable, so the helper stays decoupled and reusable. The `validate` middleware still handles request-body Zod errors up front; the handler's Zod branch is a defensive fallback for ZodError thrown deeper (e.g. response/parse validation).
+## Validation flow (typed end to end)
 
-## Validation flow
+- One `<name>.schema.ts` per module, Zod 4: `import * as z from "zod"`; top-level formats (`z.email()`, `z.uuid()`); `z.object()` strips unknown keys (this is the mass-assignment guard).
+- Reuse `objectIdSchema` / `idParamsSchema` from `lib/common-schemas.ts` and `paginationQuerySchema` from `lib/pagination.ts`.
+- Each route gets a **request bundle** in the schema file:
+  ```ts
+  export const updateProductRequest = { params: idParamsSchema, body: updateProductSchema } satisfies RequestSchemas;
+  ```
+- Routes: `validate(updateProductRequest)`. On failure it throws `BadRequestError` with `details = z.treeifyError(...)`; on success it writes the parsed values back onto `req`.
+- Controllers: `req: ValidatedRequest<typeof updateProductRequest>` — `req.params.id` and `req.body` are fully typed from the same object the route validated with. Never `req.body as X`, never re-validate.
+- Input types come from `z.output<typeof schema>`; response types from `ReturnType<typeof toXDto>`. No parallel hand-written interfaces.
 
-- One schema file per module (`<name>.schema.ts`) using Zod 4 (`import * as z from "zod"`; top-level `z.email()`, `z.uuid()`; `z.object()` strips unknown keys by default).
-- `middleware/validate.ts` exports a factory `validate({ body?, params?, query? })` returning middleware that parses with `safeParse`, and on failure throws `BadRequestError` with `details = z.treeifyError(result.error)`. On success it assigns the parsed, typed values back onto `req`.
-- Controllers consume already-validated, typed input. They never re-validate.
-- Derive types from schemas with `z.infer` rather than writing parallel interfaces — one source of truth per shape.
+## Testing
+
+Vitest, two projects (`vitest.config.ts`):
+
+| Project | Files | What it does |
+|---|---|---|
+| `unit` | `src/**/__tests__/*.test.ts` | Service/mapper/util tests. Mock the module's repository (`vi.mock("../<name>.repository.js")`) or collaborator services. No DB. |
+| `integration` | `src/**/__tests__/*.int.test.ts` | `api()` from `test/helpers.ts` (supertest over `createApp()`) against an in-memory Mongo from `test/setup-db.ts`. Asserts real statuses and envelopes, including 400/401/403/404/409. |
+
+- Tests live in the module's own `__tests__/` folder, so module work stays inside the module folder.
+- Mint auth with `authHeader(role)` from `test/helpers.ts` — never a hand-crafted JWT.
+- Test env values come from `vitest.config.ts → test.env`; `LOG_LEVEL=silent` keeps output clean.
+- Scripts: `test`, `test:unit`, `test:int`, `test:watch`, `test:coverage`.
+- `tsconfig.json` typechecks tests; `tsconfig.build.json` keeps them out of `dist/`.
 
 ## Environment config
 
 `config/env.ts` parses `process.env` through a Zod schema at startup and exits the process on failure (fail fast, never boot half-configured). Everything downstream imports the typed `env` object — **no raw `process.env` access anywhere else** in the codebase. New env vars are added to the schema and to `.env.example` in the same change.
 
-**`env.ts` validates — it does not load.** Nothing in the codebase reads `.env` off disk; that is the job of Node's native `--env-file=.env` flag, which the `dev` and `start` scripts pass (supported by both `tsx` and `node` on Node ≥ 20 — no `dotenv` dependency). A scaffold whose scripts omit this flag boots with `MONGODB_URI`/`JWT_SECRET` undefined and dies at the Zod check even though the user's `.env` is perfectly correct — this exact failure has happened, so treat the flag as part of the contract. In Docker/production the platform injects real env vars and the `Dockerfile` CMD runs `node dist/server.js` directly, no `.env` involved.
+**`env.ts` validates — it does not load.** Nothing in the codebase reads `.env` off disk; that is the job of Node's native `--env-file=.env` flag, which the `dev` and `start` scripts pass (no `dotenv` dependency). A scaffold whose scripts omit this flag boots with `MONGODB_URI`/`JWT_SECRET` undefined and dies at the Zod check even though the user's `.env` is correct — this exact failure has happened, so treat the flag as part of the contract. In Docker/production the platform injects real env vars and the `Dockerfile` CMD runs `node dist/server.js` directly, no `.env` involved.
 
 ## Logging
 
-`lib/logger.ts` exports a pino instance (pretty in dev via `pino-pretty`, JSON in prod). `request-context.ts` attaches a per-request id and a child logger at `req.log`. Application code logs through `req.log` inside requests and the root `logger` elsewhere. No `console.log` in committed code.
+`lib/logger.ts` exports a pino instance (pretty in dev via `pino-pretty`, JSON in prod, `silent` in tests). `request-context.ts` attaches a per-request id and a child logger at `req.log`. Application code logs through `req.log` inside requests and the root `logger` elsewhere. No `console.*` in committed code — lint enforces it (`config/env.ts` is the one exemption, since it fails before the logger exists).
 
 ## Naming
 
-- Files: kebab-case, suffixed by role: `product.service.ts`, `product.controller.ts`.
-- Exports: named exports for utilities/services; the module's `routes.ts` default-exports its `Router`.
-- Mongoose models: PascalCase singular (`Product`), collection auto-pluralized.
-- Zod schemas: `createProductSchema`, `updateProductSchema`; inferred types `CreateProductInput`.
+- Files: kebab-case, suffixed by role: `product.service.ts`, `product.repository.ts`.
+- Exports: named exports everywhere except `<name>.routes.ts`, which default-exports its `Router` (re-exported by name from `index.ts`: `export { default as productRoutes }`).
+- Mongoose models: PascalCase singular (`Product`), collection auto-pluralized; doc type `ProductDoc`.
+- Zod: `createProductSchema` → `CreateProductInput`; request bundles `createProductRequest`.
+- Mapper: `toProductDto` → `ProductDto`.
+- Type-only imports use `import type` (lint + `verbatimModuleSyntax`).
 
 ## DRY rules (the point of the registry)
 
-Before creating any util, middleware, helper, type, or constant, the rule for every skill that builds code is: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists — reuse it. If a genuinely new reusable piece is created, place it by kind (util → `lib/`, middleware → `middleware/`, type → `types/`, constant/enum → `constants/`) and add it to the registry in the same change so the next feature sees it. Module-local, single-use code stays in the module (in its `<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts` file) and is not registered.
+Before creating any util, middleware, helper, type, schema, or constant: **check `MODULE_REGISTRY.md` first, then grep `src/lib`, `src/middleware`, `src/types`, `src/constants`, and sibling modules.** If a suitable piece exists, import it. "It's only needed by one feature" is not a reason to inline-duplicate something that already exists. If a genuinely new reusable piece is created, place it by kind (util/shared schema → `lib/`, middleware → `middleware/`, type → `types/`, constant/enum → `constants/`) and add it to the registry in the same change. Module-local, single-use code stays in the module (in its `<name>.types.ts` / `<name>.constants.ts` / `<name>.utils.ts` file) and is not registered.
+
+## Dependencies (always latest, verified)
+
+- Never hand-write a version number. Add packages with the PM (`pnpm add <pkg>` / `pnpm add -D <pkg>`), which resolves the current release.
+- Before using a library API, check its **current** docs (context7 when available) — training-data memory of a library is often one major version behind.
+- Respect peer ranges: if a tool caps a peer (typescript-eslint caps `typescript`), install the newest version inside that cap. `references/versions.md` lists the known caps and the major-version gotchas.
 
 ## Build & scripts (clean dist, always)
 
-The compiled output lives in `dist/` (TypeScript `outDir`). A stale `dist/` is a recurring footgun — deleted source files linger as compiled `.js`, and `npm start` can run yesterday's code. So **`dist/` is always wiped before a build or a dev run.** Use `rimraf` (a devDependency) for the delete, never `rm -rf` — it must work on Windows too.
-
-`package.json` scripts (PM-agnostic — the same script bodies work under npm/pnpm/bun; chain with `&&`, not `npm run`, so they aren't tied to one PM):
+The compiled output lives in `dist/`. A stale `dist/` is a recurring footgun — deleted source files linger as compiled `.js`, and `start` can run yesterday's code. So **`dist/` is always wiped before a build or a dev run**, with `rimraf` (works on Windows; never `rm -rf`).
 
 ```jsonc
 "scripts": {
   "clean": "rimraf dist",
   "dev": "rimraf dist && tsx watch --env-file=.env src/server.ts",
-  "build": "rimraf dist && tsc -p tsconfig.json",
+  "build": "rimraf dist && tsc -p tsconfig.build.json",
   "start": "node --env-file=.env dist/server.js",
   "typecheck": "tsc --noEmit",
   "lint": "eslint .",
+  "test": "vitest run",
+  "test:unit": "vitest run --project unit",
+  "test:int": "vitest run --project integration",
+  "test:watch": "vitest",
+  "test:coverage": "vitest run --coverage",
   "prepare": "husky || true"
 }
 ```
 
-- `clean` — standalone wipe, callable directly.
-- `dev` — clears `dist/` then runs via `tsx watch` (no emit; running fresh from source, never a stale build). `--env-file=.env` loads the env file natively — without it `env.ts` validates an empty `process.env` and the boot fails; see "Environment config".
-- `build` — clears `dist/` then emits a clean compile.
-- `start` — runs the compiled output (assumes a prior `build`), also loading `.env` natively. The `Dockerfile` deliberately runs `node dist/server.js` (no flag) because containers get env vars from the platform, not a file.
-- `prepare` — installs the husky git hooks on `install`. The `|| true` keeps installs green where husky can't run (Docker image builds with `--omit=dev`, no `.git` directory, CI).
-
-Add `dist/` to `.gitignore`. The `rimraf` devDependency must be in `package.json`, and the registry/README note that `clean` runs automatically inside `dev` and `build`.
+Script bodies are PM-agnostic (chain with `&&`, never `npm run`). `prepare`'s `|| true` keeps installs green where husky can't run (Docker `--prod` installs, no `.git`, CI).
 
 ## Git hooks (husky + lint-staged)
 
-The scaffold ships husky (v9+) and lint-staged as devDependencies so every project starts with working pre-commit checks instead of bolting them on later:
+- `.husky/pre-commit` contains just `lint-staged` (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing).
+- `package.json` carries `"lint-staged": { "*.{ts,js}": "eslint --fix" }` — staged files only, so the boundary rules run on every commit.
+- Hooks activate via `prepare` on first install.
 
-- `.husky/pre-commit` contains just `lint-staged` (husky v9 puts `node_modules/.bin` on the hook's PATH; no shebang or `husky.sh` sourcing — those are deprecated).
-- `package.json` carries the lint-staged config: `"lint-staged": { "*.{ts,js}": "eslint --fix" }` — staged files only, so commits stay fast even as the repo grows.
-- Hooks activate via the `prepare` script on first install; nothing else to run manually.
-
-If the project dir is not itself the git root (e.g. scaffolded into `backend-shoply/` inside a monorepo), husky refuses to install from the subfolder — that's why `prepare` ends in `|| true`, so installs still succeed. To activate the hooks in that layout, change the project's prepare script to hop to the git root: `"prepare": "cd .. && husky backend-shoply/.husky || true"` (adjust the path to match the actual folder name), and make the hook `cd backend-shoply && npx lint-staged` (`npx`, because the hook now runs from the git root where `node_modules/.bin` isn't on PATH). When scaffolding into a subfolder, apply this adjusted form instead of the plain `husky` call.
+If the project dir is not the git root (e.g. `backend-shoply/` inside a monorepo), husky refuses to install from the subfolder. Use `"prepare": "cd .. && husky backend-shoply/.husky || true"` (adjust to the real folder name) and make the hook `cd backend-shoply && npx lint-staged` (`npx`, because the hook now runs from the git root).
 
 ## Graceful shutdown
 

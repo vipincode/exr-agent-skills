@@ -1,19 +1,15 @@
 import mongoose from "mongoose";
-
-export interface HealthStatus {
-  status: "ok";
-  uptime: number;
-  timestamp: string;
-  db: "connected" | "disconnected";
-}
+import type { HealthStatus } from "./health.types.js";
 
 // The canonical functional module the other skills imitate: a plain exported
 // function, no class, no `this`. Returns data; the controller wraps it.
+// (health owns no model, so it has no repository or mapper — a data-owning
+// module adds <name>.model.ts / .repository.ts / .mapper.ts; see ARCHITECTURE.md.)
 export function getHealth(): HealthStatus {
   return {
     status: "ok",
     uptime: process.uptime(),
     timestamp: new Date().toISOString(),
-    db: mongoose.connection.readyState === 1 ? "connected" : "disconnected",
+    db: mongoose.connection.readyState === mongoose.ConnectionStates.connected ? "connected" : "disconnected",
   };
 }

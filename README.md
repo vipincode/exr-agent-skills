@@ -19,7 +19,7 @@ handle both domains in one skill.
 
 **Setup (once per project)**
 
-- `express-ts-bootstrap` - scaffold a new Express + TypeScript + Mongoose backend (empty dir).
+- `express-ts-bootstrap` - scaffold a new Express + TypeScript + Mongoose backend (empty dir): one folder per module, lint-enforced boundaries, tests included, latest library versions.
 - `nextjs-bootstrap` - scaffold a new Next.js frontend with BFF proxy, axios, Zod, TanStack Query.
 - `project-onboard` - make existing code toolkit-ready (writes the contract files) - backend,
   frontend, or both in one pass. Records what your repo actually does; never refactors it.

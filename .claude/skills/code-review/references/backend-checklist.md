@@ -2,6 +2,15 @@
 
 Concrete things to look for per dimension. Use the contract to know the project's expected patterns; flag deviations from those, plus the universal issues below. Not every item applies to every file — judge relevance.
 
+## Module boundaries & layering (when the contract defines them)
+- **Scope**: a change for module `<x>` editing another module's files, or `app.ts`, without the slice calling for it. Shared folders touched without a reuse reason.
+- **Cross-module imports** reaching past another module's `index.ts` (its model, repository, controller, internal utils).
+- **Layer violations**: model imported outside the repository; controller/routes importing the repository; service touching `req`/`res`; business rules in the repository or controller.
+- **Raw documents in responses**: `ok(res, doc)` with a Mongoose document instead of a mapper DTO → leaks `_id`, `__v`, and any sensitive field added later.
+- **Untyped input**: `req.body as X`, `req.user!`, or a controller re-validating instead of `ValidatedRequest<typeof bundle>` / `getAuthUser(req)`.
+- **Lint suppressions** (`eslint-disable` on `no-restricted-imports`, edits that weaken `eslint.config.js`) — these hide a boundary break; flag as high.
+- Mount added in the wrong place (`app.ts` instead of the route registry), or missing from `index.ts`.
+
 ## Correctness & async
 - `await` missing on a promise (fire-and-forget that should be awaited), or awaiting in a loop where `Promise.all` is correct.
 - Unhandled rejections in non-route async code (event handlers, timers, startup).
@@ -37,7 +46,7 @@ Concrete things to look for per dimension. Use the contract to know the project'
 - Response shape matches the project's envelope exactly (no ad-hoc `res.json({...})` that diverges).
 - Input validated through the project's flow (validate middleware + schema) before reaching the handler; controller not re-validating or trusting raw input.
 - Status codes correct (201 on create, 204 on delete-no-body, etc.).
-- Pagination/filtering consistent with how other endpoints do it.
+- Pagination/filtering consistent with how other endpoints do it — through the shared pagination helper (capped `limit`, standard `meta`), not a module-local page/limit pair.
 
 ## DRY / convention (check against MODULE_REGISTRY.md)
 - New util/middleware/helper/error-class that duplicates a registry entry or an existing file → flag with the existing path; recommend reuse.
@@ -45,6 +54,11 @@ Concrete things to look for per dimension. Use the contract to know the project'
 - Layout deviation: file placed outside the contract's structure.
 - Import-convention deviation (e.g. missing `.js` extension where NodeNext requires it; not using the path alias).
 - Paradigm deviation (class where the contract says functional, or vice versa) without reason.
+
+## Tests & dependencies
+- New behavior with no test in the module's `__tests__/` (note it; test-writer covers it on request) — or an integration test missing the `.int.test.ts` suffix, so it runs without a database.
+- Tests re-creating the app, the DB lifecycle, or hand-crafting JWTs instead of the shared test helpers.
+- A dependency added with a hand-written/old version, or a library API used in a form its installed major removed (e.g. Mongoose 9 pre-hooks taking `next`, `tseslint.config()`, Zod 3 `.flatten()`).
 
 ## Performance & resources
 - Expensive work (JSON parse of large payloads, sync crypto, heavy compute) on the request path that could be deferred/streamed.

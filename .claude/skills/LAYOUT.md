@@ -93,7 +93,7 @@ Once the project dir is resolved (call it `<proj>`), the familiar paths all hang
 | `MODULE_REGISTRY.md` | `<proj>/MODULE_REGISTRY.md` |
 | `src/lib`, `src/middleware`, `src/modules/<name>/` | `<proj>/src/...` |
 | `src/features/<name>/`, `src/components/shared/` | `<proj>/src/...` |
-| `src/app.ts` (router mount) | `<proj>/src/app.ts` |
+| `src/routes.ts` (router mount; `src/app.ts` in older/onboarded projects) | `<proj>/src/routes.ts` |
 | `package.json` (framework / PM detection) | `<proj>/package.json` |
 
 When the project dir is the repo root, these are exactly the old paths — so behavior is

@@ -54,16 +54,20 @@ Genuinely single-use code — a private helper used by exactly one module — st
 
 Skip if the slice says `n/a`. Create the files the slice lists under `src/modules/<name>/`, following the paradigm in `ARCHITECTURE.md` and the anatomy in `references/backend-anatomy.md`. The non-negotiables (verify against ARCHITECTURE.md, which wins if it differs):
 
-- **Implement the slice's contract exactly** — the paths, methods, guards, request shapes, status codes, and `data` shape written there. If the contract seems wrong, say so; don't quietly implement something else, because the frontend half is about to bind to what's written.
-- **Responses** only via the shared envelope helpers (`ok`/`created`/`noContent`). Never hand-roll a success shape.
+- **Stay in the module.** Edit only `src/modules/<name>/**`, one mount line in `src/routes.ts` (first slice of a module), and the registry — plus a shared folder only when the dedup gate decided a shared piece must be created or extended, and `config/env.ts` + `.env.example` for a new env var. **Never edit another module's files**: use its `index.ts` surface, and if that surface lacks what you need, stop and surface it — unless the slice file explicitly lists that change to the other module (then it was planned and reviewed). The edit-scope table in `references/backend-anatomy.md` is the checklist.
+- **Implement the slice's contract exactly** — the paths, methods, guards, request shapes, status codes, and `data` shape written there. The mapper (`<name>.mapper.ts`) is where the `data` shape becomes code. If the contract seems wrong, say so; don't quietly implement something else, because the frontend half is about to bind to what's written.
+- **Layering** — routes → controller → service → repository → model, plus the mapper. Only the repository imports the model; controllers/routes never import the repository; other modules are reached only through their `index.ts`. These are lint errors in a bootstrapped project — fix the code, never the rule.
+- **Responses** only via the shared envelope helpers (`ok`/`created`/`noContent`), with mapper DTOs as `data`. Never a raw Mongoose document, never a hand-rolled success shape.
 - **Errors** only by throwing the shared `AppError` subclasses. Controllers don't try/catch.
-- **No `asyncHandler`** on Express 5 — it forwards async rejections natively. Plain async handlers. (Express 4 projects need the wrapper; ARCHITECTURE.md says which.)
-- **Validation** via the shared `validate({...})` middleware with the module's schemas; controllers consume typed, validated input.
-- **Types** derived from the schemas — no parallel hand-written interfaces that can drift.
-- **Placement by reach** — non-schema types in `<name>.types.ts`, constants/enums in `<name>.constants.ts`, private helpers in `<name>.utils.ts`; anything used by 2+ modules goes global (`src/types/`, `src/constants/`, `src/lib/`) and gets registered. No inline magic literals, no ad-hoc inline types.
-- **Imports** follow the project's extension convention exactly.
-- **Auth** reuses the existing `protect` / `requireRole` / JWT helpers — never new token logic.
-- **Mount the router** in `src/app.ts` at the marked insertion point.
+- **No `asyncHandler`** on Express 5 — it forwards async rejections natively. (Express 4 projects need the wrapper; ARCHITECTURE.md says which.)
+- **Typed validation** — a request bundle per route in `<name>.schema.ts`, `validate(bundle)` in routes, `ValidatedRequest<typeof bundle>` in the controller. Never `req.body as X`; never `req.user!` (use `getAuthUser(req)`).
+- **Reuse the shared schemas** — `idParamsSchema`/`objectIdSchema` and `paginationQuerySchema` + `toSkip`/`toPageMeta` for every list. No unbounded `find()`.
+- **Types** derived from their source — `z.output` for inputs, `ReturnType<typeof toXDto>` for responses.
+- **Placement by reach** — module-local types/constants/helpers in `<name>.types.ts` / `.constants.ts` / `.utils.ts`; anything used by 2+ modules goes global and gets registered. No inline magic literals.
+- **Imports** follow the project's extension convention exactly (`.js` under NodeNext); type-only imports use `import type`.
+- **Auth** reuses `protect` / `getAuthUser` / `requireRole` / the JWT helpers — never new token logic.
+- **Expose and mount** — add what other modules may call to `index.ts`; mount the router in `src/routes.ts` between the markers (never in `app.ts` when the project has a route registry).
+- **New dependency?** Install with the PM, no version (`<pm> add <pkg>`), and read its current docs (context7) before writing code against it. Cross-cutting ones get a registered wrapper in `src/lib/`.
 
 ## Step 4 — Build the frontend half and wire the design
 
@@ -88,7 +92,7 @@ Build only what the (possibly user-edited) slice specifies. If something the bin
 
 ## Step 5 — Verify it's green
 
-Run the project's typecheck / lint / build for each domain you touched (`<pm> run typecheck`, `<pm> run build`, `<pm> run lint`). Fix what fails. Code that doesn't compile isn't done. Do a quick boot or route sanity check if feasible.
+Run the project's typecheck / lint / build for each domain you touched (`<pm> run typecheck`, `<pm> run lint`, `<pm> run build`), and the existing test suite (`<pm> test`) so you know the slice didn't break a neighbour. Fix what fails — a boundary lint error means code is in the wrong layer, so move it rather than disabling the rule. Code that doesn't compile isn't done. Do a quick boot or route sanity check if feasible.
 
 **Report the result honestly.** If a check fails and you couldn't fix it, say which and why. If you couldn't run them at all, say that instead of implying they passed.
 
@@ -117,7 +121,7 @@ Do both in the same change. An out-of-date registry silently reintroduces the du
 
 Close with:
 
-1. **What was built** — the backend files, the binding files, and which design components were wired.
+1. **What was built** — the backend files, the binding files, and which design components were wired. List any file outside `src/modules/<name>/` you touched (routes.ts, a shared piece, env) and why — anything else outside the module is a scope breach to call out.
 2. **What was reused**, with paths. This is the proof the dedup gate actually ran; a summary without paths isn't evidence.
 3. **What was newly registered.**
 4. **Verification result** — what you ran and what it said.

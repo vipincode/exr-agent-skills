@@ -56,10 +56,18 @@ Source: **declared here** — or — **observed from `backend-shoply/src/modules
 
 | File | Purpose |
 |------|---------|
-| src/modules/auth/auth.schema.ts | Zod input schemas |
+| src/modules/auth/auth.model.ts | User schema + indexes (if this slice introduces the data) |
+| src/modules/auth/auth.schema.ts | Zod inputs + per-route request bundles |
+| src/modules/auth/auth.repository.ts | data access (only model importer) |
+| src/modules/auth/auth.mapper.ts | doc → response DTO (the contract's `data` shape) |
 | src/modules/auth/auth.service.ts | business logic |
-| src/modules/auth/auth.controller.ts | HTTP handlers |
-| src/modules/auth/auth.routes.ts | router (mounted in src/app.ts) |
+| src/modules/auth/auth.controller.ts | HTTP handlers (typed `ValidatedRequest`) |
+| src/modules/auth/auth.routes.ts | router |
+| src/modules/auth/index.ts | public surface: router + service fns other modules call |
+
+**Shared files touched** — `src/routes.ts` (mount line, first slice only), plus any shared piece the
+reuse check decided to create/extend, or "none". Changes to **another module** are listed here
+explicitly, or they don't happen.
 
 **Validation** — per schema: fields, formats, constraints, create-only vs updatable.
 

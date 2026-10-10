@@ -1,7 +1,7 @@
 # {{PROJECT_NAME}} — backend
 
-Express 5 + TypeScript (strict, ESM/NodeNext) + Mongoose 8 + JOSE 5 + Zod 4 + pino.
-Paradigm: **{{PARADIGM}}**. Package manager: **{{PACKAGE_MANAGER}}**.
+Express 5 + TypeScript (strict, ESM/NodeNext) + Mongoose 9 + JOSE 6 + Zod 4 + pino · Vitest.
+Paradigm: **{{PARADIGM}}**. Package manager: **{{PACKAGE_MANAGER}}**. Node **{{NODE_MAJOR}}**.
 
 > **Generated from `ARCHITECTURE.md` → `## Invariants`. Do not edit here.**
 > Change the rule in `ARCHITECTURE.md` first, then regenerate this file so the two never drift.
@@ -10,18 +10,21 @@ Paradigm: **{{PARADIGM}}**. Package manager: **{{PACKAGE_MANAGER}}**.
 
 {{INVARIANTS}}
 
+## Before you say "done"
+
+`{{PM}} run typecheck && {{PM}} run lint && {{PM}} test` — lint includes the module-boundary rules.
+
 ## Where the full detail lives
 
 Keep this file small — it is in context for **every** change. Read further only when the work needs it:
 
 | Need | Read |
 | --- | --- |
-| The full conventions (layout, envelope, error model, validation, auth, env, logging, naming) | `ARCHITECTURE.md` |
-| Does this util/middleware/type/constant already exist? | `MODULE_REGISTRY.md` (index → shard) |
+| The full conventions (layout, layering, envelope, errors, validation, pagination, tests, auth, env) | `ARCHITECTURE.md` |
+| Does this util/middleware/type/constant/schema already exist? | `MODULE_REGISTRY.md` (index → shard) |
 | What is being built and in what order | `_docs/features/<module>/` at the **repo root** |
 | Which folder each project lives in | `.claude/workspace.json` at the repo root |
 
-The `health` module (`src/modules/health/`) is the canonical example of the paradigm — imitate it.
 For a small, local change, the rules above are enough — don't load the rest.
 
 ## When to reach for a skill

@@ -23,10 +23,12 @@ When `.claude/workspace.json` has a `backend` entry, the real code is right ther
 project dir and read the chain for the requested capability:
 
 ```
-src/app.ts                       → where routers mount (find the base path, e.g. /products)
+src/routes.ts (or src/app.ts)    → where routers mount (base path, e.g. /api/v1 + /products)
+src/modules/<name>/index.ts              → the module's public surface (what other modules may call)
 src/modules/<name>/<name>.routes.ts      → method + path + which middleware (auth/validate)
 src/modules/<name>/<name>.controller.ts  → what it returns: the envelope helper + data
-src/modules/<name>/<name>.service.ts     → the shape of `data` (what the service resolves)
+src/modules/<name>/<name>.service.ts     → what the service resolves
+src/modules/<name>/<name>.mapper.ts      → the exact shape of `data` (the DTO), when a mapper exists
 src/modules/<name>/<name>.schema.ts      → request shape (body/query/params Zod schemas)
 src/modules/<name>/<name>.model.ts       → the persisted document shape (fields, types)
 ```

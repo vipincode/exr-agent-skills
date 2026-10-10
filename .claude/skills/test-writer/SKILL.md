@@ -24,7 +24,8 @@ Resolve the project dir for the target's domain via `../LAYOUT.md` (`.claude/wor
 
 - **Framework** — read `package.json`. Use whatever is installed (Vitest, Jest); only ask if neither is present, and then suggest Vitest as the default for a modern TS project. On the frontend, also confirm the renderer (React Testing Library + `user-event`, and `jsdom`/`happy-dom`).
 - **Mocking approach** — if a network-mocking library (e.g. MSW) is already installed, prefer it for hook and integration tests: intercepting at the network boundary keeps tests honest about the envelope. Otherwise mock the HTTP instance directly. Don't introduce a new mocking library when one is already in use.
-- **File convention** — detect existing tests: colocated `*.test.ts` / `*.test.tsx` next to source, a `__tests__/` directory, or a top-level `test/`. Match it. If none exists, default to colocated.
+- **File convention** — ARCHITECTURE.md's testing section first (a bootstrapped backend uses `src/modules/<name>/__tests__/` with `*.test.ts` for unit and `*.int.test.ts` for integration — the suffix decides which Vitest project runs it). Otherwise detect existing tests: colocated `*.test.ts` / `*.test.tsx`, a `__tests__/` directory, or a top-level `test/`. Match it. If none exists, default to colocated.
+- **Shared test helpers** — reuse what the project ships (`test/helpers.ts` → `api()`, `authHeader(role)`; `test/setup-db.ts` for the in-memory DB). Never re-create an app, a DB lifecycle, or a hand-crafted JWT in a test file.
 - **Import convention** — match the project's (e.g. explicit extensions under NodeNext) so the test file compiles under the same tsconfig.
 - **Setup file** — check for a test setup (custom matchers, cleanup, the jsdom environment). If it's missing and the tests need it, say so rather than silently assuming it's there.
 
@@ -42,8 +43,8 @@ If the request already implies these ("quick unit tests for the service", "just 
 Follow `references/backend-patterns.md` or `references/frontend-patterns.md` for the layer being tested.
 
 **Backend:**
-- **Service** → unit test with the model and collaborators mocked; assert the returned data and that the right error is thrown on each failure path.
-- **Controller** → mock the service; assert the response envelope shape and status via a mocked response object.
+- **Service** → unit test with the repository (or, without a repository layer, the model) and other modules' public services mocked; assert the returned DTO and that the right error is thrown on each failure path.
+- **Controller** → usually covered by the route integration test; unit-test it only if it holds logic (then mock the service and assert the envelope via a mocked response object).
 - **Routes / integration** → supertest against the built app; assert real status codes and the real envelope; use an in-memory database if the path touches one.
 
 **Frontend:**

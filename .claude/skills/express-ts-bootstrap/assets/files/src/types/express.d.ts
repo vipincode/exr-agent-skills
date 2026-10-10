@@ -7,6 +7,8 @@ declare global {
       user?: { id: string; role: string };
       id: string;
       log: Logger;
+      // Present only once a cookie parser is mounted (an auth-feature decision).
+      cookies?: Record<string, string | undefined>;
     }
   }
 }

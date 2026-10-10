@@ -1,7 +1,7 @@
 import * as z from "zod";
 import mongoose from "mongoose";
 import {
-  AppError,
+  type AppError,
   BadRequestError,
   ConflictError,
   UnprocessableError,

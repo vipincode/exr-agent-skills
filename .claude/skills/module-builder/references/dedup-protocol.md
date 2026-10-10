@@ -68,7 +68,7 @@ for shared types and constants; sibling `src/modules/*/` for a service that alre
 
 | Kind | Goes to |
 |---|---|
-| Reusable util/helper | `src/lib/` — registered |
+| Reusable util/helper, or a Zod schema 2+ modules validate with | `src/lib/` — registered |
 | Reusable middleware | `src/middleware/` — registered |
 | Type used (or usable) by 2+ modules | `src/types/` — registered |
 | Constant/enum used by 2+ modules | `src/constants/` — registered |
@@ -83,7 +83,13 @@ Never as inline magic literals or ad-hoc inline types.
 - A per-module `catchAsync`/`asyncHandler` wrapper on Express 5 (unnecessary, and the contract
   forbids it).
 - A new error class duplicating an existing `AppError` subclass.
-- Copy-pasting a validation or pagination helper "because this module is different".
+- Copy-pasting a validation or pagination helper "because this module is different" — extend
+  `paginationQuerySchema`, reuse `idParamsSchema`/`objectIdSchema`.
+- A new ObjectId regex, page/limit pair, or `{ id }` params schema in a module.
+- Importing another module's model, repository, or any file other than its `index.ts` — call its
+  public service; if the function you need isn't exported, that's a planned change to that module.
+- Moving a module-specific helper into `src/lib/` "just in case" — shared means a second caller
+  exists now (or the slice names one), not might someday.
 - Re-declaring an enum/status list another module already exports — one definition, in
   `src/constants/` if 2+ modules use it.
 - Magic literals in service/controller code that should be a named constant.
